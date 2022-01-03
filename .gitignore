@@ -1,0 +1,11 @@
+# Compiled class files
+*.class
+workspace.xml
+
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/runConfigurations.xml
