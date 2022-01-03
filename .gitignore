@@ -9,3 +9,16 @@ workspace.xml
 .idea/**/dictionaries
 .idea/**/shelf
 .idea/runConfigurations.xml
+src/main/java/Model/Fields/StartField.java
+.idea/misc.xml
+.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml
+.idea/libraries/Maven__junit_junit_4_13_2.xml
+.idea/libraries/Maven__diplomitdtu_matadorgui_3_1_7.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
