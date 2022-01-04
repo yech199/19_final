@@ -2,7 +2,7 @@ package Controller;
 
 import Model.ChanceCards.ChanceCard;
 import Model.Die;
-import Model.Fields.AmusementField;
+import Model.Fields.PropertyField;
 import Model.Fields.ChanceField;
 import Model.Fields.Field;
 import Model.GameBoard;
@@ -119,27 +119,27 @@ public class GameController {
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
         landedOn.fieldAction(player);
 
-        if (landedOn instanceof AmusementField amusementField) {
+        if (landedOn instanceof PropertyField propertyField) {
 
-            if (amusementField.owner == null) {
+            if (propertyField.owner == null) {
                 // Køb felt og ændr farve
-                player.addAmountToBalance(-amusementField.rent);
-                amusementField.owner = player;
+                player.addAmountToBalance(-propertyField.rent);
+                propertyField.owner = player;
                 guiController.setOwner(player);
 
                 //------------------------------------------------------------------------------------------------------
                 // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
                 //------------------------------------------------------------------------------------------------------
-                if (ownsBoth(amusementField)) {
+                if (ownsBoth(propertyField)) {
 
-                    AmusementField[] tmpFields = gameBoard.getPair(amusementField.backgroundColor);
+                    PropertyField[] tmpFields = gameBoard.getPair(propertyField.backgroundColor);
                     tmpFields[0].rent += tmpFields[0].rent;
                     tmpFields[1].rent += tmpFields[1].rent;
                     // Tilføjer renten til sig selv for at fordoble den.
                     // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                 }
             }
-            else guiController.updatePlayer(amusementField.owner);
+            else guiController.updatePlayer(propertyField.owner);
         }
         else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
@@ -179,7 +179,7 @@ public class GameController {
      * @param field AmusementField input
      * @return boolean output der siger om ejeren har begge felter med denne farve eller ej.
      */
-    public boolean ownsBoth(AmusementField field) {
+    public boolean ownsBoth(PropertyField field) {
 
         Field[] tmpFields = gameBoard.getPair(field.backgroundColor);
 
@@ -187,11 +187,11 @@ public class GameController {
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
         // return statementet.
         //--------------------------------------------------------------------------------------------------------------
-        if (((AmusementField) tmpFields[0]).owner == null || ((AmusementField) tmpFields[1]).owner == null) {
+        if (((PropertyField) tmpFields[0]).owner == null || ((PropertyField) tmpFields[1]).owner == null) {
             return false;
         }
 
-        return ((AmusementField) tmpFields[0]).owner == ((AmusementField) tmpFields[1]).owner;
+        return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner;
     }
 
     /**
