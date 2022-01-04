@@ -152,7 +152,7 @@ public class GameController {
         player.setCurrentPos((player.getCurrentPos() + faceValue) % gameBoard.fields.length);
 
         // Spilleren passerer Start
-        if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(2);
+        if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(4000);
         guiController.updatePlayer(player);
     }
 
