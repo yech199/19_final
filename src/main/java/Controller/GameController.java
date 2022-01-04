@@ -179,28 +179,42 @@ public class GameController {
     public void setGameEnded() {
         String winner = getWinner(playerList).name;
 
-        if (playerList.length == 2) {
-            guiController.showMessage("Spillet er slut!\n" +
-                    playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
-                    playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
-                    winner + " har vundet!");
-        }
-        else if (playerList.length == 3) {
+        if (playerList.length == 3) {
             guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                     playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                     winner + " har vundet!");
         }
-        else guiController.showMessage("Spillet er slut!\n" +
+        else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                     playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                     playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
                     winner + " har vundet!");
 
+        else if (playerList.length == 5) guiController.showMessage("Spillet er slut!\n" +
+                playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
+                playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
+                playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
+                playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
+                playerList[4].name + " har " + playerList[4].getBalance() + " point.\n" +
+                winner + " har vundet!");
+
+        else guiController.showMessage("Spillet er slut!\n" +
+                    playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
+                    playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
+                    playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
+                    playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
+                    playerList[4].name + " har " + playerList[4].getBalance() + " point.\n" +
+                    playerList[5].name + " har " + playerList[5].getBalance() + " point.\n" +
+                    winner + " har vundet!");
+
+
         guiController.showMessage("Luk spillet?");
         guiController.close();
+
+
     }
 
     /**
