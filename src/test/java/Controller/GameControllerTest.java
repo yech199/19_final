@@ -25,7 +25,7 @@ public class GameControllerTest {
         };
         gameBoard = new GameBoard();
         guiController = new StubGUIController();
-        gameController = new GameController(guiController, gameBoard, die);
+        gameController = new GameController(guiController, gameBoard, die, die);
         gameController.playerList = players;
     }
 
@@ -34,7 +34,7 @@ public class GameControllerTest {
         Player player = players[0];
         int[] rolls = {1};
         die = new StubDie(rolls);
-        gameController.die = die;
+        gameController.die1 = die;
         player.setCurrentPos(gameController.gameBoard.fields.length - 1);
 
         int moneyBefore = player.getBalance();

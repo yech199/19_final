@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class GameController {
     public ViewController guiController;
-    public Die die;
+    public Die die1, die2;
     public GameBoard gameBoard;
     public Player[] playerList;
     private boolean gameEnded;
@@ -23,8 +23,9 @@ public class GameController {
      *     Der laves et array med "playerCount" antal spillere. playerListen er af typen Player.
      *     Player constructoren skal bruge et navn i parameteren, desuden sættes den enkelte spillers start balance til 0 automatisk
      */
-    public GameController(ViewController guiController, GameBoard gameBoard, Die die) {
-        this.die = die;
+    public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2) {
+        this.die1 = die1;
+        this.die2 = die2;
         this.gameBoard = gameBoard;
         this.guiController = guiController;
 
@@ -45,7 +46,7 @@ public class GameController {
      * <p> Denne constructor kalder på ovenstående constructor
      */
     private GameController(GameBoard gameBoard) {
-        this(new GUIController(gameBoard.fields), gameBoard, new Die(1, 6));
+        this(new GUIController(gameBoard.fields), gameBoard, new Die(1, 6), new Die(1, 6));
     }
 
     /**
@@ -84,7 +85,7 @@ public class GameController {
      */
     public void playTurn(Player player) {
         guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
-        int faceValue = die.roll();
+        int faceValue = die1.roll() + die2.roll();
         guiController.setDie(faceValue);
 
         if (player.inJail) {
@@ -94,12 +95,12 @@ public class GameController {
                 player.getOutOfJailFree = false;
             }
             else {
-                if(guiController.getUserButtonPressed(player.name + " er røger i fængsel." +
+                if(guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
                         "Hvordan vil du komme ud?", "Betal 1000 kr", "Rul 2 ens").equals("Rul 2 ens")){
                     for (int i = 0; i<3; i++){
                         guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
-                        int die1 = die.roll();
-                        int die2 = die.roll();
+                        int die1 = this.die1.roll();
+                        int die2 = this.die1.roll();
                         guiController.showMessage("Du har slået " + die1 + " + " + die2);
                         if (die1 != die2){
                             player.inJail = false;
