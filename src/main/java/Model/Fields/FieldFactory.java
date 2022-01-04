@@ -53,12 +53,12 @@ public final class FieldFactory {
                 // Index 20-24
                 new FreeParkingField("Parkering", "Parkering", "Parkering er et fristed, indtil man skal kaste igen"),
                 new PropertyField("Trianglen", "Pris: kr. 4400", "Trianglen", 350,
-                        new Color(153, 0, 0), new Color(0, 0, 0)),
+                        new Color(153, 0, 0), new Color(255, 255, 255)),
                 new ChanceField(),
                 new PropertyField("Østerbro-\ngade", "Pris: kr. 4400", "Østerbrogade", 350,
-                        new Color(153, 0, 0), new Color(0, 0, 0)),
+                        new Color(153, 0, 0), new Color(255, 255, 255)),
                 new PropertyField("Grønningen", "Pris: kr. 4800", "Grønningen", 400,
-                        new Color(153, 0, 0), new Color(0, 0, 0)),
+                        new Color(153, 0, 0), new Color(255, 255, 255)),
 
                 // Index 25-29
                 new ShippingField("Ø.S.", "Pris: kr. 4000", "Ø.S. redderiet", 500),
@@ -85,10 +85,10 @@ public final class FieldFactory {
                 new ShippingField("Bornholm", "Pris: kr. 4000", "Bornholms redderi", 500),
                 new ChanceField(),
                 new PropertyField("Frederiks-\nberggade", "Pris: kr. 7000", "Frederiksberggade", 700,
-                        new Color(102, 0, 102), new Color(0, 0, 0)),
+                        new Color(102, 0, 102), new Color(255, 255, 255)),
                 new TaxField("Ekstra-\nordinær\nstatsskat", "Betal 2000 kr.", "Betal ekstraordinær\nstatsskat: kr. 2000,-"),
                 new PropertyField("Rådhuspladsen", "Pris: kr. 8000", "Rådhuspladsen", 1000,
-                        new Color(102, 0, 102), new Color(0, 0, 0)),
+                        new Color(102, 0, 102), new Color(255, 255, 255)),
         };
     }
 }
