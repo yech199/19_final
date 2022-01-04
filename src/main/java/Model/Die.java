@@ -15,7 +15,7 @@ public class Die {
         this.MAXfaceValue = MAXfaceValue;
     }
 
-    public int roll() { //funktionen roll ruller en terning med x-antal sider.
+    public int roll() { // Funktionen roll ruller en terning med x-antal sider.
         // Metode der kan køre når man har lavet et Dice objekt
         faceValue = (int) (Math.floor(Math.random() * (this.MAXfaceValue - this.MINfaceValue + 1) + this.MINfaceValue));
         return faceValue; //Maksimum værdi på terningen = 6. Minimum værdi på terningen = 1
