@@ -28,7 +28,7 @@ public class GameController {
         this.gameBoard = gameBoard;
         this.guiController = guiController;
 
-        int playerCount = guiController.getUserInteger("Hvor mange spillere (2-4)?", 2, 4);
+        int playerCount = guiController.getUserInteger("Hvor mange spillere (3-6)?", 3, 6);
 
         // Laver x antal nye spillere med navn
         playerList = new Player[playerCount];

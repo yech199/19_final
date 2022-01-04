@@ -70,20 +70,14 @@ public class GUIController extends ViewController {
      */
     @Override
     public void setUpPlayers(Player[] playerList) {
-        Color[] colors = {Color.BLUE, Color.RED, Color.YELLOW, Color.PINK};
+        Color[] colors = {Color.BLUE, Color.RED, Color.YELLOW, Color.PINK, Color.lightGray, Color.green};
         gui_players = new GUI_Player[playerList.length];
 
         //--------------------------------------------------------------------------------------------------------------
         // Sætter spillernes startbalance alt efter hvor mange spillere der spiller
         //--------------------------------------------------------------------------------------------------------------
         for (int i = 0; i < playerList.length; i++) {
-            if (playerList.length == 2) {
-                playerList[i].addAmountToBalance(20);
-            }
-            else if (playerList.length == 3) {
-                playerList[i].addAmountToBalance(18);
-            }
-            else playerList[i].addAmountToBalance(16);
+            playerList[i].addAmountToBalance(30000);
 
             GUI_Car tmpCar = new GUI_Car();
             tmpCar.setPrimaryColor(colors[i]);
