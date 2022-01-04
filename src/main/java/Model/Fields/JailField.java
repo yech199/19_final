@@ -5,8 +5,8 @@ import gui_fields.GUI_Jail;
 import java.awt.*;
 
 public class JailField extends Field {
-    public JailField(String name, String subText, String description, Color color) {
-        super(name, subText, description, color);
+    public JailField(String name, String subText, String description) {
+        super(name, subText, description, new Color(125, 125, 125), Color.WHITE);
     }
 
     /**

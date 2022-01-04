@@ -6,8 +6,8 @@ import java.awt.*;
 
 public class ChanceField extends Field {
 
-    public ChanceField(String name, String subText, String description, Color color) {
-        super(name, subText, description, color);
+    public ChanceField() {
+        super("?", "Prøv lykken", "Træk et prøv lykken kort.", new Color(0, 0, 0), Color.GREEN);
     }
 
     /**

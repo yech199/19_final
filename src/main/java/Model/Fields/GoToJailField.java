@@ -6,8 +6,8 @@ import gui_fields.GUI_Jail;
 import java.awt.*;
 
 public class GoToJailField extends Field {
-    public GoToJailField(String name, String subText, String description, Color color) {
-        super(name, subText, description, color);
+    public GoToJailField(String name, String subText, String description) {
+        super(name, subText, description, new Color(125, 125, 125), Color.white);
     }
 
     @Override
