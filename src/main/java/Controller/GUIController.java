@@ -151,12 +151,12 @@ public class GUIController extends ViewController {
     /**
      * Displays one die with the given value, at a random position on the board
      *
-     * @param faceValue The value of the die. If the value is not between
+     * @param faceValue1 The value of the die. If the value is not between
      *                  1-6, the die won't be updated.
      */
     @Override
-    public void setDie(int faceValue) {
-        gui.setDie(faceValue);
+    public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {
+        gui.setDice(faceValue1, x1, y1, faceValue2, x2, y2);
     }
 
     /**

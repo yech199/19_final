@@ -85,8 +85,10 @@ public class GameController {
      */
     public void playTurn(Player player) {
         guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
-        int faceValue = die1.roll() + die2.roll();
-        guiController.setDie(faceValue);
+        int faceValue1 = die1.roll();
+        int faceValue2 = die2.roll();
+        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+        int faceValue = faceValue1 + faceValue2;
 
         if (player.inJail) {
             if (player.getOutOfJailFree) {
