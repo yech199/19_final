@@ -94,11 +94,28 @@ public class GameController {
                 player.getOutOfJailFree = false;
             }
             else {
-                guiController.getUserButtonPressed(player.name + " er røger i fængsel. Du betaler 1000 kr");
-                player.addAmountToBalance(-1000);
+                if(guiController.getUserButtonPressed(player.name + " er røger i fængsel." +
+                        "Hvordan vil du komme ud?", "Betal 1000 kr", "Rul 2 ens").equals("Rul 2 ens")){
+                    for (int i = 0; i<3; i++){
+                        guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
+                        int die1 = die.roll();
+                        int die2 = die.roll();
+                        guiController.showMessage("Du har slået " + die1 + " + " + die2);
+                        if (die1 != die2){
+                            player.inJail = false;
+                        }
+                    }
+                }
+                else {
+                    player.addAmountToBalance(-1000);
+                    player.inJail = false;
+                }
             }
         }
-        movePlayerForward(player, faceValue);
+
+        if (!player.inJail){
+            movePlayerForward(player, faceValue);
+        }
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
         landedOn.fieldAction(player);
 
