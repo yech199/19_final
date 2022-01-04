@@ -89,9 +89,14 @@ public class GameController {
 
         if (player.inJail) {
             if (player.getOutOfJailFree) {
+                guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
+                        "benådelseskort fra Kongen.", "OK");
                 player.getOutOfJailFree = false;
             }
-            else player.addAmountToBalance(-1);
+            else {
+                guiController.getUserButtonPressed(player.name + " er røger i fængsel. Du betaler 1000 kr");
+                player.addAmountToBalance(-1000);
+            }
         }
         movePlayerForward(player, faceValue);
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
