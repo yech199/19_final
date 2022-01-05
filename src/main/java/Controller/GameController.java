@@ -126,78 +126,41 @@ public class GameController {
 
         landedOn.fieldAction(player);
 
-        if (landedOn instanceof OwnableFields ownableFields) {
-            if(ownableFields instanceof BreweryField breweryField){
+        if (landedOn instanceof OwnableField ownableField) {
+            if(ownableField instanceof BreweryField breweryField){
                 int rent = faceValue * 100;
                 if (breweryField.owner != null) {
                     player.addAmountToBalance(-rent);
                     breweryField.owner.addAmountToBalance(rent);
                 }
             }
-            if (ownableFields.owner == null) {
+
+            if (ownableField.owner == null) {
                 // Køb felt og ændr farve
-                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe " +
-                        "denne ejendom?", "Ja", "Nej").equals("Ja")) {
-                    player.addAmountToBalance(-ownableFields.price);
-                    ownableFields.owner = player;
+                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
+                    player.addAmountToBalance(-ownableField.price);
+                    ownableField.owner = player;
                     guiController.setOwner(player);
                 }
                 //------------------------------------------------------------------------------------------------------
                 // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
                 //------------------------------------------------------------------------------------------------------
                 // FIXME
-                if (landedOn instanceof PropertyField propertyField){
-                    if (ownsAll(propertyField)) {
-                        if (propertyField.getAmountOfHouses() == 0){
-                            PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
-                            for (PropertyField tmpField : tmpFields) {
-                                tmpField.rent += tmpField.rent;
-                            }
-                            if (guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")){
-                                propertyField.addHouse(1);
-                            }
-                        }
-
-                         // Tilføjer renten til sig selv for at fordoble den.
-                         // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
-                    }
-
-                }
-            } else guiController.updatePlayer(ownableFields.owner);
+                // if (ownsBoth(propertyField)) {
+                //
+                //     PropertyField[] tmpFields = gameBoard.getPair(propertyField.backgroundColor);
+                //     tmpFields[0].rent += tmpFields[0].rent;
+                //     tmpFields[1].rent += tmpFields[1].rent;
+                //     // Tilføjer renten til sig selv for at fordoble den.
+                //     // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
+                // }
+            } else guiController.updatePlayer(ownableField.owner);
 
 
         } else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
             guiController.displayChanceCard(chanceCard);
             chanceCard.cardAction(player, gameBoard);
-        }
-
-        if (landedOn instanceof OwnableFields ownableFields) {
-            if(ownableFields instanceof ShippingField shippingField){
-
-                if (shippingField.owner !=null) {
-                    int rent = shippingField.rent * 1;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-
-                else if (shippingField.owner !=null){
-                    int rent = shippingField.rent * 2;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-                else if (shippingField.owner !=null){
-                    int rent = shippingField.rent * 4;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-                else if (shippingField.owner !=null){
-                    int rent = shippingField.rent * 8;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-            }
         }
 
         guiController.updatePlayer(player);
@@ -233,24 +196,19 @@ public class GameController {
      * @return boolean output der siger om ejeren har begge felter med denne farve eller ej.
      */
     // FIXME
-    public boolean ownsAll(PropertyField field) {
+    public boolean ownsBoth(PropertyField field) {
 
-        Field[] tmpFields = gameBoard.getFieldGroup(field.backgroundColor);
+        Field[] tmpFields = gameBoard.getPair(field.backgroundColor);
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
         // return statementet.
         //--------------------------------------------------------------------------------------------------------------
-        if (tmpFields.length == 3) {
-            if (((PropertyField) tmpFields[0]).owner == null || ((PropertyField) tmpFields[1]).owner == null ||
-                    ((PropertyField) tmpFields[2]).owner == null) {
-                return false;
-            }
-            //tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
-            return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner &&
-                    ((PropertyField) tmpFields[2]).owner == ((PropertyField) tmpFields[1]).owner;
+        if (((PropertyField) tmpFields[0]).owner == null || ((PropertyField) tmpFields[1]).owner == null) {
+            return false;
         }
-        else return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner;
+
+        return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner;
     }
 
     /**
