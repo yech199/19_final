@@ -74,7 +74,7 @@ public class GameController {
         roundCounter++;
         guiController.showMessage("Runde " + roundCounter);
         for (Player player : playerList) {
-            if (roundCounter > 40){
+            if (roundCounter > 40) {
                 gameEnded = true;
                 break;
             }
@@ -137,7 +137,7 @@ public class GameController {
 
     private void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField) {
-            if(ownableField instanceof BreweryField breweryField){
+            if (ownableField instanceof BreweryField breweryField) {
                 int rent = faceValue * 100;
                 if (breweryField.owner != null) {
                     player.addAmountToBalance(-rent);
@@ -170,8 +170,11 @@ public class GameController {
         } else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
             guiController.displayChanceCard(chanceCard);
+            int tmpPos = player.getCurrentPos();
             chanceCard.cardAction(player, gameBoard);
-            checkIfInstanceOf(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
+            guiController.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
+            if (player.getCurrentPos() != tmpPos)
+                checkIfInstanceOf(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
         }
 
         guiController.updatePlayer(player);
