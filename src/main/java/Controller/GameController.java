@@ -126,19 +126,20 @@ public class GameController {
 
         landedOn.fieldAction(player);
 
-        if (landedOn instanceof OwnableFields ownableFields) {
-            if(ownableFields instanceof BreweryField breweryField){
+        if (landedOn instanceof OwnableField ownableField) {
+            if(ownableField instanceof BreweryField breweryField){
                 int rent = faceValue * 100;
                 if (breweryField.owner != null) {
                     player.addAmountToBalance(-rent);
                     breweryField.owner.addAmountToBalance(rent);
                 }
             }
-            if (ownableFields.owner == null) {
+
+            if (ownableField.owner == null) {
                 // Køb felt og ændr farve
                 if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
-                    player.addAmountToBalance(-ownableFields.price);
-                    ownableFields.owner = player;
+                    player.addAmountToBalance(-ownableField.price);
+                    ownableField.owner = player;
                     guiController.setOwner(player);
                 }
                 //------------------------------------------------------------------------------------------------------
@@ -153,7 +154,7 @@ public class GameController {
                 //     // Tilføjer renten til sig selv for at fordoble den.
                 //     // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                 // }
-            } else guiController.updatePlayer(ownableFields.owner);
+            } else guiController.updatePlayer(ownableField.owner);
 
 
         } else if (landedOn instanceof ChanceField) {

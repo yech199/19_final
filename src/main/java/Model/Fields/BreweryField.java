@@ -2,12 +2,10 @@ package Model.Fields;
 
 import Model.Player;
 import gui_fields.GUI_Brewery;
-import Model.Die;
-import gui_fields.GUI_Player;
 
 import java.awt.*;
 
-public class BreweryField extends OwnableFields{
+public class BreweryField extends OwnableField {
     public BreweryField(String name, String subText, String description) {
         super(name, subText, description, 0, 3000, Color.BLACK, Color.WHITE);
     }

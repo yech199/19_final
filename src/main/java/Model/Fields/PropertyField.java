@@ -1,11 +1,10 @@
 package Model.Fields;
 
-import Model.Player;
 import gui_fields.GUI_Street;
 
 import java.awt.*;
 
-public class PropertyField extends OwnableFields {
+public class PropertyField extends OwnableField {
     public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
         super(name, subText, description, rent, price, color, textColor);
     }
