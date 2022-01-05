@@ -42,6 +42,12 @@ public class MovementCard extends ChanceCard {
                 player.setCurrentPos(fieldIndex);
             }
         }
+        // Tjekker om spilleren passerer start
+        if (player.getCurrentPos() < player.getPreviousPos())
+            player.addAmountToBalance(4000);
 
+        // Sørger for at man laver den handling der svarer til det felt man lander på
+        Field landedOn = gameBoard.fields[player.getCurrentPos()];
+        landedOn.fieldAction(player);
     }
 }

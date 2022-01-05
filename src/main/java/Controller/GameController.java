@@ -2,9 +2,10 @@ package Controller;
 
 import Model.ChanceCards.ChanceCard;
 import Model.Die;
-import Model.Fields.PropertyField;
 import Model.Fields.ChanceField;
 import Model.Fields.Field;
+import Model.Fields.OwnableFields;
+import Model.Fields.PropertyField;
 import Model.GameBoard;
 import Model.Player;
 
@@ -122,27 +123,28 @@ public class GameController {
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
         landedOn.fieldAction(player);
 
-        if (landedOn instanceof PropertyField propertyField) {
-
-            if (propertyField.owner == null) {
+        if (landedOn instanceof OwnableFields ownableFields) {
+            if (ownableFields.owner == null) {
                 // Køb felt og ændr farve
-                player.addAmountToBalance(-propertyField.rent);
-                propertyField.owner = player;
+                player.addAmountToBalance(-ownableFields.price);
+                ownableFields.owner = player;
                 guiController.setOwner(player);
 
                 //------------------------------------------------------------------------------------------------------
                 // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
                 //------------------------------------------------------------------------------------------------------
-                if (ownsBoth(propertyField)) {
+                // FIXME
+                // if (ownsBoth(propertyField)) {
+                //
+                //     PropertyField[] tmpFields = gameBoard.getPair(propertyField.backgroundColor);
+                //     tmpFields[0].rent += tmpFields[0].rent;
+                //     tmpFields[1].rent += tmpFields[1].rent;
+                //     // Tilføjer renten til sig selv for at fordoble den.
+                //     // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
+                // }
+            } else guiController.updatePlayer(ownableFields.owner);
 
-                    PropertyField[] tmpFields = gameBoard.getPair(propertyField.backgroundColor);
-                    tmpFields[0].rent += tmpFields[0].rent;
-                    tmpFields[1].rent += tmpFields[1].rent;
-                    // Tilføjer renten til sig selv for at fordoble den.
-                    // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
-                }
-            }
-            else guiController.updatePlayer(propertyField.owner);
+
         }
         else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
@@ -182,6 +184,7 @@ public class GameController {
      * @param field AmusementField input
      * @return boolean output der siger om ejeren har begge felter med denne farve eller ej.
      */
+    // FIXME
     public boolean ownsBoth(PropertyField field) {
 
         Field[] tmpFields = gameBoard.getPair(field.backgroundColor);
