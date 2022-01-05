@@ -3,10 +3,7 @@ package Controller;
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.MovementCard;
 import Model.Die;
-import Model.Fields.ChanceField;
-import Model.Fields.Field;
-import Model.Fields.OwnableFields;
-import Model.Fields.PropertyField;
+import Model.Fields.*;
 import Model.GameBoard;
 import Model.Player;
 
@@ -126,6 +123,11 @@ public class GameController {
         movePlayerForward(player, faceValue);
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
+        if (landedOn.fieldName == "Tuborg" || landedOn.fieldName == "Carlsberg"){
+            BreweryField brew = (BreweryField) landedOn;
+            brew.setFaceValue(faceValue);
+        }
+
         landedOn.fieldAction(player);
 
         if (landedOn instanceof OwnableFields ownableFields) {
