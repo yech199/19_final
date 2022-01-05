@@ -1,5 +1,7 @@
 package Model.ChanceCards;
 
+import Model.Fields.Field;
+import Model.Fields.GoToJailField;
 import Model.GameBoard;
 import Model.Player;
 
@@ -41,5 +43,14 @@ public class MovementCard extends ChanceCard {
                 player.setCurrentPos(fieldIndex);
             }
         }
+        // Sørger for at man laver den handling der svarer til det felt man lander på
+        Field landedOn = gameBoard.fields[player.getCurrentPos()];
+        landedOn.fieldAction(player);
+
+        // Skal ikke tjekke om man passerer start når man bliver sendt i fængsel
+        if (!(landedOn instanceof GoToJailField))
+            // Tjekker om spilleren passerer start
+            if (player.getCurrentPos() < player.getPreviousPos())
+                player.addAmountToBalance(4000);
     }
 }

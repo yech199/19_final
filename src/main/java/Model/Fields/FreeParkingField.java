@@ -5,8 +5,8 @@ import gui_fields.GUI_Refuge;
 import java.awt.*;
 
 public class FreeParkingField extends Field {
-    public FreeParkingField(String name, String subText, String description, Color color) {
-        super(name, subText, description, color);
+    public FreeParkingField(String name, String subText, String description) {
+        super(name, subText, description, Color.WHITE, Color.BLACK);
     }
 
     /**

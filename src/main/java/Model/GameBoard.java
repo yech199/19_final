@@ -2,7 +2,7 @@ package Model;
 
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.ChanceCard_Factory;
-import Model.Fields.AmusementField;
+import Model.Fields.PropertyField;
 import Model.Fields.Field;
 import Model.Fields.FieldFactory;
 
@@ -27,14 +27,14 @@ public class GameBoard {
      * @param color Java.awt.Color input
      * @return Field[] output
      */
-    public AmusementField[] getPair(Color color) {
-        AmusementField[] tmpFields = new AmusementField[2];
+    public PropertyField[] getPair(Color color) {
+        PropertyField[] tmpFields = new PropertyField[2];
         int counter = 0;
 
         for (Field field : fields) {
-            if (field instanceof AmusementField amusementField) {
+            if (field instanceof PropertyField propertyField) {
                 if (field.backgroundColor.equals(color)) {
-                    tmpFields[counter++] = amusementField;
+                    tmpFields[counter++] = propertyField;
                 }
                 if (counter == 2) break;
             }

@@ -16,12 +16,12 @@ public abstract class Field {
     public final Color backgroundColor;
     public final Color textColor;
 
-    public Field(String name, String subText, String description, Color color) {
+    public Field(String name, String subText, String description, Color color, Color textColor) {
         this.fieldName = name;
         this.subText = subText;
         this.description = description;
         this.backgroundColor = color;
-        this.textColor = Color.BLACK;
+        this.textColor = textColor;
     }
 
     public void fieldAction(Player player) {

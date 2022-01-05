@@ -1,10 +1,12 @@
 package Controller;
 
 import Model.ChanceCards.ChanceCard;
+import Model.ChanceCards.MovementCard;
 import Model.Die;
-import Model.Fields.AmusementField;
 import Model.Fields.ChanceField;
 import Model.Fields.Field;
+import Model.Fields.OwnableFields;
+import Model.Fields.PropertyField;
 import Model.GameBoard;
 import Model.Player;
 
@@ -12,7 +14,7 @@ import java.util.Random;
 
 public class GameController {
     public ViewController guiController;
-    public Die die;
+    public Die die1, die2;
     public GameBoard gameBoard;
     public Player[] playerList;
     private boolean gameEnded;
@@ -23,12 +25,13 @@ public class GameController {
      *     Der laves et array med "playerCount" antal spillere. playerListen er af typen Player.
      *     Player constructoren skal bruge et navn i parameteren, desuden sættes den enkelte spillers start balance til 0 automatisk
      */
-    public GameController(ViewController guiController, GameBoard gameBoard, Die die) {
-        this.die = die;
+    public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2) {
+        this.die1 = die1;
+        this.die2 = die2;
         this.gameBoard = gameBoard;
         this.guiController = guiController;
 
-        int playerCount = guiController.getUserInteger("Hvor mange spillere (2-4)?", 2, 4);
+        int playerCount = guiController.getUserInteger("Hvor mange spillere (3-6)?", 3, 6);
 
         // Laver x antal nye spillere med navn
         playerList = new Player[playerCount];
@@ -45,7 +48,7 @@ public class GameController {
      * <p> Denne constructor kalder på ovenstående constructor
      */
     private GameController(GameBoard gameBoard) {
-        this(new GUIController(gameBoard.fields), gameBoard, new Die(1, 6));
+        this(new GUIController(gameBoard.fields), gameBoard, new Die(1, 6), new Die(1, 6));
     }
 
     /**
@@ -84,40 +87,69 @@ public class GameController {
      */
     public void playTurn(Player player) {
         guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
-        int faceValue = die.roll();
-        guiController.setDie(faceValue);
+        int faceValue1 = die1.roll();
+        int faceValue2 = die2.roll();
+        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+        int faceValue = faceValue1 + faceValue2;
 
         if (player.inJail) {
             if (player.getOutOfJailFree) {
+                guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
+                        "benådelseskort fra Kongen.", "OK");
                 player.getOutOfJailFree = false;
             }
-            else player.addAmountToBalance(-1);
+            else {
+                if(guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
+                        "Hvordan vil du komme ud?", "Betal 1000 kr", "Rul 2 ens").equals("Rul 2 ens")){
+                    for (int i = 0; i<3; i++){
+                        guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
+                        int die1 = this.die1.roll();
+                        int die2 = this.die1.roll();
+
+                        guiController.setDice(die1,2, 8, die2, 3, 8);
+
+                        if (die1 == die2){ //tjekker om der er blevet rullet 2 ens
+                            player.inJail = false;
+                            faceValue = die1 + die2;
+                            i=3; //stopper loopet
+                        }
+                        else faceValue = 0;
+                    }
+                }
+                else {
+                    player.addAmountToBalance(-1000);
+                    player.inJail = false;
+                }
+            }
         }
+
         movePlayerForward(player, faceValue);
+
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
         landedOn.fieldAction(player);
 
-        if (landedOn instanceof AmusementField amusementField) {
-
-            if (amusementField.owner == null) {
+        if (landedOn instanceof OwnableFields ownableFields) {
+            if (ownableFields.owner == null) {
                 // Køb felt og ændr farve
-                player.addAmountToBalance(-amusementField.rent);
-                amusementField.owner = player;
+                player.addAmountToBalance(-ownableFields.price);
+                ownableFields.owner = player;
                 guiController.setOwner(player);
 
                 //------------------------------------------------------------------------------------------------------
                 // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
                 //------------------------------------------------------------------------------------------------------
-                if (ownsBoth(amusementField)) {
+                // FIXME
+                // if (ownsBoth(propertyField)) {
+                //
+                //     PropertyField[] tmpFields = gameBoard.getPair(propertyField.backgroundColor);
+                //     tmpFields[0].rent += tmpFields[0].rent;
+                //     tmpFields[1].rent += tmpFields[1].rent;
+                //     // Tilføjer renten til sig selv for at fordoble den.
+                //     // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
+                // }
+            } else guiController.updatePlayer(ownableFields.owner);
 
-                    AmusementField[] tmpFields = gameBoard.getPair(amusementField.backgroundColor);
-                    tmpFields[0].rent += tmpFields[0].rent;
-                    tmpFields[1].rent += tmpFields[1].rent;
-                    // Tilføjer renten til sig selv for at fordoble den.
-                    // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
-                }
-            }
-            else guiController.updatePlayer(amusementField.owner);
+
         }
         else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
@@ -147,7 +179,7 @@ public class GameController {
         player.setCurrentPos((player.getCurrentPos() + faceValue) % gameBoard.fields.length);
 
         // Spilleren passerer Start
-        if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(2);
+        if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(4000);
         guiController.updatePlayer(player);
     }
 
@@ -157,7 +189,8 @@ public class GameController {
      * @param field AmusementField input
      * @return boolean output der siger om ejeren har begge felter med denne farve eller ej.
      */
-    public boolean ownsBoth(AmusementField field) {
+    // FIXME
+    public boolean ownsBoth(PropertyField field) {
 
         Field[] tmpFields = gameBoard.getPair(field.backgroundColor);
 
@@ -165,11 +198,11 @@ public class GameController {
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
         // return statementet.
         //--------------------------------------------------------------------------------------------------------------
-        if (((AmusementField) tmpFields[0]).owner == null || ((AmusementField) tmpFields[1]).owner == null) {
+        if (((PropertyField) tmpFields[0]).owner == null || ((PropertyField) tmpFields[1]).owner == null) {
             return false;
         }
 
-        return ((AmusementField) tmpFields[0]).owner == ((AmusementField) tmpFields[1]).owner;
+        return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner;
     }
 
     /**
@@ -179,28 +212,42 @@ public class GameController {
     public void setGameEnded() {
         String winner = getWinner(playerList).name;
 
-        if (playerList.length == 2) {
-            guiController.showMessage("Spillet er slut!\n" +
-                    playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
-                    playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
-                    winner + " har vundet!");
-        }
-        else if (playerList.length == 3) {
+        if (playerList.length == 3) {
             guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                     playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                     winner + " har vundet!");
         }
-        else guiController.showMessage("Spillet er slut!\n" +
+        else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                     playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                     playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
                     winner + " har vundet!");
 
+        else if (playerList.length == 5) guiController.showMessage("Spillet er slut!\n" +
+                playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
+                playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
+                playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
+                playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
+                playerList[4].name + " har " + playerList[4].getBalance() + " point.\n" +
+                winner + " har vundet!");
+
+        else guiController.showMessage("Spillet er slut!\n" +
+                    playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
+                    playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
+                    playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
+                    playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
+                    playerList[4].name + " har " + playerList[4].getBalance() + " point.\n" +
+                    playerList[5].name + " har " + playerList[5].getBalance() + " point.\n" +
+                    winner + " har vundet!");
+
+
         guiController.showMessage("Luk spillet?");
         guiController.close();
+
+
     }
 
     /**
