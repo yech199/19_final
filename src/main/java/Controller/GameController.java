@@ -123,14 +123,17 @@ public class GameController {
         movePlayerForward(player, faceValue);
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
-        if (landedOn.fieldName.equals("Tuborg") || landedOn.fieldName.equals("Carlsberg")){
-            BreweryField brew = (BreweryField) landedOn;
-            brew.setFaceValue(faceValue);
-        }
 
         landedOn.fieldAction(player);
 
         if (landedOn instanceof OwnableFields ownableFields) {
+            if(ownableFields instanceof BreweryField breweryField){
+                int rent = faceValue * 100;
+                if (breweryField.owner != null) {
+                    player.addAmountToBalance(-rent);
+                    breweryField.owner.addAmountToBalance(rent);
+                }
+            }
             if (ownableFields.owner == null) {
                 // Køb felt og ændr farve
                 if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
