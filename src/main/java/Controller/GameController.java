@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.ChanceCards.ChanceCard;
+import Model.ChanceCards.MovementCard;
 import Model.Die;
 import Model.Fields.PropertyField;
 import Model.Fields.ChanceField;
@@ -103,10 +104,15 @@ public class GameController {
                         guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
                         int die1 = this.die1.roll();
                         int die2 = this.die1.roll();
-                        guiController.showMessage("Du har slået " + die1 + " + " + die2);
-                        if (die1 != die2){
+
+                        guiController.setDice(die1,2, 8, die2, 3, 8);
+
+                        if (die1 == die2){ //tjekker om der er blevet rullet 2 ens
                             player.inJail = false;
+                            faceValue = die1 + die2;
+                            i=3; //stopper loopet
                         }
+                        else faceValue = 0;
                     }
                 }
                 else {
@@ -116,9 +122,8 @@ public class GameController {
             }
         }
 
-        if (!player.inJail){
-            movePlayerForward(player, faceValue);
-        }
+        movePlayerForward(player, faceValue);
+
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
         landedOn.fieldAction(player);
 
