@@ -11,8 +11,7 @@ public class ChanceCard_Factory {
                 new MovementCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start.", 10, MovementCard.MovementType.INDEX),
 
                 new MovementCard("Frederiksberg Allé", "Ryk frem til Frederiksberg Allé. Hvis De passere START, indkasser da 4000 kr.", 11, MovementCard.MovementType.INDEX),
-                new MovementCard("Mols-Linien", "Tag med Mols-Linien, flyt brikken frem og hvis De passerer START indkassér da kr\n" +
-                        "4000.", 15, MovementCard.MovementType.INDEX),
+                new MovementCard("Mols-Linien", "Tag med Mols-Linien, flyt brikken frem og hvis De passerer START indkassér da kr 4000.", 15, MovementCard.MovementType.INDEX),
                 new MovementCard("Grønningen", "Ryk frem til Grønningen, hvis De passerer start indkasser da kr 4000", 24, MovementCard.MovementType.INDEX),
                 new MovementCard("Vimmelskaftet", "Ryk frem til Vimmelskaftet, hvis de passerer start indkasser da kr 4000", 32, MovementCard.MovementType.INDEX),
                 new MovementCard("Strandvejen", "Ryk frem til Strandvejen. Hvis De passere START, indkasser da 4000 kr.", 19, MovementCard.MovementType.INDEX),
