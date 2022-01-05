@@ -32,7 +32,7 @@ public class StubGUIController extends ViewController {
 
     @Override
     public String getUserButtonPressed(String msg, String... menuOptions) {
-        return null;
+        return menuOptions[0];
     }
 
     @Override

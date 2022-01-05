@@ -1,7 +1,7 @@
 package Model.ChanceCards;
 
 import Model.Fields.Field;
-import Model.Fields.GoToJailField;
+import Model.Fields.JailField;
 import Model.GameBoard;
 import Model.Player;
 
@@ -37,7 +37,13 @@ public class MovementCard extends ChanceCard {
     public void cardAction(Player player, GameBoard gameBoard) {
         switch (movementType) {
             case NUMBER -> {
-                player.setCurrentPos(player.getCurrentPos() + fieldIndex % gameBoard.fields.length);
+                int newPos = (player.getCurrentPos() + fieldIndex) % gameBoard.fields.length;
+
+                // Tjekker om den nye position er negativ.
+                if (newPos < 0) {
+                    newPos += gameBoard.fields.length;
+                }
+                player.setCurrentPos(newPos);
             }
             case INDEX -> {
                 player.setCurrentPos(fieldIndex);
@@ -48,9 +54,12 @@ public class MovementCard extends ChanceCard {
         landedOn.fieldAction(player);
 
         // Skal ikke tjekke om man passerer start når man bliver sendt i fængsel
-        if (!(landedOn instanceof GoToJailField))
+        if (!(landedOn instanceof JailField)) {
             // Tjekker om spilleren passerer start
             if (player.getCurrentPos() < player.getPreviousPos())
                 player.addAmountToBalance(4000);
+        }
+        else
+            player.inJail = true;
     }
 }
