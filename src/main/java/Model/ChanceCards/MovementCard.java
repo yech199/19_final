@@ -1,7 +1,6 @@
 package Model.ChanceCards;
 
 import Model.Fields.Field;
-import Model.Fields.GoToJailField;
 import Model.Fields.JailField;
 import Model.GameBoard;
 import Model.Player;

@@ -12,14 +12,14 @@ public class MovementCardTest {
     GameBoard gameBoard;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         this.player = new Player("");
         this.gameBoard = new GameBoard();
     }
 
     @Test
     public void testMoveBackwardsWhenPassingStart() {
-        ChanceCard movementCard = gameBoard.chanceCards[15];
+        MovementCard movementCard = new MovementCard("", "", -3, MovementCard.MovementType.NUMBER);
         movementCard.cardAction(player, gameBoard);
         Assert.assertEquals(gameBoard.fields.length - 3, player.getCurrentPos());
     }
@@ -37,5 +37,24 @@ public class MovementCardTest {
         prev = player.getBalance();
         movementCard.cardAction(player, gameBoard);
         Assert.assertEquals(prev + 4000, player.getBalance());
+    }
+
+    @Test
+    public void testPlayerIsPutInJailAndReceivesNoMoneyWhenPassingStart() {
+        player.setCurrentPos(gameBoard.fields.length - 1);
+        ChanceCard movementCard = new MovementCard("", "", 10, MovementCard.MovementType.INDEX);
+        int prev = player.getBalance();
+        movementCard.cardAction(player, gameBoard);
+        Assert.assertTrue(player.inJail);
+
+        Assert.assertEquals(prev, player.getBalance());
+    }
+
+    @Test
+    public void testPlayerIsMovedToCorrectPosition() {
+        int index = 19;
+        ChanceCard movementCard = new MovementCard("", "", index, MovementCard.MovementType.INDEX);
+        movementCard.cardAction(player, gameBoard);
+        Assert.assertEquals(index, player.getCurrentPos());
     }
 }
