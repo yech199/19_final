@@ -131,10 +131,11 @@ public class GameController {
         if (landedOn instanceof OwnableFields ownableFields) {
             if (ownableFields.owner == null) {
                 // Køb felt og ændr farve
-                player.addAmountToBalance(-ownableFields.price);
-                ownableFields.owner = player;
-                guiController.setOwner(player);
-
+                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
+                    player.addAmountToBalance(-ownableFields.price);
+                    ownableFields.owner = player;
+                    guiController.setOwner(player);
+                }
                 //------------------------------------------------------------------------------------------------------
                 // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
                 //------------------------------------------------------------------------------------------------------
