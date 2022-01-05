@@ -21,6 +21,11 @@ public class GameBoard {
         this.chanceCards = ChanceCard_Factory.createChanceCards();
     }
 
+    public GameBoard(Field[] fields, ChanceCard[] chanceCards) {
+        this.fields = fields;
+        this.chanceCards = chanceCards;
+    }
+
     /**
      * Bruger input til at finde det andet felt med samme farve, og returner et Field[] array.
      *

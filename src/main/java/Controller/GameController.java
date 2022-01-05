@@ -125,7 +125,17 @@ public class GameController {
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
 
         landedOn.fieldAction(player);
+        checkIfInstanceOf(player, faceValue, landedOn);
 
+        //--------------------------------------------------------------------------------------------------------------
+        // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
+        //--------------------------------------------------------------------------------------------------------------
+        if (player.getBalance() <= 0) {
+            gameEnded = true;
+        }
+    }
+
+    private void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField) {
             if(ownableField instanceof BreweryField breweryField){
                 int rent = faceValue * 100;
@@ -161,16 +171,10 @@ public class GameController {
             ChanceCard chanceCard = drawChanceCard();
             guiController.displayChanceCard(chanceCard);
             chanceCard.cardAction(player, gameBoard);
+            checkIfInstanceOf(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
         }
 
         guiController.updatePlayer(player);
-
-        //--------------------------------------------------------------------------------------------------------------
-        // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
-        //--------------------------------------------------------------------------------------------------------------
-        if (player.getBalance() <= 0) {
-            gameEnded = true;
-        }
     }
 
     /**
