@@ -1,5 +1,6 @@
 package Model.ChanceCards;
 
+import Model.Fields.Field;
 import Model.GameBoard;
 import Model.Player;
 
@@ -41,5 +42,6 @@ public class MovementCard extends ChanceCard {
                 player.setCurrentPos(fieldIndex);
             }
         }
+
     }
 }

@@ -6,8 +6,8 @@ import gui_fields.GUI_Street;
 import java.awt.*;
 
 public class PropertyField extends OwnableFields {
-    public PropertyField(String name, String subText, String description, int rent, Color color, Color textColor) {
-        super(name, subText, description, rent, color, textColor);
+    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
+        super(name, subText, description, rent, price, color, textColor);
     }
 
     /**

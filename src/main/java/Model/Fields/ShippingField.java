@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class ShippingField extends OwnableFields{
     public ShippingField(String name, String subText, String description, int rent) {
-        super(name, subText, description, rent, Color.WHITE, Color.BLACK);
+        super(name, subText, description, rent, 4000, Color.WHITE, Color.BLACK);
     }
 
     @Override
