@@ -41,6 +41,6 @@ public class GameControllerTest {
 
         gameController.playTurn(player);
 
-        assertEquals(moneyBefore + 2, player.getBalance());
+        assertEquals(moneyBefore + 4000, player.getBalance());
     }
 }
