@@ -12,7 +12,7 @@ public class GoToJailField extends Field {
 
     @Override
     public void fieldAction(Player player) {
-        player.setCurrentPos(6);
+        player.setCurrentPos(10);
         player.inJail = true;
     }
 
