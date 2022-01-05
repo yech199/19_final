@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.ChanceCards.ChanceCard;
-import Model.ChanceCards.MovementCard;
 import Model.Die;
 import Model.Fields.ChanceField;
 import Model.Fields.Field;
@@ -97,26 +96,23 @@ public class GameController {
                 guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
                         "benådelseskort fra Kongen.", "OK");
                 player.getOutOfJailFree = false;
-            }
-            else {
-                if(guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
-                        "Hvordan vil du komme ud?", "Betal 1000 kr", "Rul 2 ens").equals("Rul 2 ens")){
-                    for (int i = 0; i<3; i++){
+            } else {
+                if (guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
+                        "Hvordan vil du komme ud?", "Betal 1000 kr", "Rul 2 ens").equals("Rul 2 ens")) {
+                    for (int i = 0; i < 3; i++) {
                         guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
                         int die1 = this.die1.roll();
                         int die2 = this.die1.roll();
 
-                        guiController.setDice(die1,2, 8, die2, 3, 8);
+                        guiController.setDice(die1, 2, 8, die2, 3, 8);
 
-                        if (die1 == die2){ //tjekker om der er blevet rullet 2 ens
+                        if (die1 == die2) { //tjekker om der er blevet rullet 2 ens
                             player.inJail = false;
                             faceValue = die1 + die2;
-                            i=3; //stopper loopet
-                        }
-                        else faceValue = 0;
+                            i = 3; //stopper loopet
+                        } else faceValue = 0;
                     }
-                }
-                else {
+                } else {
                     player.addAmountToBalance(-1000);
                     player.inJail = false;
                 }
@@ -151,8 +147,7 @@ public class GameController {
             } else guiController.updatePlayer(ownableFields.owner);
 
 
-        }
-        else if (landedOn instanceof ChanceField) {
+        } else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
             guiController.displayChanceCard(chanceCard);
             chanceCard.cardAction(player, gameBoard);
@@ -219,13 +214,12 @@ public class GameController {
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                     playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                     winner + " har vundet!");
-        }
-        else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
-                    playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
-                    playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
-                    playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
-                    playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
-                    winner + " har vundet!");
+        } else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
+                playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
+                playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
+                playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
+                playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
+                winner + " har vundet!");
 
         else if (playerList.length == 5) guiController.showMessage("Spillet er slut!\n" +
                 playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
