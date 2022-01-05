@@ -2,6 +2,7 @@ package Controller;
 
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.MovementCard;
+import Model.ChanceCards.ReceiveMoneyCard;
 import Model.Die;
 import Model.Fields.ChanceField;
 import Model.Fields.Field;
@@ -77,5 +78,34 @@ public class GameControllerTest {
         assertEquals(0, player.getCurrentPos());
         // Tjekker at spilleren rent faktisk har rykket sig
         assertNotEquals(0, player.getPreviousPos());
+    }
+
+    @Test
+    public void testPlayerDoesNotDrawTwiceOnTheSameChanceField() {
+        int money = 1000;
+        ChanceCard[] chanceCards = new ChanceCard[]{
+                new ReceiveMoneyCard("", "", money, ReceiveMoneyCard.ReceivingFrom.BANK),
+        };
+
+        Field[] fields = new Field[]{
+                new StartField("", "", "", Color.BLACK),
+                new ChanceField(),
+        };
+
+        gameBoard = new GameBoard(fields, chanceCards);
+        Player player = players[0];
+        int[] rolls = {1, 0};
+        die = new StubDie(rolls);
+        gameController = new GameController(guiController, gameBoard, die, die);
+
+        int tmpBalance = player.getBalance();
+        gameController.playTurn(player);
+
+        // Tjekker at spilleren kun får pengene én gang
+        assertEquals(tmpBalance + money, player.getBalance());
+
+        // Tjekker at spilleren rent faktisk har rykket sig
+        assertEquals(1, player.getCurrentPos());
+        assertEquals(0, player.getPreviousPos());
     }
 }
