@@ -32,10 +32,11 @@ public class GameControllerTest {
     @Test
     public void playerGetsMoneyWhenPassingStart() {
         Player player = players[0];
-        int[] rolls = {1};
+        int[] rolls = {1, 1};
         die = new StubDie(rolls);
         gameController.die1 = die;
-        player.setCurrentPos(gameController.gameBoard.fields.length - 1);
+        gameController.die2 = die;
+        player.setCurrentPos(gameController.gameBoard.fields.length - 2);
 
         int moneyBefore = player.getBalance();
 
