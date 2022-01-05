@@ -10,10 +10,8 @@ public class BreweryField extends OwnableField {
         super(name, subText, description, 0, 3000, Color.BLACK, Color.WHITE);
     }
 
-
     @Override
     public void fieldAction(Player player) {
-
     }
 
     @Override

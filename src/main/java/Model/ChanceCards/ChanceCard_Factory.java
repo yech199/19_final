@@ -15,6 +15,7 @@ public class ChanceCard_Factory {
                 new MovementCard("Grønningen", "Ryk frem til Grønningen, hvis De passerer start indkasser da kr 4000", 24, MovementCard.MovementType.INDEX),
                 new MovementCard("Vimmelskaftet", "Ryk frem til Vimmelskaftet, hvis de passerer start indkasser da kr 4000", 32, MovementCard.MovementType.INDEX),
                 new MovementCard("Strandvejen", "Ryk frem til Strandvejen. Hvis De passere START, indkasser da 4000 kr.", 19, MovementCard.MovementType.INDEX),
+
                 // TODO: Find den der er tættest på spillerens nuværende position
                 new MovementCard("Nærmeste rederi", "Ryk frem til det nærmeste rederi og betal ejeren to gange den leje han ellers er berettiget\n" +
                         "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", 5, MovementCard.MovementType.INDEX),
