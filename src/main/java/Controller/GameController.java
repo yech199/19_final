@@ -15,6 +15,7 @@ public class GameController {
     public GameBoard gameBoard;
     public Player[] playerList;
     private boolean gameEnded;
+    public int roundCounter;
 
     /**
      * Denne controller laver alle de objekter som spillet skal bruge for at kunne køre
@@ -71,11 +72,14 @@ public class GameController {
      * Spiller en runde for hver spiller i player listen
      */
     public void playRound() {
+        roundCounter++;
+        guiController.showMessage("Runde " + roundCounter);
         for (Player player : playerList) {
-            playTurn(player);
-            if (gameEnded) {
+            if (roundCounter > 40){
+                gameEnded = true;
                 break;
             }
+            playTurn(player);
         }
     }
 
@@ -123,7 +127,7 @@ public class GameController {
         movePlayerForward(player, faceValue);
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
-        if (landedOn.fieldName == "Tuborg" || landedOn.fieldName == "Carlsberg"){
+        if (landedOn.fieldName.equals("Tuborg") || landedOn.fieldName.equals("Carlsberg")){
             BreweryField brew = (BreweryField) landedOn;
             brew.setFaceValue(faceValue);
         }
