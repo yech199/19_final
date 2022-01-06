@@ -55,8 +55,12 @@ public class ChanceCard_Factory {
                 new ReceiveMoneyCard("Avl", "Værdien af egen avl fra nyttehaven udgør 200 som de modtager af banken", 200, ReceiveMoneyCard.ReceivingFrom.BANK),
 
                 // FIXME: Receive money from other players
-                new ReceiveMoneyCard("Fødselsdag", "Det er din fødselsdag! Modtag 2$ fra banken. TILLYKKE MED FØDSELSDAGEN!",
-                        2, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS), // FIXME: fra andre spillere
+                new ReceiveMoneyCard("Fødselsdag", "Det er deres fødselsdag. Modtag af hver medspiller 200 kr.",
+                        200, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
+                new ReceiveMoneyCard("Sammenskudsgilde", "De har lagt penge ud til et sammenskudsgilde. Mærkværdigvis betaler alle straks.\n" +
+                        "Modtag fra hver medspiller 500 kr.", 500, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
+                new ReceiveMoneyCard("Familiefest", "De skal holde familiefest og får et tilskud fra hver medspiller på 500 kr.",
+                        500, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
 
                 // Release from prison
                 new ReleaseFromPrisonCard("Kongens fødselsdag", "I anledning af kongens fødselsdag benådes De herved for fængsel. Dette kort kan\n" +
