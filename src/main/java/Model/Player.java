@@ -13,7 +13,7 @@ public class Player {
     private int previousPos;
 
     public final String name;
-    private final Konto konto;
+    private int balance;
     public boolean inJail;
     public boolean getOutOfJailFree;
 
@@ -24,33 +24,29 @@ public class Player {
      */
     public Player(String name) {
         this.name = name;
-        konto = new Konto(0);
+        this.balance = 0;
     }
 
     /**
      * Metode der tilføjer et positivt eller negativt beløb til spillerens pengebeholdning. Fx når spilleren køber en forlystelse
      *
      * @param amount to add to the players balance
-     * @return the players new updated balance
      */
-    public int addAmountToBalance(int amount) {
-        int newBalance = konto.getBalance() + amount;
-
-        konto.setBalance(newBalance);
-
-        return konto.getBalance();
+    public void addAmountToBalance(int amount) {
+        this.balance += amount;
     }
 
     //------------------------------------------------------------------------------------------------------------------
     // get() og set() metoder til den enkelte spillers balance
     // Bruger variablen balance fra klassen Konto
     //------------------------------------------------------------------------------------------------------------------
+
     public int getBalance() {
-        return konto.getBalance();
+        return this.balance;
     }
 
     public void setBalance(int newBalance) {
-        this.konto.setBalance(newBalance);
+        this.balance = newBalance;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -69,10 +65,6 @@ public class Player {
     public void setCurrentPos(int currentPos) {
         this.previousPos = this.currentPos;
         this.currentPos = currentPos;
-    }
-
-    public void setPreviousPos(int previousPos) {
-        this.previousPos = previousPos;
     }
 
     /**
