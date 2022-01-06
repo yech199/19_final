@@ -60,7 +60,7 @@ public class GameController {
     }
 
     /**
-     * Kører spillet indtil spillet slutter (Dette sker hvis en player får en balance under nul -  Se if statement i playTurn)
+     * Kører spillet indtil spillet slutter (Dette sker hvis en player får en balance under nul - Se if statement i playTurn)
      */
     public void runGame() {
         decideStartingOrder();
@@ -234,7 +234,6 @@ public class GameController {
                         // Tilføjer renten til sig selv for at fordoble den.
                         // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     }
-
                 }
             } else {
                 if (landedOn instanceof PropertyField propertyField) {
