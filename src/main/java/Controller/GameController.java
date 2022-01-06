@@ -96,6 +96,7 @@ public class GameController {
         guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
         int faceValue = faceValue1 + faceValue2;
 
+
         if (player.inJail) {
             if (player.getOutOfJailFree) {
                 guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
@@ -138,7 +139,28 @@ public class GameController {
         if (player.getBalance() <= 0) {
             gameEnded = true;
         }
-    }
+
+        if (faceValue1==faceValue2) {
+            guiController.getUserButtonPressed(player.name + " du slog to ens." + " Rul med terningen igen", "Rul");
+            for (int i = 0; i < 3; i++) {
+                int die1 = this.die1.roll();
+                int die2 = this.die2.roll();
+
+                guiController.setDice(die1, 2, 8, die2, 3, 8);}
+
+            int faceValue3 = die1.roll();
+            int faceValue4 = die2.roll();
+            int faceValue5 = faceValue3 + faceValue4;
+
+            movePlayerForward(player, faceValue5);
+            guiController.setDice(faceValue3, 2, 8, faceValue4, 3, 8);}
+
+
+        }
+
+
+
+
 
     //------------------------------------------------------------------------------------------------------------------
     // Metoder der bruges ovenover
@@ -180,6 +202,8 @@ public class GameController {
             }
         }
     }
+
+
 
     private void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField) {
@@ -365,3 +389,4 @@ public class GameController {
         return gameBoard.chanceCards[rng];
     }
 }
+
