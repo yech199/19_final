@@ -89,7 +89,7 @@ public final class FieldFactory {
                         new Color(102, 0, 102), new Color(255, 255, 255), new int[]{3500, 10000, 22000, 26000, 30000}),
                 new TaxField("Ekstra-\nordinær\nstatsskat", "Betal 2000 kr.", "Betal ekstraordinær\nstatsskat: kr. 2000,-"),
                 new PropertyField("Rådhuspladsen", "Pris: kr. 8000", "Rådhuspladsen", 1000, 8000,
-                        new Color(102, 0, 102), new Color(255, 255, 255), new int[]{4000, 12000, 28000, 34000, 40000}),
+                        new Color(102, 0, 102), new Color(255, 255, 255), new int[]{4000, 12000, 28000, 34000, 40000})
         };
     }
 }
