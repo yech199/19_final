@@ -136,7 +136,8 @@ public class GameController {
             }
             if (ownableFields.owner == null) {
                 // Køb felt og ændr farve
-                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
+                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe " +
+                        "denne ejendom?", "Ja", "Nej").equals("Ja")) {
                     player.addAmountToBalance(-ownableFields.price);
                     ownableFields.owner = player;
                     guiController.setOwner(player);
@@ -147,15 +148,21 @@ public class GameController {
                 // FIXME
                 if (landedOn instanceof PropertyField propertyField){
                     if (ownsAll(propertyField)) {
-
-                         PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
-                        for (PropertyField tmpField : tmpFields) {
-                            tmpField.rent += tmpField.rent;
+                        if (propertyField.getAmountOfHouses() == 0){
+                            PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
+                            for (PropertyField tmpField : tmpFields) {
+                                tmpField.rent += tmpField.rent;
+                            }
+                            if (guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")){
+                                propertyField.addHouse(1);
+                            }
                         }
 
                          // Tilføjer renten til sig selv for at fordoble den.
                          // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     }
+
                 }
             } else guiController.updatePlayer(ownableFields.owner);
 
