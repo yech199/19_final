@@ -162,6 +162,33 @@ public class GameController {
             chanceCard.cardAction(player, gameBoard);
         }
 
+        if (landedOn instanceof OwnableFields ownableFields) {
+            if(ownableFields instanceof ShippingField shippingField){
+
+                if (shippingField.owner !=null) {
+                    int rent = shippingField.rent * 1;
+                    player.addAmountToBalance(-rent);
+                    shippingField.owner.addAmountToBalance(rent);
+                }
+
+                else if (shippingField.owner !=null){
+                    int rent = shippingField.rent * 2;
+                    player.addAmountToBalance(-rent);
+                    shippingField.owner.addAmountToBalance(rent);
+                }
+                else if (shippingField.owner !=null){
+                    int rent = shippingField.rent * 4;
+                    player.addAmountToBalance(-rent);
+                    shippingField.owner.addAmountToBalance(rent);
+                }
+                else if (shippingField.owner !=null){
+                    int rent = shippingField.rent * 8;
+                    player.addAmountToBalance(-rent);
+                    shippingField.owner.addAmountToBalance(rent);
+                }
+            }
+        }
+
         guiController.updatePlayer(player);
 
         //--------------------------------------------------------------------------------------------------------------
