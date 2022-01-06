@@ -19,6 +19,7 @@ public class PropertyField extends OwnableField {
         if (amountOfHouses > 1){
             amountOfHouses = 1;
         }
+        rent = houseRent[amountOfHouses-1];
     }
 
     public void removeHouse(int house){
