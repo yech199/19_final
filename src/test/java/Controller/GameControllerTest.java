@@ -3,12 +3,15 @@ package Controller;
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.MovementCard;
 import Model.ChanceCards.ReceiveMoneyCard;
+import Model.ChanceCards.ReleaseFromPrisonCard;
 import Model.Die;
 import Model.Fields.ChanceField;
 import Model.Fields.Field;
+import Model.Fields.JailField;
 import Model.Fields.StartField;
 import Model.GameBoard;
 import Model.Player;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import stub.StubDie;
@@ -107,5 +110,33 @@ public class GameControllerTest {
         // Tjekker at spilleren rent faktisk har rykket sig
         assertEquals(1, player.getCurrentPos());
         assertEquals(0, player.getPreviousPos());
+    }
+
+    @Test
+    public void testPlayerGetsReleasedFromPrisonWhenHavingCardAndDoesNotLooseMoney() {
+        int money = 1000;
+        ChanceCard[] chanceCards = new ChanceCard[]{
+                new ReleaseFromPrisonCard("", "")
+        };
+
+        Field[] fields = new Field[]{
+                new StartField("", "", "", Color.BLACK),
+                new ChanceField(),
+                new JailField("", "", ""),
+        };
+
+        gameBoard = new GameBoard(fields, chanceCards);
+        Player player = players[0];
+        int[] rolls = {1, 0, 0, 0};
+        die = new StubDie(rolls);
+        gameController = new GameController(guiController, gameBoard, die, die);
+        player.setBalance(money);
+
+        gameController.playTurn(player);
+        player.inJail = true;
+        gameController.playTurn(player);
+
+        Assert.assertFalse(player.inJail);
+        Assert.assertEquals(money, player.getBalance());
     }
 }
