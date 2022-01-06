@@ -61,7 +61,7 @@ public class GameController {
     }
 
     /**
-     * Kører spillet indtil spillet slutter (Dette sker hvis en player får en balance under nul -  Se if statement i playTurn)
+     * Kører spillet indtil spillet slutter (Dette sker hvis en player får en balance under nul - Se if statement i playTurn)
      */
     public void runGame() {
         decideStartingOrder();
@@ -189,7 +189,8 @@ public class GameController {
                     player.addAmountToBalance(-rent);
                     breweryField.owner.addAmountToBalance(rent);
                 }
-            } else if (ownableField instanceof ShippingField shippingField) {
+            }
+            else if (ownableField instanceof ShippingField shippingField) {
                 if (shippingField.owner != null) {
                     int rent = shippingField.rent * 1;
                     player.addAmountToBalance(-rent);
@@ -221,7 +222,7 @@ public class GameController {
                 // FIXME fjern køb hus og hustjek
                 if (landedOn instanceof PropertyField propertyField) {
                     if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0) {
-                        PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
+                        PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
                         for (PropertyField tmpField : tmpFields) {
                             tmpField.rent += tmpField.rent;
                         }
@@ -229,7 +230,6 @@ public class GameController {
                         // Tilføjer renten til sig selv for at fordoble den.
                         // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     }
-
                 }
             } else {
                 if (landedOn instanceof PropertyField propertyField) {
@@ -282,7 +282,7 @@ public class GameController {
     // FIXME
     public boolean ownsAll(PropertyField field) {
 
-        Field[] tmpFields = gameBoard.getFieldGroup(field.backgroundColor);
+        Field[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(field.backgroundColor);
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i

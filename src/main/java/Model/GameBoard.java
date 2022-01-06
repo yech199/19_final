@@ -45,21 +45,44 @@ public class GameBoard {
      * @param color Java.awt.Color input
      * @return Field[] output
      */
-    public PropertyField[] getFieldGroup(Color color) {
-        PropertyField[] tmpFields = new PropertyField[3];
+    public PropertyField[] findAllPropertyFieldsOfSameColor(Color color) {
+        PropertyField[] tmpFields = new PropertyField[2];
         int counter = 0;
 
-        for (Field field : fields) {
+        for (Field field : this.fields) {
             if (field instanceof PropertyField propertyField) {
-                if (field.backgroundColor.equals(color)) {
+                if (propertyField.backgroundColor.equals(color) && counter != 2) {
                     tmpFields[counter] = propertyField;
                     counter++;
                 }
-                if (counter == 3) {
-                    break;
+                else if (counter == 2) {
+                    if (propertyField != tmpFields[0] && propertyField != tmpFields[1] && propertyField.backgroundColor.equals(color))
+                        tmpFields = addX(tmpFields.length, tmpFields, propertyField);
                 }
             }
         }
         return tmpFields;
+    }
+
+    /**
+     * Funktion der tilføjer x til arrayet på plads n + 1
+     *
+     * @param n              Antallet af elementer i det gamle array
+     * @param propertyFields Det gamle array
+     * @param propertyField  Det der skal tilføjes i arrayet på plads n + 1
+     * @return Det gamle array med et ekstra element
+     */
+    public static PropertyField[] addX(int n, PropertyField[] propertyFields, PropertyField propertyField) {
+        int i;
+        PropertyField[] newArray = new PropertyField[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (i = 0; i < n; i++)
+            newArray[i] = propertyFields[i];
+
+        newArray[n] = propertyField;
+        return newArray;
     }
 }
