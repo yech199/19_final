@@ -92,19 +92,6 @@ public class GameController {
         guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
         int faceValue = faceValue1 + faceValue2;
 
-
-
-        if (faceValue1==faceValue2) {
-            guiController.getUserButtonPressed(player.name + " du slog det samme." + " Rul med terningen igen", "Rul");
-            for (int i = 0; i < 3; i++) {
-                int die1 = this.die1.roll();
-                int die2 = this.die1.roll();
-
-                guiController.setDice(die1, 2, 8, die2, 3, 8);}
-        }
-
-
-
         if (player.inJail) {
             if (player.getOutOfJailFree) {
                 guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
