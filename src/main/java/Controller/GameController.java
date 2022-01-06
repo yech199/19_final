@@ -63,8 +63,8 @@ public class GameController {
      * Kører spillet indtil spillet slutter (Dette sker hvis en player får en balance under nul -  Se if statement i playTurn)
      */
     public void runGame() {
+        decideStartingOrder();
         while (!gameEnded) {
-            decideStartingOrder();
             playRound();
         }
         setGameEnded();
