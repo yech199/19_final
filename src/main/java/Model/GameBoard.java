@@ -78,10 +78,8 @@ public class GameBoard {
         }
 
         switch (fieldType) {
-            case SHIPPING ->
-                indices = ferryIndices;
-            case BREWERY ->
-                indices = breweryIndices;
+            case SHIPPING -> indices = ferryIndices;
+            case BREWERY -> indices = breweryIndices;
         }
         fieldIndice = new int[indices.length];
         for (int i = 0; i < fieldIndice.length; i++) {
