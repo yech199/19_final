@@ -5,8 +5,31 @@ import gui_fields.GUI_Street;
 import java.awt.*;
 
 public class PropertyField extends OwnableField {
-    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
+    private int amountOfHouses;
+    private int[] houseRent;
+
+    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor, int [] houseRent) {
         super(name, subText, description, rent, price, color, textColor);
+        amountOfHouses = 0;
+        this.houseRent = houseRent;
+    }
+
+    public void addHouse(int house){
+        amountOfHouses = amountOfHouses + house;
+        if (amountOfHouses > 1){
+            amountOfHouses = 1;
+        }
+    }
+
+    public void removeHouse(int house){
+        amountOfHouses = amountOfHouses - house;
+        if (amountOfHouses < 0){
+            amountOfHouses = 0;
+        }
+    }
+
+    public int getAmountOfHouses() {
+        return amountOfHouses;
     }
 
     /**
