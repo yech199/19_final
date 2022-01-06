@@ -14,7 +14,8 @@ import Model.Player;
 public class MovementCard extends ChanceCard {
     public enum MovementType {
         NUMBER,
-        INDEX
+        INDEX,
+        NEAREST
     }
 
     private final int fieldIndex;
@@ -47,6 +48,30 @@ public class MovementCard extends ChanceCard {
             }
             case INDEX -> {
                 player.setCurrentPos(fieldIndex);
+            }
+            case NEAREST -> {
+                int pos = player.getCurrentPos();
+                int nearest = gameBoard.ferryIndices[0];
+                int nearestDistance = nearest - pos;
+
+                if (nearestDistance < 0) {
+                    nearestDistance += gameBoard.fields.length;
+                }
+
+                for (int ferryIndex : gameBoard.ferryIndices) {
+                    int distance = ferryIndex - pos;
+                    if (distance < 0) {
+                        distance += gameBoard.fields.length;
+                    }
+
+                    if (distance < nearestDistance) {
+                        nearest = ferryIndex;
+                        nearestDistance = distance;
+                    }
+                }
+                // Vi har nu fundet den færge der er tættest på spillerens position (fremadgående)
+
+                player.setCurrentPos(nearest);
             }
         }
         // Sørger for at man laver den handling der svarer til det felt man lander på

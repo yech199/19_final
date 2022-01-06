@@ -2,28 +2,41 @@ package Model;
 
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.ChanceCard_Factory;
-import Model.Fields.PropertyField;
 import Model.Fields.Field;
 import Model.Fields.FieldFactory;
+import Model.Fields.PropertyField;
+import Model.Fields.ShippingField;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public class GameBoard {
     public final ChanceCard[] chanceCards;
     public final Field[] fields; // Array af fields
+    public final int[] ferryIndices;
 
     //------------------------------------------------------------------------------------------------------------------
     // Constructor der laver et GameBoard
     //------------------------------------------------------------------------------------------------------------------
-    public GameBoard() {
-        this.fields = FieldFactory.createFields(); // Makes a new array using Field abstract class from Model package
-        this.chanceCards = ChanceCard_Factory.createChanceCards();
-    }
-
     public GameBoard(Field[] fields, ChanceCard[] chanceCards) {
         this.fields = fields;
         this.chanceCards = chanceCards;
+
+        ArrayList<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i] instanceof ShippingField) {
+                indices.add(i);
+            }
+        }
+        this.ferryIndices = new int[indices.toArray().length];
+        for (int i = 0; i < ferryIndices.length; i++) {
+            ferryIndices[i] = indices.get(i);
+        }
+    }
+
+    public GameBoard() {
+        this(FieldFactory.createFields(), ChanceCard_Factory.createChanceCards());
     }
 
     /**

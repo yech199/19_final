@@ -16,12 +16,12 @@ public class ChanceCard_Factory {
                 new MovementCard("Vimmelskaftet", "Ryk frem til Vimmelskaftet, hvis de passerer start indkasser da kr 4000", 32, MovementCard.MovementType.INDEX),
                 new MovementCard("Strandvejen", "Ryk frem til Strandvejen. Hvis De passere START, indkasser da 4000 kr.", 19, MovementCard.MovementType.INDEX),
 
-                // TODO: Find den der er tættest på spillerens nuværende position
+                // fieldIndex er sat til -1, for alle der bruger NEAREST
                 new MovementCard("Nærmeste rederi", "Ryk frem til det nærmeste rederi og betal ejeren to gange den leje han ellers er berettiget\n" +
-                        "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", 5, MovementCard.MovementType.INDEX),
+                        "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", -1, MovementCard.MovementType.NEAREST),
                 new MovementCard("Nærmeste rederi", "Ryk frem til det nærmeste rederi og betal ejeren to gange den leje han ellers er berettiget\n" +
-                        "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", 5, MovementCard.MovementType.INDEX),
-                new MovementCard("Færge", "Tag med den nærmeste færge, hvis de passerer start indkasser da kr 4000", 5, MovementCard.MovementType.INDEX),
+                        "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", -1, MovementCard.MovementType.NEAREST),
+                new MovementCard("Færge", "Tag med den nærmeste færge, hvis de passerer start indkasser da kr 4000", -1, MovementCard.MovementType.NEAREST),
 
                 // Number of fields
                 new MovementCard("3 felter frem", "Ryk tre felter frem", 3, MovementCard.MovementType.NUMBER),
