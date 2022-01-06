@@ -92,19 +92,6 @@ public class GameController {
         guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
         int faceValue = faceValue1 + faceValue2;
 
-
-
-        if (faceValue1==faceValue2) {
-            guiController.getUserButtonPressed(player.name + " du slog det samme." + " Rul med terningen igen", "Rul");
-            for (int i = 0; i < 3; i++) {
-                int die1 = this.die1.roll();
-                int die2 = this.die1.roll();
-
-                guiController.setDice(die1, 2, 8, die2, 3, 8);}
-        }
-
-
-
         if (player.inJail) {
             if (player.getOutOfJailFree) {
                 guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
@@ -178,7 +165,6 @@ public class GameController {
                     shippingField.owner.addAmountToBalance(rent);
                 }
             }
-
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
                 if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
@@ -189,18 +175,12 @@ public class GameController {
                 //------------------------------------------------------------------------------------------------------
                 // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
                 //------------------------------------------------------------------------------------------------------
-                // FIXME
+                // FIXME fjern køb hus og hustjek
                 if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField)) {
-                        if (propertyField.getAmountOfHouses() == 0) {
-                            PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
-                            for (PropertyField tmpField : tmpFields) {
-                                tmpField.rent += tmpField.rent;
-                            }
-                            if (guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
-                                propertyField.addHouse(1);
-                            }
+                    if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0) {
+                        PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
+                        for (PropertyField tmpField : tmpFields) {
+                            tmpField.rent += tmpField.rent;
                         }
 
                         // Tilføjer renten til sig selv for at fordoble den.
@@ -208,8 +188,18 @@ public class GameController {
                     }
 
                 }
-            } else guiController.updatePlayer(ownableField.owner);
+            } else {
+                if (landedOn instanceof PropertyField propertyField){
+                    if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0 &&
+                            guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                            "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja") ){
 
+                        propertyField.addHouse(1);
+                    }
+                }
+
+                guiController.updatePlayer(ownableField.owner);
+            }
 
         } else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
