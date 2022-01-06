@@ -97,6 +97,7 @@ public class GameController {
                 guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
                         "benådelseskort fra Kongen.", "OK");
                 player.getOutOfJailFree = false;
+                player.inJail = false;
             } else {
                 if (guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
                         "Hvordan vil du komme ud?", "Betal 1000 kr", "Rul 2 ens").equals("Rul 2 ens")) {
