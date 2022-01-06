@@ -8,6 +8,7 @@ import gui_fields.GUI_Field;
 import gui_fields.GUI_Ownable;
 import gui_fields.GUI_Player;
 import gui_main.GUI;
+import gui_fields.GUI_Street;
 
 import java.awt.*;
 
@@ -207,5 +208,11 @@ public class GUIController extends ViewController {
     @Override
     public void displayChanceCard(ChanceCard chanceCard) {
         gui.displayChanceCard(chanceCard.cardText);
+    }
+
+
+    public void setHouses(int houseCount){
+        GUI_Street gui_street = new GUI_Street();
+        gui_street.setHouses(houseCount);
     }
 }
