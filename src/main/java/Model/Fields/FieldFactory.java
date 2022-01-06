@@ -49,7 +49,7 @@ public final class FieldFactory {
                 new PropertyField("Hellerupvej", "Pris: kr. 3600", "Hellerupvej", 300, 3600,
                         new Color(96, 96, 96), new Color(0, 0, 0)),
                 new PropertyField("Strandvejen", "Pris: kr. 4000", "Strandvejen", 350, 4000,
-                        new Color(95, 95, 95), new Color(0, 0, 0)),
+                        new Color(96, 96, 96), new Color(0, 0, 0)),
 
                 // Index 20-24
                 new FreeParkingField("Parkering", "Parkering", "Parkering er et fristed, indtil man skal kaste igen"),

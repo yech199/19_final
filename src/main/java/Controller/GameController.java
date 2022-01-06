@@ -142,14 +142,18 @@ public class GameController {
                 // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
                 //------------------------------------------------------------------------------------------------------
                 // FIXME
-                // if (ownsBoth(propertyField)) {
-                //
-                //     PropertyField[] tmpFields = gameBoard.getPair(propertyField.backgroundColor);
-                //     tmpFields[0].rent += tmpFields[0].rent;
-                //     tmpFields[1].rent += tmpFields[1].rent;
-                //     // Tilføjer renten til sig selv for at fordoble den.
-                //     // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
-                // }
+                if (landedOn instanceof PropertyField propertyField){
+                    if (ownsAll(propertyField)) {
+
+                         PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
+                        for (PropertyField tmpField : tmpFields) {
+                            tmpField.rent += tmpField.rent;
+                        }
+
+                         // Tilføjer renten til sig selv for at fordoble den.
+                         // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
+                    }
+                }
             } else guiController.updatePlayer(ownableFields.owner);
 
 
@@ -192,19 +196,24 @@ public class GameController {
      * @return boolean output der siger om ejeren har begge felter med denne farve eller ej.
      */
     // FIXME
-    public boolean ownsBoth(PropertyField field) {
+    public boolean ownsAll(PropertyField field) {
 
-        Field[] tmpFields = gameBoard.getPair(field.backgroundColor);
+        Field[] tmpFields = gameBoard.getFieldGroup(field.backgroundColor);
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
         // return statementet.
         //--------------------------------------------------------------------------------------------------------------
-        if (((PropertyField) tmpFields[0]).owner == null || ((PropertyField) tmpFields[1]).owner == null) {
-            return false;
+        if (tmpFields.length == 3) {
+            if (((PropertyField) tmpFields[0]).owner == null || ((PropertyField) tmpFields[1]).owner == null ||
+                    ((PropertyField) tmpFields[2]).owner == null) {
+                return false;
+            }
+            //tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
+            return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner &&
+                    ((PropertyField) tmpFields[2]).owner == ((PropertyField) tmpFields[1]).owner;
         }
-
-        return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner;
+        else return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner;
     }
 
     /**

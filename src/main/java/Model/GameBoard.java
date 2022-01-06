@@ -27,16 +27,17 @@ public class GameBoard {
      * @param color Java.awt.Color input
      * @return Field[] output
      */
-    public PropertyField[] getPair(Color color) {
-        PropertyField[] tmpFields = new PropertyField[2];
+    public PropertyField[] getFieldGroup(Color color) {
+        PropertyField[] tmpFields = new PropertyField[3];
         int counter = 0;
 
         for (Field field : fields) {
             if (field instanceof PropertyField propertyField) {
                 if (field.backgroundColor.equals(color)) {
-                    tmpFields[counter++] = propertyField;
+                    tmpFields[counter] = propertyField;
+                    counter++;
                 }
-                if (counter == 2) break;
+                if (counter == 3){break;}
             }
         }
         return tmpFields;
