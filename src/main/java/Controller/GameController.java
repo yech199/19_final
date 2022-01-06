@@ -123,14 +123,17 @@ public class GameController {
         movePlayerForward(player, faceValue);
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
-        if (landedOn.fieldName.equals("Tuborg") || landedOn.fieldName.equals("Carlsberg")){
-            BreweryField brew = (BreweryField) landedOn;
-            brew.setFaceValue(faceValue);
-        }
 
         landedOn.fieldAction(player);
 
         if (landedOn instanceof OwnableFields ownableFields) {
+            if(ownableFields instanceof BreweryField breweryField){
+                int rent = faceValue * 100;
+                if (breweryField.owner != null) {
+                    player.addAmountToBalance(-rent);
+                    breweryField.owner.addAmountToBalance(rent);
+                }
+            }
             if (ownableFields.owner == null) {
                 // Køb felt og ændr farve
                 if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
@@ -161,6 +164,33 @@ public class GameController {
             ChanceCard chanceCard = drawChanceCard();
             guiController.displayChanceCard(chanceCard);
             chanceCard.cardAction(player, gameBoard);
+        }
+
+        if (landedOn instanceof OwnableFields ownableFields) {
+            if(ownableFields instanceof ShippingField shippingField){
+
+                if (shippingField.owner !=null) {
+                    int rent = shippingField.rent * 1;
+                    player.addAmountToBalance(-rent);
+                    shippingField.owner.addAmountToBalance(rent);
+                }
+
+                else if (shippingField.owner !=null){
+                    int rent = shippingField.rent * 2;
+                    player.addAmountToBalance(-rent);
+                    shippingField.owner.addAmountToBalance(rent);
+                }
+                else if (shippingField.owner !=null){
+                    int rent = shippingField.rent * 4;
+                    player.addAmountToBalance(-rent);
+                    shippingField.owner.addAmountToBalance(rent);
+                }
+                else if (shippingField.owner !=null){
+                    int rent = shippingField.rent * 8;
+                    player.addAmountToBalance(-rent);
+                    shippingField.owner.addAmountToBalance(rent);
+                }
+            }
         }
 
         guiController.updatePlayer(player);
