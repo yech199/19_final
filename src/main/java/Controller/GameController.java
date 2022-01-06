@@ -6,7 +6,8 @@ import Model.Fields.*;
 import Model.GameBoard;
 import Model.Player;
 
-import java.util.Random;
+import java.util.*;
+import java.util.stream.IntStream;
 
 public class GameController {
     public ViewController guiController;
@@ -62,9 +63,53 @@ public class GameController {
      */
     public void runGame() {
         while (!gameEnded) {
+            playerOrder();
             playRound();
         }
         setGameEnded();
+    }
+    private boolean rollDice(int[] dieValues){
+        boolean duplicates=false;
+        for (int i = 0; i < playerList.length; i++){
+            guiController.getUserButtonPressed(playerList[i].name + " skal rulle med terningen for hvem der skal starte!", "Rul");
+            int rollResult1 = die1.roll();
+            int rollResult2 = die2.roll();
+            int rollResult = rollResult1 + rollResult2;
+            guiController.setDice(rollResult1, 2, 8, rollResult2, 3, 8);
+            for (int j=0; j<dieValues.length;j++){
+                if (dieValues[j]==rollResult)
+                    duplicates=true;
+            }
+            if (!duplicates)
+                dieValues[i] = rollResult;
+            else
+                dieValues = new int[playerList.length];
+        }
+        return duplicates;
+    }
+    public void playerOrder(){
+        int[] dieValues = new int[playerList.length];
+        boolean rollAgain = true;
+        while(rollAgain){
+            rollAgain=rollDice(dieValues);
+            if (!rollAgain){
+                String[] sortedIndices = IntStream.range(0, dieValues.length).boxed().sorted(Collections.reverseOrder()/*Comparator.comparingInt(i -> dieValues[i])*/).map(i->playerList[i].name).toArray(x->new String[x]);
+                Player[] sortedPlayerList=new Player[playerList.length];
+
+                for (int i = 0; i<sortedIndices.length; i++){
+                    String playerName=sortedIndices[i];
+                    for (int j=0;j<playerList.length;j++){
+                        if (playerList[j].name==playerName){
+                            sortedPlayerList[i]=playerList[j];
+                        }
+                    }
+                }
+                playerList=sortedPlayerList;
+            }
+            else {
+                guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
+            }
+        }
     }
 
     /**
@@ -166,7 +211,6 @@ public class GameController {
                     shippingField.owner.addAmountToBalance(rent);
                 }
             }
-
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
                 if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
@@ -177,18 +221,12 @@ public class GameController {
                 //------------------------------------------------------------------------------------------------------
                 // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
                 //------------------------------------------------------------------------------------------------------
-                // FIXME
+                // FIXME fjern køb hus og hustjek
                 if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField)) {
-                        if (propertyField.getAmountOfHouses() == 0) {
-                            PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
-                            for (PropertyField tmpField : tmpFields) {
-                                tmpField.rent += tmpField.rent;
-                            }
-                            if (guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
-                                propertyField.addHouse(1);
-                            }
+                    if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0) {
+                        PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
+                        for (PropertyField tmpField : tmpFields) {
+                            tmpField.rent += tmpField.rent;
                         }
 
                         // Tilføjer renten til sig selv for at fordoble den.
@@ -196,8 +234,18 @@ public class GameController {
                     }
 
                 }
-            } else guiController.updatePlayer(ownableField.owner);
+            } else {
+                if (landedOn instanceof PropertyField propertyField){
+                    if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0 &&
+                            guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                            "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja") ){
 
+                        propertyField.addHouse(1);
+                    }
+                }
+
+                guiController.updatePlayer(ownableField.owner);
+            }
 
         } else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
