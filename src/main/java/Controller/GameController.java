@@ -6,7 +6,9 @@ import Model.Fields.*;
 import Model.GameBoard;
 import Model.Player;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -142,45 +144,39 @@ public class GameController {
     //------------------------------------------------------------------------------------------------------------------
     // Metoder der bruges ovenover
     //------------------------------------------------------------------------------------------------------------------
-    private boolean rollDice(int[] dieValues) {
+    private boolean rollDice(HashMap<Integer, Player> dieValues) {
         boolean duplicates = false;
         for (int i = 0; i < playerList.length; i++) {
-            guiController.getUserButtonPressed(playerList[i].name + " skal rulle med terningen for hvem der skal starte!", "Rul");
+            guiController.getUserButtonPressed(playerList[i].name + " skal rulle med terningen for, at se hvem der skal starte!", "Rul");
             int rollResult1 = die1.roll();
             int rollResult2 = die2.roll();
             int rollResult = rollResult1 + rollResult2;
             guiController.setDice(rollResult1, 2, 8, rollResult2, 3, 8);
-            for (int j = 0; j < dieValues.length; j++) {
-                if (dieValues[j] == rollResult)
-                    duplicates = true;
+            if (dieValues.containsKey(rollResult)) {
+                duplicates = true;
+                dieValues.clear();
+                break;
             }
-            if (!duplicates)
-                dieValues[i] = rollResult;
-            else
-                dieValues = new int[playerList.length];
+            else {
+                dieValues.put(rollResult, playerList[i]);
+            }
         }
         return duplicates;
     }
 
     private void decideStartingOrder() {
-        int[] dieValues = new int[playerList.length];
+        HashMap<Integer, Player> dieValues = new HashMap<>();
         boolean rollAgain = true;
         while (rollAgain) {
             rollAgain = rollDice(dieValues);
-            if (!rollAgain) {
-                String[] sortedIndices = IntStream.range(0, dieValues.length).boxed().sorted(Collections.reverseOrder()/*Comparator.comparingInt(i -> dieValues[i])*/).map(i -> playerList[i].name).toArray(x -> new String[x]);
-                Player[] sortedPlayerList = new Player[playerList.length];
-
-                for (int i = 0; i < sortedIndices.length; i++) {
-                    String playerName = sortedIndices[i];
-                    for (int j = 0; j < playerList.length; j++) {
-                        if (playerList[j].name.equals(playerName)) {
-                            sortedPlayerList[i] = playerList[j];
-                        }
-                    }
+            if (!rollAgain){
+                Object[] keys = dieValues.keySet().toArray();
+                Arrays.sort(keys, Collections.reverseOrder());
+                for (int i = 0; i < playerList.length; i++){
+                    playerList[i] = dieValues.get(keys[i]);
                 }
-                playerList = sortedPlayerList;
-            } else {
+            }
+            else {
                 guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
             }
         }
