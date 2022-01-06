@@ -6,7 +6,8 @@ import Model.Fields.*;
 import Model.GameBoard;
 import Model.Player;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 public class GameController {
@@ -19,9 +20,9 @@ public class GameController {
 
     /**
      * Denne controller laver alle de objekter som spillet skal bruge for at kunne køre
-     *   Fx en terning, et gameBoard og x antal spillere.
-     *     Der laves et array med "playerCount" antal spillere. playerListen er af typen Player.
-     *     Player constructoren skal bruge et navn i parameteren, desuden sættes den enkelte spillers start balance til 0 automatisk
+     * Fx en terning, et gameBoard og x antal spillere.
+     * Der laves et array med "playerCount" antal spillere. playerListen er af typen Player.
+     * Player constructoren skal bruge et navn i parameteren, desuden sættes den enkelte spillers start balance til 0 automatisk
      */
     public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2) {
         this.die1 = die1;
@@ -68,17 +69,18 @@ public class GameController {
         }
         setGameEnded();
     }
-    private boolean rollDice(int[] dieValues){
-        boolean duplicates=false;
-        for (int i = 0; i < playerList.length; i++){
+
+    private boolean rollDice(int[] dieValues) {
+        boolean duplicates = false;
+        for (int i = 0; i < playerList.length; i++) {
             guiController.getUserButtonPressed(playerList[i].name + " skal rulle med terningen for hvem der skal starte!", "Rul");
             int rollResult1 = die1.roll();
             int rollResult2 = die2.roll();
             int rollResult = rollResult1 + rollResult2;
             guiController.setDice(rollResult1, 2, 8, rollResult2, 3, 8);
-            for (int j=0; j<dieValues.length;j++){
-                if (dieValues[j]==rollResult)
-                    duplicates=true;
+            for (int j = 0; j < dieValues.length; j++) {
+                if (dieValues[j] == rollResult)
+                    duplicates = true;
             }
             if (!duplicates)
                 dieValues[i] = rollResult;
@@ -87,26 +89,26 @@ public class GameController {
         }
         return duplicates;
     }
-    public void playerOrder(){
+
+    public void playerOrder() {
         int[] dieValues = new int[playerList.length];
         boolean rollAgain = true;
-        while(rollAgain){
-            rollAgain=rollDice(dieValues);
-            if (!rollAgain){
-                String[] sortedIndices = IntStream.range(0, dieValues.length).boxed().sorted(Collections.reverseOrder()/*Comparator.comparingInt(i -> dieValues[i])*/).map(i->playerList[i].name).toArray(x->new String[x]);
-                Player[] sortedPlayerList=new Player[playerList.length];
+        while (rollAgain) {
+            rollAgain = rollDice(dieValues);
+            if (!rollAgain) {
+                String[] sortedIndices = IntStream.range(0, dieValues.length).boxed().sorted(Collections.reverseOrder()/*Comparator.comparingInt(i -> dieValues[i])*/).map(i -> playerList[i].name).toArray(x -> new String[x]);
+                Player[] sortedPlayerList = new Player[playerList.length];
 
-                for (int i = 0; i<sortedIndices.length; i++){
-                    String playerName=sortedIndices[i];
-                    for (int j=0;j<playerList.length;j++){
-                        if (playerList[j].name==playerName){
-                            sortedPlayerList[i]=playerList[j];
+                for (int i = 0; i < sortedIndices.length; i++) {
+                    String playerName = sortedIndices[i];
+                    for (int j = 0; j < playerList.length; j++) {
+                        if (playerList[j].name == playerName) {
+                            sortedPlayerList[i] = playerList[j];
                         }
                     }
                 }
-                playerList=sortedPlayerList;
-            }
-            else {
+                playerList = sortedPlayerList;
+            } else {
                 guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
             }
         }
@@ -194,18 +196,15 @@ public class GameController {
                     int rent = shippingField.rent * 1;
                     player.addAmountToBalance(-rent);
                     shippingField.owner.addAmountToBalance(rent);
-                }
-                else if (shippingField.owner != null) {
+                } else if (shippingField.owner != null) {
                     int rent = shippingField.rent * 2;
                     player.addAmountToBalance(-rent);
                     shippingField.owner.addAmountToBalance(rent);
-                }
-                else if (shippingField.owner != null) {
+                } else if (shippingField.owner != null) {
                     int rent = shippingField.rent * 4;
                     player.addAmountToBalance(-rent);
                     shippingField.owner.addAmountToBalance(rent);
-                }
-                else if (shippingField.owner != null) {
+                } else if (shippingField.owner != null) {
                     int rent = shippingField.rent * 8;
                     player.addAmountToBalance(-rent);
                     shippingField.owner.addAmountToBalance(rent);
@@ -235,10 +234,10 @@ public class GameController {
 
                 }
             } else {
-                if (landedOn instanceof PropertyField propertyField){
+                if (landedOn instanceof PropertyField propertyField) {
                     if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                            "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja") ){
+                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
 
                         propertyField.addHouse(1);
                     }
