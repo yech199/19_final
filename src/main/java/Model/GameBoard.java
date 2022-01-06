@@ -2,13 +2,9 @@ package Model;
 
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.ChanceCard_Factory;
-import Model.Fields.Field;
-import Model.Fields.FieldFactory;
-import Model.Fields.PropertyField;
-import Model.Fields.ShippingField;
+import Model.Fields.*;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 
 public class GameBoard {
@@ -23,16 +19,9 @@ public class GameBoard {
         this.fields = fields;
         this.chanceCards = chanceCards;
 
-        ArrayList<Integer> indices = new ArrayList<>();
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i] instanceof ShippingField) {
-                indices.add(i);
-            }
-        }
-        this.ferryIndices = new int[indices.toArray().length];
-        for (int i = 0; i < ferryIndices.length; i++) {
-            ferryIndices[i] = indices.get(i);
-        }
+        int[] indices = new int[]{};
+
+        ferryIndices = findAllShippingFields(fields, indices);
     }
 
     public GameBoard() {
@@ -40,9 +29,9 @@ public class GameBoard {
     }
 
     /**
-     * Bruger input til at finde det andet felt med samme farve, og returner et Field[] array.
+     * Finder alle PropertyFields med samme farve, og returner et PropertyField[] array.
      *
-     * @param color Java.awt.Color input
+     * @param color Den farve felter vi gerne vil finde
      * @return Field[] output
      */
     public PropertyField[] findAllPropertyFieldsOfSameColor(Color color) {
@@ -64,6 +53,21 @@ public class GameBoard {
         return tmpFields;
     }
 
+    public int[] findAllShippingFields(Field[] fields, int[] indices) {
+        final int[] ferryIndices;
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i] instanceof ShippingField) {
+                indices = addX(indices.length, indices, i);
+            }
+        }
+
+        ferryIndices = new int[indices.length];
+        for (int i = 0; i < ferryIndices.length; i++) {
+            ferryIndices[i] = indices[i];
+        }
+        return ferryIndices;
+    }
+
     /**
      * Funktion der tilføjer x til arrayet på plads n + 1
      *
@@ -75,6 +79,20 @@ public class GameBoard {
     public static PropertyField[] addX(int n, PropertyField[] propertyFields, PropertyField propertyField) {
         int i;
         PropertyField[] newArray = new PropertyField[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (i = 0; i < n; i++)
+            newArray[i] = propertyFields[i];
+
+        newArray[n] = propertyField;
+        return newArray;
+    }
+
+    public static int[] addX(int n, int[] propertyFields, int propertyField) {
+        int i;
+        int[] newArray = new int[n + 1];
 
         //--------------------------------------------------------------------------------------------------------------
         // Indsætter det gamle array i det nye array
