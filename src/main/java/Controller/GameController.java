@@ -194,7 +194,8 @@ public class GameController {
                     player.addAmountToBalance(-rent);
                     breweryField.owner.addAmountToBalance(rent);
                 }
-            } else if (ownableField instanceof ShippingField shippingField) {
+            }
+            else if (ownableField instanceof ShippingField shippingField) {
                 if (shippingField.owner != null) {
                     int rent = shippingField.rent * 1;
                     player.addAmountToBalance(-rent);
