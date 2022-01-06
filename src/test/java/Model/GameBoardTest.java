@@ -50,7 +50,7 @@ public class GameBoardTest {
     }
 
     @Test
-    public void testFindsAllShippingFields() {
+    public void testFindAllShippingAndBreweryFields() {
         Field[] fields = new Field[]{
                 new StartField("", "", "", Color.RED),
                 new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
@@ -70,6 +70,7 @@ public class GameBoardTest {
                 new BreweryField("Tuborg", "Pris: kr. 3000", "Tuborg bryggeri"),
                 new ShippingField("D.F.D.S.", "Pris: kr. 4000", "D.F.D.S.", 500),
                 new FreeParkingField("Parkering", "Parkering", "Parkering er et fristed, indtil man skal kaste igen"),
+                new BreweryField("Carlsberg", "Pris: kr. 3000", "Carlsberg bryggeri"),
                 new ShippingField("Ø.S.", "Pris: kr. 4000", "Ø.S. redderiet", 500),
 
                 new GoToJailField("Gå i fængsel", "Gå i fængsel",
@@ -79,7 +80,10 @@ public class GameBoardTest {
 
         gameBoard = new GameBoard(fields, chanceCards);
         int[] indices = new int[]{};
-        int numberOfShippingFields = gameBoard.findAllShippingFields(fields, indices).length;
+        int numberOfShippingFields = gameBoard.findAllShippingAndBreweryFields(fields, indices, GameBoard.FieldType.SHIPPING).length;
         Assert.assertEquals(4, numberOfShippingFields);
+
+        numberOfShippingFields = gameBoard.findAllShippingAndBreweryFields(fields, indices, GameBoard.FieldType.BREWERY).length;
+        Assert.assertEquals(2, numberOfShippingFields);
     }
 }
