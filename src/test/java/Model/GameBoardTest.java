@@ -42,10 +42,10 @@ public class GameBoardTest {
                 };
 
         gameBoard = new GameBoard(fields, chanceCards);
-        int numberOfFieldsInSameColor = gameBoard.getFieldGroup(new Color(0, 0, 102)).length;
+        int numberOfFieldsInSameColor = gameBoard.findAllPropertyFieldsOfSameColor(new Color(0, 0, 102)).length;
         Assert.assertEquals(2, numberOfFieldsInSameColor);
 
-        numberOfFieldsInSameColor = gameBoard.getFieldGroup(new Color(255, 128, 0)).length;
+        numberOfFieldsInSameColor = gameBoard.findAllPropertyFieldsOfSameColor(new Color(255, 128, 0)).length;
         Assert.assertEquals(3, numberOfFieldsInSameColor);
     }
 }

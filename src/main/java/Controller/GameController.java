@@ -227,7 +227,7 @@ public class GameController {
                 // FIXME fjern køb hus og hustjek
                 if (landedOn instanceof PropertyField propertyField) {
                     if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0) {
-                        PropertyField[] tmpFields = gameBoard.getFieldGroup(propertyField.backgroundColor);
+                        PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
                         for (PropertyField tmpField : tmpFields) {
                             tmpField.rent += tmpField.rent;
                         }
@@ -287,7 +287,7 @@ public class GameController {
     // FIXME
     public boolean ownsAll(PropertyField field) {
 
-        Field[] tmpFields = gameBoard.getFieldGroup(field.backgroundColor);
+        Field[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(field.backgroundColor);
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
