@@ -67,8 +67,6 @@ public class GameBoard {
         int[] indices1 = indices;
         int[] indices2 = indices;
 
-        final int[] ferryIndices;
-        final int[] breweryIndices;
         final int[] fieldIndice;
         for (int i = 0; i < fields.length; i++) {
             if (fields[i] instanceof ShippingField) {
@@ -80,13 +78,10 @@ public class GameBoard {
         }
 
         switch (fieldType) {
-            case SHIPPING -> {
+            case SHIPPING ->
                 indices = indices1;
-
-            }
-            case BREWERY -> {
+            case BREWERY ->
                 indices = indices2;
-            }
         }
         fieldIndice = new int[indices.length];
         for (int i = 0; i < fieldIndice.length; i++) {
@@ -95,39 +90,39 @@ public class GameBoard {
         return fieldIndice;
     }
 
-        /**
-         * Funktion der tilføjer x til arrayet på plads n + 1
-         *
-         * @param n              Antallet af elementer i det gamle array
-         * @param propertyFields Det gamle array
-         * @param propertyField  Det der skal tilføjes i arrayet på plads n + 1
-         * @return Det gamle array med et ekstra element
-         */
-        private static PropertyField[] addX ( int n, PropertyField[] propertyFields, PropertyField propertyField){
-            int i;
-            PropertyField[] newArray = new PropertyField[n + 1];
+    /**
+     * Funktion der tilføjer x til arrayet på plads n + 1
+     *
+     * @param n              Antallet af elementer i det gamle array
+     * @param propertyFields Det gamle array
+     * @param propertyField  Det der skal tilføjes i arrayet på plads n + 1
+     * @return Det gamle array med et ekstra element
+     */
+    private static PropertyField[] addX(int n, PropertyField[] propertyFields, PropertyField propertyField) {
+        int i;
+        PropertyField[] newArray = new PropertyField[n + 1];
 
-            //--------------------------------------------------------------------------------------------------------------
-            // Indsætter det gamle array i det nye array
-            //--------------------------------------------------------------------------------------------------------------
-            for (i = 0; i < n; i++)
-                newArray[i] = propertyFields[i];
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (i = 0; i < n; i++)
+            newArray[i] = propertyFields[i];
 
-            newArray[n] = propertyField;
-            return newArray;
-        }
-
-        private static int[] addX ( int n, int[] propertyFields, int propertyField){
-            int i;
-            int[] newArray = new int[n + 1];
-
-            //--------------------------------------------------------------------------------------------------------------
-            // Indsætter det gamle array i det nye array
-            //--------------------------------------------------------------------------------------------------------------
-            for (i = 0; i < n; i++)
-                newArray[i] = propertyFields[i];
-
-            newArray[n] = propertyField;
-            return newArray;
-        }
+        newArray[n] = propertyField;
+        return newArray;
     }
+
+    private static int[] addX(int n, int[] propertyFields, int propertyField) {
+        int i;
+        int[] newArray = new int[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (i = 0; i < n; i++)
+            newArray[i] = propertyFields[i];
+
+        newArray[n] = propertyField;
+        return newArray;
+    }
+}
