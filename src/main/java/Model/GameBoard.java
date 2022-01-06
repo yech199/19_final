@@ -42,7 +42,9 @@ public class GameBoard {
                     tmpFields[counter] = propertyField;
                     counter++;
                 }
-                if (counter == 3){break;}
+                if (counter == 3) {
+                    break;
+                }
             }
         }
         return tmpFields;
