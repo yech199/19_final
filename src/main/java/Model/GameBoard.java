@@ -67,7 +67,7 @@ public class GameBoard {
         int[] ferryIndices = indices;
         int[] breweryIndices = indices;
 
-        final int[] fieldIndice;
+        int[] fieldIndices;
         for (int i = 0; i < fields.length; i++) {
             if (fields[i] instanceof ShippingField) {
                 ferryIndices = addElementToOldArray(ferryIndices.length, ferryIndices, i);
@@ -81,11 +81,11 @@ public class GameBoard {
             case SHIPPING -> indices = ferryIndices;
             case BREWERY -> indices = breweryIndices;
         }
-        fieldIndice = new int[indices.length];
-        for (int i = 0; i < fieldIndice.length; i++) {
-            fieldIndice[i] = indices[i];
+        fieldIndices = new int[indices.length];
+        for (int i = 0; i < fieldIndices.length; i++) {
+            fieldIndices[i] = indices[i];
         }
-        return fieldIndice;
+        return fieldIndices;
     }
 
     /**
