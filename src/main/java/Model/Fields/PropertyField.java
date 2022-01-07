@@ -6,14 +6,15 @@ import gui_fields.GUI_Street;
 import java.awt.*;
 
 public class PropertyField extends OwnableField {
-    private final int[] houseRents;
-    private final int buildingPrice;
     private int amountOfBuildings;
+    public final int[] rents;
+    public final int buildingPrice;
 
-    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor, int buildingPrice, int[] houseRents) {
+    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor, int buildingPrice, int[] buildingRents) {
         super(name, subText, description, rent, price, color, textColor);
-        this.houseRents = houseRents;
+        assert buildingRents.length == 5;
         amountOfBuildings = 0;
+        this.rents = new int[] {rent, buildingRents[0], buildingRents[1], buildingRents[2], buildingRents[3], buildingRents[4]};
         this.buildingPrice = buildingPrice;
 
     }
