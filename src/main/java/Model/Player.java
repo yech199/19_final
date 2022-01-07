@@ -17,14 +17,18 @@ public class Player {
     public boolean inJail;
     public boolean getOutOfJailFree;
 
+    public Player(String name, int balance) {
+        this.name = name;
+        this.balance = balance;
+    }
+
     /**
      * Constructor der laver en player med et navn og en startbalance på 0
      *
      * @param name of the Player being made
      */
     public Player(String name) {
-        this.name = name;
-        this.balance = 0;
+        this(name, GlobalValues.START_MONEY);
     }
 
     /**
