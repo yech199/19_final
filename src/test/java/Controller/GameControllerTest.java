@@ -113,7 +113,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void testPlayerGetsReleasedFromPrisonWhenHavingCardAndDoesNotLooseMoney() {
+    public void testPlayerGetsReleasedFromPrisonWhenHavingCardAndDoesNotLoseMoney() {
         int money = 1000;
         ChanceCard[] chanceCards = new ChanceCard[]{
                 new ReleaseFromPrisonCard("", "")
@@ -138,5 +138,20 @@ public class GameControllerTest {
 
         Assert.assertFalse(player.inJail);
         Assert.assertEquals(money, player.getBalance());
+    }
+
+    @Test
+    public void correctWinnerIsDecided() {
+        Player[] playerList = new Player[6];
+        this.guiController.setUpPlayers(playerList);
+        for (int i = 0; i < playerList.length; i++) {
+            playerList[i] = new Player("" + i);
+        }
+        int counter = 0;
+        for (Player player : playerList){
+            player.addAmountToBalance(10+counter);
+            counter++;
+        }
+        assertEquals(gameController.getWinner(playerList), playerList[playerList.length-1]);
     }
 }
