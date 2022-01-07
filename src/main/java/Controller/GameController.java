@@ -146,7 +146,8 @@ public class GameController {
     private boolean rollDice(HashMap<Integer, Player> dieValues) {
         boolean duplicates = false;
         for (Player player : playerList) {
-            guiController.getUserButtonPressed(player.name + " skal rulle med terningen for, at se hvem der skal starte!", "Rul");
+            guiController.getUserButtonPressed(player.name + " skal rulle med terningen for, " +
+                    "at se hvem der skal starte!", "Rul");
             int rollResult1 = die1.roll();
             int rollResult2 = die2.roll();
             int rollResult = rollResult1 + rollResult2;
@@ -175,7 +176,8 @@ public class GameController {
                 }
             }
             else {
-                guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
+                guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle" +
+                        " igen med terningen for hvem der skal starte!", "Rul");
             }
         }
     }
@@ -210,7 +212,8 @@ public class GameController {
             }
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
-                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
+                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
+                        ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
                     player.addAmountToBalance(-ownableField.price);
                     ownableField.owner = player;
                     guiController.setOwner(player);
