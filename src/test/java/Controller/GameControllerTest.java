@@ -35,6 +35,7 @@ public class GameControllerTest {
         };
         gameBoard = new GameBoard();
         guiController = new StubGUIController();
+        guiController.customChoice = null;
         gameController = new GameController(guiController, gameBoard, die, die);
         gameController.playerList = players;
     }
@@ -210,5 +211,39 @@ public class GameControllerTest {
 
         Assert.assertTrue(gameController.ownsAll(fields[0]));
         Assert.assertTrue(gameController.ownsAll(fields[4]));
+    }
+
+    @Test
+    public void testPlayerGetsOutOfJailWhenRollingAPair() {
+        guiController.customChoice = "Rul 2 ens";
+        gameBoard = new GameBoard(
+                new Field[]{
+                    new StartField("", "", "", Color.RED),
+                    new FreeParkingField("", "", ""),
+                    new JailField("", "", "")
+                },
+                new ChanceCard[]{}
+        );
+        Player player1 = new Player("1");
+        Player player2 = new Player("2");
+        player1.setCurrentPos(2);
+        player2.setCurrentPos(2);
+        player1.inJail = true;
+        player2.inJail = true;
+        int[] rolls = {0,0,1,2,3,4,0,1};
+        die = new StubDie(rolls);
+        gameController = new GameController(guiController, gameBoard, die, die);
+        gameController.playTurn(player1);
+
+        Assert.assertTrue(player1.inJail);
+        Assert.assertEquals(2, player1.getCurrentPos());
+
+        die = new StubDie(new int[]{0, 0, 1, 2, 3, 4, 1, 1});
+        gameController.die1 = die;
+        gameController.die2 = die;
+        gameController.playTurn(player2);
+
+        Assert.assertFalse(player2.inJail);
+        Assert.assertEquals(1, player2.getCurrentPos());
     }
 }

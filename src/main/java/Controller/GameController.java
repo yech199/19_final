@@ -120,11 +120,11 @@ public class GameController {
                             faceValue = die1 + die2;
                             i = 3; //stopper loopet
                         }
-                        else faceValue = 0;
                     }
+                    if (player.inJail) return;
                 }
                 else {
-                    player.addAmountToBalance(-1000);
+                    player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
                     player.inJail = false;
                 }
             }

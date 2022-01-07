@@ -5,6 +5,7 @@ import Model.ChanceCards.ChanceCard;
 import Model.Player;
 
 public class StubGUIController extends ViewController {
+    public String customChoice = null;
 
     @Override
     public int getUserInteger(String msg, int min, int max) {
@@ -30,7 +31,7 @@ public class StubGUIController extends ViewController {
 
     @Override
     public String getUserButtonPressed(String msg, String... menuOptions) {
-        return menuOptions[0];
+        return customChoice == null ? menuOptions[0] : customChoice;
     }
 
     @Override
