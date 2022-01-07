@@ -208,6 +208,7 @@ public class GameController {
                     player.addAmountToBalance(-rent);
                     shippingField.owner.addAmountToBalance(rent);
                 }
+
             }
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve

@@ -20,9 +20,9 @@ public final class FieldFactory {
                 new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
                         new Color(0, 0, 102), new Color(255, 255, 255), new int[]{250, 750, 2250, 4000, 6000}),
                 new TaxField("Betal\nindkomst-\nskat", "10% el. 4000", "Betal indkomstskat\n10% eller kr. 4000,-"),
-                new ShippingField("Øresund", "Pris: kr. 4000", "Øresundsredderiet", 500),
 
                 // Index 5-9
+                new ShippingField("Øresund", "Pris: kr. 4000", "Øresundsredderiet", 500),
                 new PropertyField("Roskildevej", "Pris: kr. 2000", "Roskildevej", 100, 2000,
                         new Color(255, 128, 0), new Color(0, 0, 0), new int[]{600, 1800, 5400, 8000, 11000}),
                 new ChanceField(),
