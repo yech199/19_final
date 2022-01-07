@@ -199,7 +199,7 @@ public class GameController {
                 //------------------------------------------------------------------------------------------------------
                 // FIXME fjern køb hus og hustjek
                 if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0) {
+                    if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0) {
                         PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
                         for (PropertyField tmpField : tmpFields) {
                             tmpField.rent *= 2;
@@ -211,11 +211,11 @@ public class GameController {
             }
             else {
                 if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0 &&
+                    if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
                                     "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
 
-                        propertyField.addHouse(player);
+                        propertyField.buyBuilding(player);
                     }
                 }
 
