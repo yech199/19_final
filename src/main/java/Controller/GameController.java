@@ -233,12 +233,11 @@ public class GameController {
             } else {
                 if (landedOn instanceof PropertyField propertyField) {
                     if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0 &&
-                            guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
-
+                            ((PropertyField) landedOn).owner.equals(player) &&
+                            guiController.getUserButtonPressed("Du ejer alle felter af denne farve. Vil du købe " +
+                                    "et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
+                        player.addAmountToBalance(-4000);
                         propertyField.addHouse(1);
-                        
-
                     }
                 }
 
