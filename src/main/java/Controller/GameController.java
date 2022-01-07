@@ -215,7 +215,7 @@ public class GameController {
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
                                     "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
 
-                        propertyField.addHouse(1);
+                        propertyField.addHouse(player);
                     }
                 }
 

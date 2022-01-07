@@ -1,31 +1,35 @@
 package Model.Fields;
 
+import Model.Player;
 import gui_fields.GUI_Street;
 
 import java.awt.*;
 
 public class PropertyField extends OwnableField {
     private int amountOfHouses;
-    private int[] houseRent;
+    private final int[] houseRents;
+    private final int buildingPrice;
 
-    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor, int[] houseRent) {
+    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor, int buildingPrice, int[] houseRents) {
         super(name, subText, description, rent, price, color, textColor);
         amountOfHouses = 0;
-        this.houseRent = houseRent;
+        this.houseRents = houseRents;
+        this.buildingPrice = buildingPrice;
+
     }
 
-    public void addHouse(int house) {
-        amountOfHouses = amountOfHouses + house;
-        if (amountOfHouses > 1) {
-            amountOfHouses = 1;
+    public void addHouse(Player player) {
+        if (amountOfHouses < 4) {
+            amountOfHouses++;
+            player.addAmountToBalance(-buildingPrice);
         }
-        rent = houseRent[amountOfHouses - 1];
+        rent = houseRents[amountOfHouses - 1];
     }
 
-    public void removeHouse(int house) {
-        amountOfHouses = amountOfHouses - house;
-        if (amountOfHouses < 0) {
-            amountOfHouses = 0;
+    public void removeHouse(Player player) {
+        if (amountOfHouses > 0) {
+            amountOfHouses--;
+            player.addAmountToBalance(buildingPrice);
         }
     }
 
