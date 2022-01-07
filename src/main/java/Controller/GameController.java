@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.ChanceCards.ChanceCard;
+import Model.ChanceCards.MovementCard;
 import Model.Die;
 import Model.Fields.*;
 import Model.GameBoard;
@@ -261,7 +262,16 @@ public class GameController {
             guiController.displayChanceCard(chanceCard);
             int tmpPos = player.getCurrentPos();
             chanceCard.cardAction(player, gameBoard);
+
+            if (chanceCard instanceof MovementCard) {
+                guiController.updatePlayer(player);
+
+                // Sørger for at man laver den handling der svarer til det felt man lander på
+                landedOn = gameBoard.fields[player.getCurrentPos()];
+                landedOn.fieldAction(player);
+            }
             guiController.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
+            // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig
             if (player.getCurrentPos() != tmpPos)
                 checkIfInstanceOf(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
         }

@@ -7,6 +7,7 @@ import Model.ChanceCards.ReleaseFromPrisonCard;
 import Model.Die;
 import Model.Fields.*;
 import Model.GameBoard;
+import Model.GlobalValues;
 import Model.Player;
 import org.junit.Assert;
 import org.junit.Before;
@@ -107,6 +108,39 @@ public class GameControllerTest {
         // Tjekker at spilleren rent faktisk har rykket sig
         assertEquals(1, player.getCurrentPos());
         assertEquals(0, player.getPreviousPos());
+    }
+
+    @Test
+    public void testReceiveMoneyWhenPassingStartUsingChanceCard() {
+        ChanceCard[] chanceCards = new ChanceCard[]{
+                new MovementCard("", "", 2, MovementCard.MovementType.NUMBER),
+                new MovementCard("", "", 1, MovementCard.MovementType.INDEX),
+                new MovementCard("", "", -1, MovementCard.MovementType.NEAREST)
+        };
+
+        Field[] fields = new Field[]{
+                new StartField("", "", "", Color.BLACK),
+                new ShippingField(0, 0),
+                new ChanceField(),
+        };
+
+        for (ChanceCard chanceCard : chanceCards) {
+            gameBoard = new GameBoard(fields, new ChanceCard[]{chanceCard});
+            Player player = new Player("");
+            int[] rolls = {1, 1};
+            die = new StubDie(rolls);
+            gameController = new GameController(guiController, gameBoard, die, die);
+
+            int tmpBalance = player.getBalance();
+            gameController.playTurn(player);
+
+            // Tjekker at spilleren kun får pengene én gang
+            assertEquals(tmpBalance + GlobalValues.START_FIELD_VALUE, player.getBalance());
+
+            // Tjekker at spilleren rent faktisk har rykket sig
+            assertEquals(2, player.getPreviousPos());
+            assertEquals(1, player.getCurrentPos());
+        }
     }
 
     @Test
