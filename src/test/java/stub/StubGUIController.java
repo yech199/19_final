@@ -22,12 +22,10 @@ public class StubGUIController extends ViewController {
 
     @Override
     public void updatePlayer(Player player) {
-
     }
 
     @Override
     public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {
-
     }
 
     @Override
@@ -37,21 +35,17 @@ public class StubGUIController extends ViewController {
 
     @Override
     public void setOwner(Player player) {
-
     }
 
     @Override
     public void showMessage(String msg) {
-
     }
 
     @Override
     public void close() {
-
     }
 
     @Override
     public void displayChanceCard(ChanceCard chanceCard) {
-
     }
 }
