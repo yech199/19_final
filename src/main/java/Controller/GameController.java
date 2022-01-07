@@ -4,6 +4,7 @@ import Model.ChanceCards.ChanceCard;
 import Model.Die;
 import Model.Fields.*;
 import Model.GameBoard;
+import Model.GlobalValues;
 import Model.Player;
 
 import java.util.Arrays;
@@ -31,7 +32,7 @@ public class GameController {
         this.gameBoard = gameBoard;
         this.guiController = guiController;
 
-        int playerCount = guiController.getUserInteger("Hvor mange spillere (3-6)?", 3, 6);
+        int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?", GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS), GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
 
         // Laver x antal nye spillere med navn
         playerList = new Player[playerCount];
@@ -48,7 +49,7 @@ public class GameController {
      * <p> Denne constructor kalder på ovenstående constructor
      */
     private GameController(GameBoard gameBoard) {
-        this(new GUIController(gameBoard.fields), gameBoard, new Die(1, 6), new Die(1, 6));
+        this(new GUIController(gameBoard.fields), gameBoard, new Die(), new Die());
     }
 
     /**
@@ -105,7 +106,7 @@ public class GameController {
             }
             else {
                 if (guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
-                        "Hvordan vil du komme ud?", "Betal 1000 kr", "Rul 2 ens").equals("Rul 2 ens")) {
+                        "Hvordan vil du komme ud?", "Betal " + GlobalValues.JAIL_PRICE + " kr", "Rul 2 ens").equals("Rul 2 ens")) {
                     for (int i = 0; i < 3; i++) {
                         guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
                         int die1 = this.die1.roll();
@@ -280,7 +281,7 @@ public class GameController {
         player.setCurrentPos((player.getCurrentPos() + faceValue) % gameBoard.fields.length);
 
         // Spilleren passerer Start
-        if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(4000);
+        if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(GlobalValues.START_FIELD_VALUE);
         guiController.updatePlayer(player);
     }
 

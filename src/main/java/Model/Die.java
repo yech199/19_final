@@ -15,6 +15,10 @@ public class Die {
         this.MAXfaceValue = MAXfaceValue;
     }
 
+    public Die() {
+        this(GlobalValues.DIE_MIN, GlobalValues.DIE_MAX);
+    }
+
     public int roll() { // Funktionen roll ruller en terning med x-antal sider.
         // Metode der kan køre når man har lavet et Dice objekt
         faceValue = (int) (Math.floor(Math.random() * (this.MAXfaceValue - this.MINfaceValue + 1) + this.MINfaceValue));
