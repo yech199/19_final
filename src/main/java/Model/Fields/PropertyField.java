@@ -33,6 +33,7 @@ public class PropertyField extends OwnableField {
         return amountOfHouses;
     }
 
+
     /**
      * Translates the fields we made to Fields in GUI format, so the GUI can use the fields
      *
