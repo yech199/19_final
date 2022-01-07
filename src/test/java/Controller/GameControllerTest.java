@@ -149,7 +149,7 @@ public class GameControllerTest {
         }
         int counter = 0;
         for (Player player : playerList){
-            player.addAmountToBalance(10+counter);
+            player.addAmountToBalance(counter);
             counter++;
         }
         assertEquals(gameController.getWinner(playerList), playerList[playerList.length-1]);
