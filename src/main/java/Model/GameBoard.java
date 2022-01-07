@@ -92,11 +92,11 @@ public class GameBoard {
      * Funktion der tilføjer x til arrayet på plads n + 1
      *
      * @param n              Antallet af elementer i det gamle array
-     * @param propertyFields Det gamle array
-     * @param propertyField  Det der skal tilføjes i arrayet på plads n + 1
+     * @param oldArray Det gamle array
+     * @param newElement  Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static PropertyField[] addElementToOldArray(int n, PropertyField[] propertyFields, PropertyField propertyField) {
+    private static PropertyField[] addElementToOldArray(int n, PropertyField[] oldArray, PropertyField newElement) {
         int i;
         PropertyField[] newArray = new PropertyField[n + 1];
 
@@ -104,21 +104,21 @@ public class GameBoard {
         // Indsætter det gamle array i det nye array
         //--------------------------------------------------------------------------------------------------------------
         for (i = 0; i < n; i++)
-            newArray[i] = propertyFields[i];
+            newArray[i] = oldArray[i];
 
-        newArray[n] = propertyField;
+        newArray[n] = newElement;
         return newArray;
     }
 
     /**
      * Funktion der tilføjer x til arrayet på plads n + 1
      *
-     * @param n              Antallet af elementer i det gamle array
-     * @param propertyFields Det gamle array
-     * @param propertyField  Det der skal tilføjes i arrayet på plads n + 1
+     * @param n          Antallet af elementer i det gamle array
+     * @param oldArray   Det gamle array
+     * @param newElement Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static int[] addElementToOldArray(int n, int[] propertyFields, int propertyField) {
+    private static int[] addElementToOldArray(int n, int[] oldArray, int newElement) {
         int i;
         int[] newArray = new int[n + 1];
 
@@ -126,9 +126,9 @@ public class GameBoard {
         // Indsætter det gamle array i det nye array
         //--------------------------------------------------------------------------------------------------------------
         for (i = 0; i < n; i++)
-            newArray[i] = propertyFields[i];
+            newArray[i] = oldArray[i];
 
-        newArray[n] = propertyField;
+        newArray[n] = newElement;
         return newArray;
     }
 }
