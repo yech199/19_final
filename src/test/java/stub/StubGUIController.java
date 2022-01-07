@@ -2,6 +2,7 @@ package stub;
 
 import Controller.ViewController;
 import Model.ChanceCards.ChanceCard;
+import Model.Fields.PropertyField;
 import Model.Player;
 
 public class StubGUIController extends ViewController {
@@ -52,6 +53,11 @@ public class StubGUIController extends ViewController {
 
     @Override
     public void displayChanceCard(ChanceCard chanceCard) {
+
+    }
+
+    @Override
+    public void setHouses(int houseCount, PropertyField propertyField){
 
     }
 }

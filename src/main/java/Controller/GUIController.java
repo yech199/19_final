@@ -2,6 +2,7 @@ package Controller;
 
 import Model.ChanceCards.ChanceCard;
 import Model.Fields.Field;
+import Model.Fields.PropertyField;
 import Model.Player;
 import gui_fields.GUI_Car;
 import gui_fields.GUI_Field;
@@ -210,9 +211,8 @@ public class GUIController extends ViewController {
         gui.displayChanceCard(chanceCard.cardText);
     }
 
-
-    public void setHouses(int houseCount){
-        GUI_Street gui_street = new GUI_Street();
-        gui_street.setHouses(houseCount);
+    @Override
+    public void setHouses(int houseCount, PropertyField propertyField){
+        propertyField.getGUIversion().setHouses(houseCount);
     }
 }

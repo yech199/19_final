@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.ChanceCards.ChanceCard;
+import Model.Fields.PropertyField;
 import Model.Player;
 
 public abstract class ViewController {
@@ -23,4 +24,6 @@ public abstract class ViewController {
     public abstract void close();
 
     public abstract void displayChanceCard(ChanceCard chanceCard);
+
+    public abstract void setHouses(int houseCount, PropertyField propertyField);
 }

@@ -238,6 +238,7 @@ public class GameController {
                                     "et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
                         player.addAmountToBalance(-4000);
                         propertyField.addHouse(1);
+                        guiController.setHouses(1, (PropertyField)landedOn);
                     }
                 }
 
