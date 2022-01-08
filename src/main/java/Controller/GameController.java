@@ -18,8 +18,17 @@ public class GameController {
     public Die die1, die2;
     public GameBoard gameBoard;
     public Player[] playerList;
-    private boolean gameEnded;
+    public boolean gameEnded;
     public int roundCounter;
+
+    public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
+        this.die1 = die1;
+        this.die2 = die2;
+        this.gameBoard = gameBoard;
+        this.guiController = guiController;
+        this.playerList = players;
+        this.guiController.setUpPlayers(playerList);
+    }
 
     /**
      * Denne controller laver alle de objekter som spillet skal bruge for at kunne køre
@@ -28,20 +37,7 @@ public class GameController {
      * Player constructoren skal bruge et navn i parameteren, desuden sættes den enkelte spillers start balance til 0 automatisk
      */
     public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2) {
-        this.die1 = die1;
-        this.die2 = die2;
-        this.gameBoard = gameBoard;
-        this.guiController = guiController;
-
-        int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?", GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS), GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
-
-        // Laver x antal nye spillere med navn
-        playerList = new Player[playerCount];
-        for (int i = 0; i < playerList.length; i++) {
-            playerList[i] = new Player(this.guiController.getUserString("Player " + (i + 1) + " skriv dit navn:"));
-        }
-
-        this.guiController.setUpPlayers(playerList);
+        this(guiController, gameBoard, die1, die2, setUpPlayers(guiController));
     }
 
     /**
@@ -60,6 +56,20 @@ public class GameController {
      */
     public GameController() {
         this(new GameBoard());
+    }
+
+    private static Player[] setUpPlayers(ViewController guiController) {
+        int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?", GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS), GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
+
+        // Laver x antal nye spillere med navn
+        Player[] playerList = new Player[playerCount];
+        for (int i = 0; i < playerList.length; i++) {
+            playerList[i] = new Player(guiController.getUserString("Player " + (i + 1) + " skriv dit navn:"));
+        }
+
+        guiController.setUpPlayers(playerList);
+
+        return playerList;
     }
 
     /**
@@ -220,7 +230,6 @@ public class GameController {
                         propertyField.buyBuilding(player);
                     }
                 }
-
                 guiController.updatePlayer(ownableField.owner);
             }
 
@@ -359,11 +368,8 @@ public class GameController {
                     playerList[5].name + " har " + playerList[5].getBalance() + " point.\n" +
                     winner + " har vundet!");
 
-
         guiController.showMessage("Luk spillet?");
         guiController.close();
-
-
     }
 
     /**

@@ -230,7 +230,7 @@ public class GameControllerTest {
         player2.setCurrentPos(2);
         player1.inJail = true;
         player2.inJail = true;
-        int[] rolls = {0,0,1,2,3,4,0,1};
+        int[] rolls = {0, 0, 1, 2, 3, 4, 0, 1};
         die = new StubDie(rolls);
         gameController = new GameController(guiController, gameBoard, die, die);
         gameController.playTurn(player1);
@@ -245,5 +245,22 @@ public class GameControllerTest {
 
         Assert.assertFalse(player2.inJail);
         Assert.assertEquals(1, player2.getCurrentPos());
+    }
+
+    @Test
+    public void testGameEndsWhenPlayerIsBankrupt() {
+        gameBoard = new GameBoard(new Field[]{new StartField("", "", "", Color.RED), new ShippingField(0, 50)}, new ChanceCard[]{});
+        Player player1 = new Player("1", -1000);
+        Player player2 = new Player("2", 1000);
+        Player player3 = new Player("3", 1000);
+        // De første 3 rul er de rul der tjekker hvem der starter vha. metoden decideStartingOrder().
+        // Derefter spilles der er runder for hver spiller i spillerlisten.
+        int[] rolls = {0, 3, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0};
+        die = new StubDie(rolls);
+        gameController = new GameController(guiController, gameBoard, die, die, new Player[]{player1, player2, player3});
+        gameController.runGame();
+        // gameController.setGameEnded();
+
+        Assert.assertTrue(gameController.gameEnded);
     }
 }
