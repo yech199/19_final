@@ -226,6 +226,7 @@ public class GameController {
                     }
                 }
             }
+
             else {
                 if (landedOn instanceof PropertyField propertyField) {
                     if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0 &&
@@ -235,7 +236,10 @@ public class GameController {
                         propertyField.buyBuilding(player);
                     }
                 }
-                if (ownableField instanceof BreweryField breweryField) {
+                else if (ownableField instanceof BreweryField breweryField) {
+                    BreweryField[] breweryFields = new BreweryField[]{};
+                    BreweryField[] tmpFields = gameBoard.findAllBreweryFields(breweryFields);
+
                     breweryField.rent = faceValue * 100;
                     player.addAmountToBalance(-breweryField.rent);
                     breweryField.owner.addAmountToBalance(breweryField.rent);
@@ -244,7 +248,7 @@ public class GameController {
                     ShippingField[] shippingFields = new ShippingField[]{};
                     ShippingField[] tmpFields = gameBoard.findAllShippingFields(shippingFields);
 
-                    if (shippingField.owner != null && tmpFields.length == 4) {
+                    if (tmpFields.length == 4) {
                         if (tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner &&
                                 tmpFields[2].owner == tmpFields[3].owner) {
                             shippingField.rent = shippingField.shippingRents[3];
