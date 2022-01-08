@@ -1,7 +1,6 @@
 package Model.Fields;
 
 import java.awt.*;
-import java.security.KeyStore;
 
 public final class FieldFactory {
 

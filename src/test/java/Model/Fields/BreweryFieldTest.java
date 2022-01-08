@@ -7,12 +7,12 @@ import Model.Player;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import stub.StubDie;
 import stub.StubGUIController;
 
 public class BreweryFieldTest {
     private GameBoard gameBoard;
     private Player[] players;
-    private Die die;
     private StubGUIController guiController;
     private GameController gameController;
     private Field[] fields;
@@ -20,8 +20,8 @@ public class BreweryFieldTest {
     @Before
     public void setup() {
         players = new Player[]{
-                new Player("Test 1", 0),
-                new Player("Test 2", 0)
+                new Player("Test 1", 500),
+                new Player("Test 2", 500)
         };
         fields = new Field[]{
                 new BreweryField("", "", ""),
@@ -29,6 +29,7 @@ public class BreweryFieldTest {
 
         guiController = new StubGUIController();
         gameBoard = new GameBoard(fields, null);
+        Die die = new StubDie(0);
         gameController = new GameController(guiController, gameBoard, die, die);
     }
 
@@ -43,19 +44,7 @@ public class BreweryFieldTest {
         int balanceAfter = player1.getBalance();
 
         Assert.assertTrue(balanceBefore > balanceAfter);
-        Assert.assertEquals(balanceBefore, 0);
-        Assert.assertEquals(balanceAfter, -100);
-    }
-
-    @Test
-    public void fieldAction() {
-    }
-
-    @Test
-    public void getGUIversion() {
-    }
-
-    @Test
-    public void setFaceValue() {
+        Assert.assertEquals(balanceBefore, 500);
+        Assert.assertEquals(balanceAfter, 400);
     }
 }
