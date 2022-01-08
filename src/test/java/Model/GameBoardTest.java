@@ -81,7 +81,7 @@ public class GameBoardTest {
         int numberOfShippingFields = gameBoard.findAllShippingAndBreweryFields(fields, indices, GameBoard.FieldType.SHIPPING).length;
         Assert.assertEquals(4, numberOfShippingFields);
 
-        numberOfShippingFields = gameBoard.findAllShippingAndBreweryFields(fields, indices, GameBoard.FieldType.BREWERY).length;
-        Assert.assertEquals(2, numberOfShippingFields);
+        int numberOfBreweryFields = gameBoard.findAllShippingAndBreweryFields(fields, indices, GameBoard.FieldType.BREWERY).length;
+        Assert.assertEquals(2, numberOfBreweryFields);
     }
 }
