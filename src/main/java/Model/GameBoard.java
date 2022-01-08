@@ -68,9 +68,7 @@ public class GameBoard {
 
         for (Field field : this.fields) {
             if (field instanceof ShippingField shippingField) {
-                for (int i = 0; i < fields.length; i++) {
                     tmpFields = addShippingFieldToOldArray(tmpFields.length, tmpFields, shippingField);
-                }
             }
         }
         return tmpFields;
