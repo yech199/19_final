@@ -236,9 +236,9 @@ public class GameController {
                     }
                 }
                 if (ownableField instanceof BreweryField breweryField) {
-                    int rent = faceValue * 100;
-                    player.addAmountToBalance(-rent);
-                    breweryField.owner.addAmountToBalance(rent);
+                    breweryField.rent = faceValue * 100;
+                    player.addAmountToBalance(-breweryField.rent);
+                    breweryField.owner.addAmountToBalance(breweryField.rent);
                 }
                 else if (ownableField instanceof ShippingField shippingField) {
                     ShippingField[] shippingFields = new ShippingField[]{};
