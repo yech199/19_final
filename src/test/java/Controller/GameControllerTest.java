@@ -259,7 +259,6 @@ public class GameControllerTest {
         die = new StubDie(rolls);
         gameController = new GameController(guiController, gameBoard, die, die, new Player[]{player1, player2, player3});
         gameController.runGame();
-        // gameController.setGameEnded();
 
         Assert.assertTrue(gameController.gameEnded);
     }
