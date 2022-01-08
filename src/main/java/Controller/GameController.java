@@ -181,7 +181,7 @@ public class GameController {
         }
     }
 
-    private void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
+    public void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField) {
             if (ownableField instanceof BreweryField breweryField) {
                 int rent = faceValue * 100;
