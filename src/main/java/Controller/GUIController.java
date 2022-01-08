@@ -78,8 +78,6 @@ public class GUIController extends ViewController {
         // Sætter spillernes startbalance alt efter hvor mange spillere der spiller
         //--------------------------------------------------------------------------------------------------------------
         for (int i = 0; i < playerList.length; i++) {
-            playerList[i].addAmountToBalance(30000);
-
             GUI_Car tmpCar = new GUI_Car();
             tmpCar.setPrimaryColor(colors[i]);
 

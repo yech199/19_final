@@ -2,19 +2,20 @@ package Model;
 
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.ChanceCard_Factory;
-import Model.Fields.Field;
-import Model.Fields.FieldFactory;
-import Model.Fields.PropertyField;
-import Model.Fields.ShippingField;
+import Model.Fields.*;
 
 import java.awt.*;
-import java.util.ArrayList;
-
 
 public class GameBoard {
+    public enum FieldType {
+        SHIPPING,
+        BREWERY
+    }
+
     public final ChanceCard[] chanceCards;
     public final Field[] fields; // Array af fields
     public final int[] ferryIndices;
+    public final int[] breweryIndices;
 
     //------------------------------------------------------------------------------------------------------------------
     // Constructor der laver et GameBoard
@@ -23,16 +24,14 @@ public class GameBoard {
         this.fields = fields;
         this.chanceCards = chanceCards;
 
-        ArrayList<Integer> indices = new ArrayList<>();
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i] instanceof ShippingField) {
-                indices.add(i);
-            }
-        }
-        this.ferryIndices = new int[indices.toArray().length];
-        for (int i = 0; i < ferryIndices.length; i++) {
-            ferryIndices[i] = indices.get(i);
-        }
+        int[] indices = new int[]{};
+        FieldType fieldType;
+
+        fieldType = FieldType.SHIPPING;
+        ferryIndices = findAllShippingAndBreweryFields(fields, indices, fieldType);
+
+        fieldType = FieldType.BREWERY;
+        breweryIndices = findAllShippingAndBreweryFields(fields, indices, fieldType);
     }
 
     public GameBoard() {
@@ -40,26 +39,96 @@ public class GameBoard {
     }
 
     /**
-     * Bruger input til at finde det andet felt med samme farve, og returner et Field[] array.
+     * Finder alle PropertyFields med samme farve, og returner et PropertyField[] array.
      *
-     * @param color Java.awt.Color input
+     * @param color Den farve felter vi gerne vil finde
      * @return Field[] output
      */
-    public PropertyField[] getFieldGroup(Color color) {
-        PropertyField[] tmpFields = new PropertyField[3];
+    public PropertyField[] findAllPropertyFieldsOfSameColor(Color color) {
+        PropertyField[] tmpFields = new PropertyField[2];
         int counter = 0;
 
-        for (Field field : fields) {
+        for (Field field : this.fields) {
             if (field instanceof PropertyField propertyField) {
-                if (field.backgroundColor.equals(color)) {
+                if (propertyField.backgroundColor.equals(color) && counter != 2) {
                     tmpFields[counter] = propertyField;
                     counter++;
                 }
-                if (counter == 3) {
-                    break;
+                else if (counter == 2) {
+                    if (propertyField != tmpFields[0] && propertyField != tmpFields[1] && propertyField.backgroundColor.equals(color))
+                        tmpFields = addElementToOldArray(tmpFields.length, tmpFields, propertyField);
                 }
             }
         }
         return tmpFields;
+    }
+
+    public int[] findAllShippingAndBreweryFields(Field[] fields, int[] indices, FieldType fieldType) {
+        int[] ferryIndices = indices;
+        int[] breweryIndices = indices;
+
+        int[] fieldIndices;
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i] instanceof ShippingField) {
+                ferryIndices = addElementToOldArray(ferryIndices.length, ferryIndices, i);
+            }
+            else if (fields[i] instanceof BreweryField) {
+                breweryIndices = addElementToOldArray(breweryIndices.length, breweryIndices, i);
+            }
+        }
+
+        switch (fieldType) {
+            case SHIPPING -> indices = ferryIndices;
+            case BREWERY -> indices = breweryIndices;
+        }
+        fieldIndices = new int[indices.length];
+        for (int i = 0; i < fieldIndices.length; i++) {
+            fieldIndices[i] = indices[i];
+        }
+        return fieldIndices;
+    }
+
+    /**
+     * Funktion der tilføjer x til arrayet på plads n + 1
+     *
+     * @param n              Antallet af elementer i det gamle array
+     * @param oldArray Det gamle array
+     * @param newElement  Det der skal tilføjes i arrayet på plads n + 1
+     * @return Det gamle array med et ekstra element
+     */
+    private static PropertyField[] addElementToOldArray(int n, PropertyField[] oldArray, PropertyField newElement) {
+        int i;
+        PropertyField[] newArray = new PropertyField[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (i = 0; i < n; i++)
+            newArray[i] = oldArray[i];
+
+        newArray[n] = newElement;
+        return newArray;
+    }
+
+    /**
+     * Funktion der tilføjer x til arrayet på plads n + 1
+     *
+     * @param n          Antallet af elementer i det gamle array
+     * @param oldArray   Det gamle array
+     * @param newElement Det der skal tilføjes i arrayet på plads n + 1
+     * @return Det gamle array med et ekstra element
+     */
+    private static int[] addElementToOldArray(int n, int[] oldArray, int newElement) {
+        int i;
+        int[] newArray = new int[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (i = 0; i < n; i++)
+            newArray[i] = oldArray[i];
+
+        newArray[n] = newElement;
+        return newArray;
     }
 }

@@ -12,13 +12,12 @@ public class PayTheBankCardTest {
 
     @Before
     public void setUp() {
-        this.player = new Player("");
+        this.player = new Player("", 1000);
         this.gameBoard = new GameBoard();
     }
 
     @Test
     public void testPlayerLosesMoney() {
-        player.setBalance(1000);
         ChanceCard chanceCard = new PayTheBankCard("", "", 1000);
         chanceCard.cardAction(player, gameBoard);
         Assert.assertEquals(0, player.getBalance());
