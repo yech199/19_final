@@ -236,41 +236,50 @@ public class GameController {
                         propertyField.buyBuilding(player);
                     }
                 }
-                guiController.updatePlayer(ownableField.owner);
-            }
-
-
-            if (ownableField instanceof BreweryField breweryField) {
-                int rent = faceValue * 100;
-                if (breweryField.owner != null) {
+                if (ownableField instanceof BreweryField breweryField) {
+                    int rent = faceValue * 100;
                     player.addAmountToBalance(-rent);
                     breweryField.owner.addAmountToBalance(rent);
                 }
-            }
-            else if (ownableField instanceof ShippingField shippingField && shippingField.owner != null) {
-                if (gameBoard.ferryIndices.length - gameBoard.ferryIndices.length == 0) {
-                    int rent = shippingField.rent * 1;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-                else if (shippingField.owner != null) {
-                    int rent = shippingField.rent * 2;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-                else if (shippingField.owner != null) {
-                    int rent = shippingField.rent * 4;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-                else if (shippingField.owner != null) {
-                    int rent = shippingField.rent * 8;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-            }
+                else if (ownableField instanceof ShippingField shippingField) {
+                    ShippingField[] shippingFields = new ShippingField[]{};
+                    ShippingField[] tmpFields = gameBoard.findAllShippingFields(shippingFields);
 
-
+                    if (shippingField.owner != null) {
+                        if (tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner &&
+                                tmpFields[2].owner == tmpFields[3].owner) {
+                            shippingField.rent = shippingField.shippingRents[3];
+                            player.addAmountToBalance(-shippingField.rent);
+                            shippingField.owner.addAmountToBalance(shippingField.rent);
+                        }
+                        else if ((tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner ||
+                                tmpFields[1].owner == tmpFields[2].owner && tmpFields[2].owner == tmpFields[3].owner ||
+                                tmpFields[2].owner == tmpFields[3].owner && tmpFields[3].owner == tmpFields[0].owner ||
+                                tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[3].owner) &&
+                                (tmpFields[0].owner != null && tmpFields[1].owner != null || tmpFields[2].owner != tmpFields[3].owner)) {
+                            shippingField.rent = shippingField.shippingRents[2];
+                            player.addAmountToBalance(-shippingField.rent);
+                            shippingField.owner.addAmountToBalance(shippingField.rent);
+                        }
+                        else if ((tmpFields[0].owner == tmpFields[1].owner) && (tmpFields[0].owner != null) ||
+                                (tmpFields[0].owner == tmpFields[2].owner) && (tmpFields[0].owner != null) ||
+                                (tmpFields[0].owner == tmpFields[3].owner) && (tmpFields[0].owner != null) ||
+                                (tmpFields[1].owner == tmpFields[2].owner) && (tmpFields[1].owner != null) ||
+                                (tmpFields[1].owner == tmpFields[3].owner) && (tmpFields[1].owner != null) ||
+                                (tmpFields[2].owner == tmpFields[3].owner) && (tmpFields[2].owner != null)) {
+                            shippingField.rent = shippingField.shippingRents[1];
+                            player.addAmountToBalance(-shippingField.rent);
+                            shippingField.owner.addAmountToBalance(shippingField.rent);
+                        }
+                        else {
+                            shippingField.rent = shippingField.shippingRents[0];
+                            player.addAmountToBalance(-shippingField.rent);
+                            shippingField.owner.addAmountToBalance(shippingField.rent);
+                        }
+                    }
+                }
+                guiController.updatePlayer(ownableField.owner);
+            }
         }
         else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();

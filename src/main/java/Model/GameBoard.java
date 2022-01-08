@@ -28,10 +28,10 @@ public class GameBoard {
         FieldType fieldType;
 
         fieldType = FieldType.SHIPPING;
-        ferryIndices = findAllShippingAndBreweryFields(fields, indices, fieldType);
+        ferryIndices = findAllShippingAndBreweryFieldIndices(fields, indices, fieldType);
 
         fieldType = FieldType.BREWERY;
-        breweryIndices = findAllShippingAndBreweryFields(fields, indices, fieldType);
+        breweryIndices = findAllShippingAndBreweryFieldIndices(fields, indices, fieldType);
     }
 
     public GameBoard() {
@@ -56,24 +56,35 @@ public class GameBoard {
                 }
                 else if (counter == 2) {
                     if (propertyField != tmpFields[0] && propertyField != tmpFields[1] && propertyField.backgroundColor.equals(color))
-                        tmpFields = addElementToOldArray(tmpFields.length, tmpFields, propertyField);
+                        tmpFields = addPropertyToOldArray(tmpFields.length, tmpFields, propertyField);
                 }
             }
         }
         return tmpFields;
     }
 
-    public int[] findAllShippingAndBreweryFields(Field[] fields, int[] indices, FieldType fieldType) {
+    public ShippingField[] findAllShippingFields(ShippingField[] shippingFields) {
+        ShippingField[] tmpFields = shippingFields;
+
+        for (Field field : this.fields) {
+            if (field instanceof ShippingField shippingField) {
+                    tmpFields = addShippingFieldToOldArray(tmpFields.length, tmpFields, shippingField);
+            }
+        }
+        return tmpFields;
+    }
+
+    public int[] findAllShippingAndBreweryFieldIndices(Field[] fields, int[] indices, FieldType fieldType) {
         int[] ferryIndices = indices;
         int[] breweryIndices = indices;
 
         int[] fieldIndices;
         for (int i = 0; i < fields.length; i++) {
             if (fields[i] instanceof ShippingField) {
-                ferryIndices = addElementToOldArray(ferryIndices.length, ferryIndices, i);
+                ferryIndices = addPropertyToOldArray(ferryIndices.length, ferryIndices, i);
             }
             else if (fields[i] instanceof BreweryField) {
-                breweryIndices = addElementToOldArray(breweryIndices.length, breweryIndices, i);
+                breweryIndices = addPropertyToOldArray(breweryIndices.length, breweryIndices, i);
             }
         }
 
@@ -96,9 +107,23 @@ public class GameBoard {
      * @param newElement  Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static PropertyField[] addElementToOldArray(int n, PropertyField[] oldArray, PropertyField newElement) {
+    private static PropertyField[] addPropertyToOldArray(int n, PropertyField[] oldArray, PropertyField newElement) {
         int i;
         PropertyField[] newArray = new PropertyField[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (i = 0; i < n; i++)
+            newArray[i] = oldArray[i];
+
+        newArray[n] = newElement;
+        return newArray;
+    }
+
+    private static ShippingField[] addShippingFieldToOldArray(int n, ShippingField[] oldArray, ShippingField newElement) {
+        int i;
+        ShippingField[] newArray = new ShippingField[n + 1];
 
         //--------------------------------------------------------------------------------------------------------------
         // Indsætter det gamle array i det nye array
@@ -118,7 +143,7 @@ public class GameBoard {
      * @param newElement Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static int[] addElementToOldArray(int n, int[] oldArray, int newElement) {
+    private static int[] addPropertyToOldArray(int n, int[] oldArray, int newElement) {
         int i;
         int[] newArray = new int[n + 1];
 

@@ -6,8 +6,11 @@ import gui_fields.GUI_Shipping;
 import java.awt.*;
 
 public class ShippingField extends OwnableField {
+    public final int[] shippingRents;
+
     public ShippingField(String name, String subText, String description, int rent, int price) {
         super(name, subText, description, rent, price, Color.WHITE, Color.BLACK);
+        this.shippingRents = new int[]{rent, rent * 2, rent * 4, rent * 8};
     }
 
     public ShippingField(String name, String subText, String description, int rent) {

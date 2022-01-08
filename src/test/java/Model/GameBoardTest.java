@@ -78,10 +78,10 @@ public class GameBoardTest {
 
         gameBoard = new GameBoard(fields, chanceCards);
         int[] indices = new int[]{};
-        int numberOfShippingFields = gameBoard.findAllShippingAndBreweryFields(fields, indices, GameBoard.FieldType.SHIPPING).length;
+        int numberOfShippingFields = gameBoard.findAllShippingAndBreweryFieldIndices(fields, indices, GameBoard.FieldType.SHIPPING).length;
         Assert.assertEquals(4, numberOfShippingFields);
 
-        int numberOfBreweryFields = gameBoard.findAllShippingAndBreweryFields(fields, indices, GameBoard.FieldType.BREWERY).length;
+        int numberOfBreweryFields = gameBoard.findAllShippingAndBreweryFieldIndices(fields, indices, GameBoard.FieldType.BREWERY).length;
         Assert.assertEquals(2, numberOfBreweryFields);
     }
 }
