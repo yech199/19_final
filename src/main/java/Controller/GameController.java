@@ -28,7 +28,6 @@ public class GameController {
         this.gameBoard = gameBoard;
         this.guiController = guiController;
         this.playerList = players;
-        this.guiController.setUpPlayers(playerList);
     }
 
     /**
