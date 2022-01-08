@@ -262,4 +262,19 @@ public class GameControllerTest {
 
         Assert.assertTrue(gameController.gameEnded);
     }
+
+    @Test
+    public void testGameEndsAfter40Rounds() {
+        gameBoard = new GameBoard(new Field[]{new StartField("", "", "", Color.RED)}, new ChanceCard[]{});
+        Player player1 = new Player("1", 1000);
+        Player player2 = new Player("2", 1000);
+        Player player3 = new Player("3", 1000);
+        die = new StubDie(0);
+        gameController = new GameController(guiController, gameBoard, die, die, new Player[]{player1, player2, player3});
+        for (int i = 0; i < 41; i++) {
+            gameController.playRound();
+        }
+
+        Assert.assertTrue(gameController.gameEnded);
+    }
 }
