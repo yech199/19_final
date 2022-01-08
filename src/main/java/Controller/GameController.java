@@ -21,6 +21,7 @@ public class GameController {
     public boolean gameEnded;
     public int roundCounter;
 
+
     public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
         this.die2 = die2;
@@ -59,12 +60,13 @@ public class GameController {
     }
 
     private static Player[] setUpPlayers(ViewController guiController) {
-        int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?", GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS), GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
+        int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?",
+                GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS), GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
 
         // Laver x antal nye spillere med navn
         Player[] playerList = new Player[playerCount];
         for (int i = 0; i < playerList.length; i++) {
-            playerList[i] = new Player(guiController.getUserString("Player " + (i + 1) + " skriv dit navn:"));
+            playerList[i] = new Player(i, guiController.getUserString("Player " + (i + 1) + " skriv dit navn:"));
         }
 
         guiController.setUpPlayers(playerList);
@@ -90,6 +92,10 @@ public class GameController {
         roundCounter++;
         guiController.showMessage("Runde " + roundCounter);
         for (Player player : playerList) {
+            if (playerList.length == 1) {
+                gameEnded = true;
+                return;
+            }
             if (roundCounter > 40) {
                 gameEnded = true;
                 break;
@@ -151,7 +157,7 @@ public class GameController {
         // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
         //--------------------------------------------------------------------------------------------------------------
         if (player.getBalance() <= 0) {
-            gameEnded = true;
+            playerList = removeElementFromOldArray(playerList, player.index);
         }
     }
 
@@ -337,7 +343,12 @@ public class GameController {
     public void setGameEnded() {
         String winner = getWinner(playerList).name;
 
-        if (playerList.length == 3) {
+        if (playerList.length == 1){
+            guiController.showMessage("Spillet er slut!\n" +
+                    winner + " er den eneste spiller tilbage og\n" +
+                    winner + " har derfor vundet med " + playerList[0].getBalance() + " kr.");
+        }
+        else if (playerList.length == 3) {
             guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
@@ -380,7 +391,7 @@ public class GameController {
      * @return returnerer den spiller der har vundet
      */
     public Player getWinner(Player[] playerList) {
-        Player winner = new Player(""); //tom spiller, da den udskiftes med en ny spiller efter første runde i for-loop
+        Player winner = new Player("", 0); //tom spiller, da den udskiftes med en ny spiller efter første runde i for-loop
         for (Player player : playerList) {
             if (winner.getBalance() < player.getBalance()) {
                 winner = player;
@@ -392,5 +403,37 @@ public class GameController {
     public ChanceCard drawChanceCard() {
         int rng = new Random().nextInt(gameBoard.chanceCards.length);
         return gameBoard.chanceCards[rng];
+    }
+
+    /**
+     * Fjerner en player fra et array af typen Player
+     * @param oldArray Det array vi vil fjerne et element fra
+     * @param index Den spiller vi vil fjerne fra arrayet
+     * @return Det gamle array uden den spiller vi hat fjernet
+     */
+    public static Player[] removeElementFromOldArray(Player[] oldArray, int index) {
+        // Hvis array'et er tomt, eller hvis index'et ikke er i array rækkevidden
+        // returneres det originale array
+        if (oldArray == null || index < 0
+                || index >= oldArray.length) {
+
+            return oldArray;
+        }
+
+        // Laver et array der er et element mindre end det originale array
+        Player[] anotherArray = new Player[oldArray.length - 1];
+
+        // Kopierer alle elementer bortset fra index'et fra det originale array ind i det nye array
+        for (int i = 0, k = 0; i < oldArray.length; i++) {
+
+            // Hvis index'et er det element man vil fjerne
+            if (i == index) {
+                continue;
+            }
+
+            // Hvis index'et ikke er den element man vil fjerne
+            anotherArray[k++] = oldArray[i];
+        }
+        return anotherArray;
     }
 }

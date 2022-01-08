@@ -36,8 +36,7 @@ public class GameControllerTest {
         gameBoard = new GameBoard();
         guiController = new StubGUIController();
         guiController.customChoice = null;
-        gameController = new GameController(guiController, gameBoard, die, die);
-        gameController.playerList = players;
+        gameController = new GameController(guiController, gameBoard, die, die, players);
     }
 
     @Test
@@ -248,10 +247,34 @@ public class GameControllerTest {
     }
 
     @Test
-    public void testGameEndsWhenPlayerIsBankrupt() {
-        gameBoard = new GameBoard(new Field[]{new StartField("", "", "", Color.RED), new ShippingField(0, 50)}, new ChanceCard[]{});
+    public void testPlayerLosesMoneyWhenPayingToExitJail() {
+        guiController.customChoice = "Betal \" + GlobalValues.JAIL_PRICE + \" kr";
+        gameBoard = new GameBoard(
+                new Field[]{
+                    new StartField("", "", "", Color.RED),
+                    new FreeParkingField("", "", ""),
+                    new JailField("", "", "")
+                },
+                new ChanceCard[]{}
+        );
+        int balance = 10000;
+        Player player1 = new Player("1", balance);
+        player1.setCurrentPos(2);
+        player1.inJail = true;
+        die = new StubDie(0);
+        gameController = new GameController(guiController, gameBoard, die, die);
+        gameController.playTurn(player1);
+
+        Assert.assertFalse(player1.inJail);
+        Assert.assertEquals(2, player1.getCurrentPos());
+        Assert.assertEquals(balance - GlobalValues.JAIL_PRICE, player1.getBalance());
+    }
+
+    @Test
+    public void testGameEndsWhenAllPlayersExceptForOneIsBankrupt() {
+        gameBoard = new GameBoard(new Field[]{new StartField("", "", "", Color.RED)}, new ChanceCard[]{});
         Player player1 = new Player("1", -1000);
-        Player player2 = new Player("2", 1000);
+        Player player2 = new Player("2", -1000);
         Player player3 = new Player("3", 1000);
         // De første 3 rul er de rul der tjekker hvem der starter vha. metoden decideStartingOrder().
         // Derefter spilles der er runder for hver spiller i spillerlisten.
