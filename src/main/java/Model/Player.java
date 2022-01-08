@@ -15,6 +15,7 @@ public class Player {
     public final String name;
     public final int index;
     private int balance;
+    private int jailTryRollCounter;
     public boolean inJail;
     public boolean getOutOfJailFree;
 
@@ -26,6 +27,7 @@ public class Player {
         this.name = name;
         this.balance = balance;
         this.index = index;
+        this.jailTryRollCounter = 1;
     }
 
     /**
@@ -93,5 +95,13 @@ public class Player {
      */
     public int getPreviousPos() {
         return previousPos;
+    }
+
+    public int getJailTryRollCounter() {
+        return jailTryRollCounter;
+    }
+
+    public void setJailTryRollCounter(int jailTryRollCounter) {
+        this.jailTryRollCounter = jailTryRollCounter;
     }
 }

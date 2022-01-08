@@ -21,7 +21,6 @@ public class GameController {
     public boolean gameEnded;
     public int roundCounter;
 
-
     public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
         this.die2 = die2;
@@ -120,6 +119,7 @@ public class GameController {
             faceValue = faceValue1 + faceValue2;
         }
         else {
+
             if (player.getOutOfJailFree) {
                 guiController.getUserButtonPressed(player.name + " er røget i fængsel, " +
                         "men har et benådelseskort fra Kongen, og kommer derfor gratis ud af fængslet", "OK");
@@ -127,25 +127,46 @@ public class GameController {
                 player.inJail = false;
             }
             else {
+
                 if (guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
                         "Hvordan vil du komme ud?", "Betal " + GlobalValues.JAIL_PRICE + " kr", "Rul 2 ens").equals("Rul 2 ens")) {
-                    for (int i = 0; i < 3; i++) {
-                        guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
-                        faceValue1 = this.die1.roll();
-                        faceValue2 = this.die1.roll();
 
-                        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
-
-                        // Tjekker om der er blevet rullet 2 ens
-                        if (faceValue1 == faceValue2) {
-                            player.inJail = false;
+                    if (player.getJailTryRollCounter() < 3) {
+                        for (int i = 0; i < 3; i++) {
+                            guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
+                            faceValue1 = this.die1.roll();
+                            faceValue2 = this.die1.roll();
                             faceValue = faceValue1 + faceValue2;
-                            i = 3; //stopper loopet
+
+                            guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+
+                            // Tjekker om der er blevet rullet 2 ens
+                            if (faceValue1 == faceValue2) {
+                                player.inJail = false;
+                                i = 3; //stopper loopet
+                                player.setJailTryRollCounter(1);
+                            }
+                        }
+
+                        if (player.inJail) {
+                            player.setJailTryRollCounter(player.getJailTryRollCounter() + 1);
+                            return;
                         }
                     }
-                    if (player.inJail) return;
+                    if (player.getJailTryRollCounter() == 3) {
+                        player.setJailTryRollCounter(1);
+                        guiController.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
+                                "Du er derfor nødt til at betale dig ud af fængslet. Du kan rykke igen næste gang det bliver din tur");
+                        player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
+                        player.inJail = false;
+                        // Vi returner fordi spilleren ikke må rykke, hvis spilleren har valgt at rulle 2 ens,
+                        // men stadig fejler efter 3 runders forsøg. Man er da tvunget til at betale sig ud af fængslet,
+                        // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
+                        return;
+                    }
                 }
                 else {
+                    player.setJailTryRollCounter(1);
                     player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
                     player.inJail = false;
                 }
