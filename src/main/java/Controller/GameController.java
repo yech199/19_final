@@ -245,7 +245,7 @@ public class GameController {
                     ShippingField[] shippingFields = new ShippingField[]{};
                     ShippingField[] tmpFields = gameBoard.findAllShippingFields(shippingFields);
 
-                    if (shippingField.owner != null) {
+                    if (shippingField.owner != null && tmpFields.length == 4) {
                         if (tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner &&
                                 tmpFields[2].owner == tmpFields[3].owner) {
                             shippingField.rent = shippingField.shippingRents[3];
