@@ -203,6 +203,7 @@ public class GUIController extends ViewController {
         gui.close();
     }
 
+
     @Override
     public void displayChanceCard(ChanceCard chanceCard) {
         gui.displayChanceCard(chanceCard.cardText);

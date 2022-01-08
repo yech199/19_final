@@ -229,7 +229,7 @@ public class GameControllerTest {
         player2.setCurrentPos(2);
         player1.inJail = true;
         player2.inJail = true;
-        int[] rolls = {0, 0, 1, 2, 3, 4, 0, 1};
+        int[] rolls = {1, 2, 3, 4, 0, 1};
         die = new StubDie(rolls);
         gameController = new GameController(guiController, gameBoard, die, die);
         gameController.playTurn(player1);
@@ -237,7 +237,7 @@ public class GameControllerTest {
         Assert.assertTrue(player1.inJail);
         Assert.assertEquals(2, player1.getCurrentPos());
 
-        die = new StubDie(new int[]{0, 0, 1, 2, 3, 4, 1, 1});
+        die = new StubDie(new int[]{1, 2, 3, 4, 1, 1});
         gameController.die1 = die;
         gameController.die2 = die;
         gameController.playTurn(player2);

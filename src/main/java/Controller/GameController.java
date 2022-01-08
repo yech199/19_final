@@ -60,7 +60,8 @@ public class GameController {
 
     private static Player[] setUpPlayers(ViewController guiController) {
         int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?",
-                GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS), GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
+                GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS),
+                GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
 
         // Laver x antal nye spillere med navn
         Player[] playerList = new Player[playerCount];
@@ -107,16 +108,21 @@ public class GameController {
      * Logik til den enkeltes spillers tur
      */
     public void playTurn(Player player) {
-        guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
-        int faceValue1 = die1.roll();
-        int faceValue2 = die2.roll();
-        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
-        int faceValue = faceValue1 + faceValue2;
+        int faceValue1;
+        int faceValue2;
+        int faceValue = 0;
 
-        if (player.inJail) {
+        if (!player.inJail) {
+            guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
+            faceValue1 = die1.roll();
+            faceValue2 = die2.roll();
+            guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+            faceValue = faceValue1 + faceValue2;
+        }
+        else {
             if (player.getOutOfJailFree) {
-                guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
-                        "benådelseskort fra Kongen.", "OK");
+                guiController.getUserButtonPressed(player.name + " er røget i fængsel, " +
+                        "men har et benådelseskort fra Kongen, og kommer derfor gratis ud af fængslet", "OK");
                 player.getOutOfJailFree = false;
                 player.inJail = false;
             }
@@ -125,14 +131,15 @@ public class GameController {
                         "Hvordan vil du komme ud?", "Betal " + GlobalValues.JAIL_PRICE + " kr", "Rul 2 ens").equals("Rul 2 ens")) {
                     for (int i = 0; i < 3; i++) {
                         guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
-                        int die1 = this.die1.roll();
-                        int die2 = this.die1.roll();
+                        faceValue1 = this.die1.roll();
+                        faceValue2 = this.die1.roll();
 
-                        guiController.setDice(die1, 2, 8, die2, 3, 8);
+                        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
 
-                        if (die1 == die2) { //tjekker om der er blevet rullet 2 ens
+                        // Tjekker om der er blevet rullet 2 ens
+                        if (faceValue1 == faceValue2) {
                             player.inJail = false;
-                            faceValue = die1 + die2;
+                            faceValue = faceValue1 + faceValue2;
                             i = 3; //stopper loopet
                         }
                     }
@@ -157,6 +164,9 @@ public class GameController {
         //--------------------------------------------------------------------------------------------------------------
         if (player.getBalance() <= 0) {
             playerList = removeElementFromOldArray(playerList, player.index);
+            if (player == playerList[playerList.length - 1]) {
+                playRound();
+            }
         }
     }
 
