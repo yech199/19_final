@@ -26,6 +26,10 @@ public class StubGUIController extends ViewController {
     }
 
     @Override
+    public void removeCar(Player player) {
+    }
+
+    @Override
     public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {
     }
 

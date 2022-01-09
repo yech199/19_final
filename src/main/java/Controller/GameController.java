@@ -20,6 +20,7 @@ public class GameController {
     public Player[] playerList;
     public boolean gameEnded;
     public int roundCounter;
+    private Player[] tmpPlayerList;
 
     public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
@@ -27,6 +28,7 @@ public class GameController {
         this.gameBoard = gameBoard;
         this.guiController = guiController;
         this.playerList = players;
+        this.tmpPlayerList = this.playerList;
     }
 
     /**
@@ -59,7 +61,7 @@ public class GameController {
 
     private static Player[] setUpPlayers(ViewController guiController) {
         int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?",
-                GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS),
+                        GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS),
                 GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
 
         // Laver x antal nye spillere med navn
@@ -91,7 +93,7 @@ public class GameController {
         roundCounter++;
         guiController.showMessage("Runde " + roundCounter);
         for (Player player : playerList) {
-            if (playerList.length == 1) {
+            if (tmpPlayerList.length == 1) {
                 gameEnded = true;
                 return;
             }
@@ -112,11 +114,7 @@ public class GameController {
         int faceValue = 0;
 
         if (!player.inJail) {
-            guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
-            faceValue1 = die1.roll();
-            faceValue2 = die2.roll();
-            guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
-            faceValue = faceValue1 + faceValue2;
+            faceValue = rollDice(player);
         }
         else {
 
@@ -125,8 +123,7 @@ public class GameController {
                         "men har et benådelseskort fra Kongen, og kommer derfor gratis ud af fængslet", "OK");
                 player.getOutOfJailFree = false;
                 player.inJail = false;
-            }
-            else {
+            } else {
 
                 if (guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
                         "Hvordan vil du komme ud?", "Betal " + GlobalValues.JAIL_PRICE + " kr", "Rul 2 ens").equals("Rul 2 ens")) {
@@ -164,11 +161,11 @@ public class GameController {
                         // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
                         return;
                     }
-                }
-                else {
+                } else {
                     player.setJailTryRollCounter(1);
                     player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
                     player.inJail = false;
+                    faceValue = rollDice(player);
                 }
             }
         }
@@ -180,15 +177,34 @@ public class GameController {
         landedOn.fieldAction(player);
         checkIfInstanceOf(player, faceValue, landedOn);
 
+
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
         //--------------------------------------------------------------------------------------------------------------
         if (player.getBalance() <= 0) {
-            playerList = removeElementFromOldArray(playerList, player.index);
-            if (player == playerList[playerList.length - 1]) {
-                playRound();
-            }
+            guiController.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
+            guiController.removeCar(player);
+            tmpPlayerList = removeElementFromOldArray(playerList, player.getIndex());
+            // if (player == playerList[player.index]) {
+            //     playRound();
+            // }
         }
+        if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
+                tmpPlayerList.length == 1) {
+            playerList = tmpPlayerList;
+        }
+    }
+
+    private int rollDice(Player player) {
+        int faceValue2;
+        int faceValue1;
+        int faceValue;
+        guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
+        faceValue1 = die1.roll();
+        faceValue2 = die2.roll();
+        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+        faceValue = faceValue1 + faceValue2;
+        return faceValue;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -206,8 +222,7 @@ public class GameController {
                 duplicates = true;
                 dieValues.clear();
                 break;
-            }
-            else {
+            } else {
                 dieValues.put(rollResult, playerList[i]);
             }
         }
@@ -216,18 +231,26 @@ public class GameController {
 
     private void decideStartingOrder() {
         HashMap<Integer, Player> dieValues = new HashMap<>();
+        Player[] orderOfPlayers = playerList;
+
         boolean rollAgain = true;
         while (rollAgain) {
             rollAgain = rollDice(dieValues);
             if (!rollAgain) {
                 Object[] keys = dieValues.keySet().toArray();
                 Arrays.sort(keys, Collections.reverseOrder());
-                for (int i = 0; i < playerList.length; i++) {
-                    playerList[i] = dieValues.get(keys[i]);
+                for (int i = 0; i < orderOfPlayers.length; i++) {
+                    orderOfPlayers[i] = dieValues.get(keys[i]);
                 }
+            } else {
+                guiController.getUserButtonPressed("Der er ens antal øjne " + orderOfPlayers[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
             }
-            else {
-                guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
+        }
+        for (int i = 0; i < orderOfPlayers.length; i++) {
+            for (Player player : orderOfPlayers) {
+                if (orderOfPlayers[i].getIndex() == i) {
+                    playerList[i].setIndex(player.getIndex());
+                }
             }
         }
     }
@@ -256,9 +279,7 @@ public class GameController {
                         // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     }
                 }
-            }
-
-            else {
+            } else {
                 if (landedOn instanceof PropertyField propertyField) {
                     if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
@@ -266,16 +287,14 @@ public class GameController {
 
                         propertyField.buyBuilding(player);
                     }
-                }
-                else if (ownableField instanceof BreweryField breweryField) {
+                } else if (ownableField instanceof BreweryField breweryField) {
                     BreweryField[] breweryFields = new BreweryField[]{};
                     BreweryField[] tmpFields = gameBoard.findAllBreweryFields(breweryFields);
 
                     breweryField.rent = faceValue * 100;
                     player.addAmountToBalance(-breweryField.rent);
                     breweryField.owner.addAmountToBalance(breweryField.rent);
-                }
-                else if (ownableField instanceof ShippingField shippingField) {
+                } else if (ownableField instanceof ShippingField shippingField) {
                     ShippingField[] shippingFields = new ShippingField[]{};
                     ShippingField[] tmpFields = gameBoard.findAllShippingFields(shippingFields);
 
@@ -285,8 +304,7 @@ public class GameController {
                             shippingField.rent = shippingField.shippingRents[3];
                             player.addAmountToBalance(-shippingField.rent);
                             shippingField.owner.addAmountToBalance(shippingField.rent);
-                        }
-                        else if ((tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner ||
+                        } else if ((tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner ||
                                 tmpFields[1].owner == tmpFields[2].owner && tmpFields[2].owner == tmpFields[3].owner ||
                                 tmpFields[2].owner == tmpFields[3].owner && tmpFields[3].owner == tmpFields[0].owner ||
                                 tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[3].owner) &&
@@ -294,8 +312,7 @@ public class GameController {
                             shippingField.rent = shippingField.shippingRents[2];
                             player.addAmountToBalance(-shippingField.rent);
                             shippingField.owner.addAmountToBalance(shippingField.rent);
-                        }
-                        else if ((tmpFields[0].owner == tmpFields[1].owner) && (tmpFields[0].owner != null) ||
+                        } else if ((tmpFields[0].owner == tmpFields[1].owner) && (tmpFields[0].owner != null) ||
                                 (tmpFields[0].owner == tmpFields[2].owner) && (tmpFields[0].owner != null) ||
                                 (tmpFields[0].owner == tmpFields[3].owner) && (tmpFields[0].owner != null) ||
                                 (tmpFields[1].owner == tmpFields[2].owner) && (tmpFields[1].owner != null) ||
@@ -304,8 +321,7 @@ public class GameController {
                             shippingField.rent = shippingField.shippingRents[1];
                             player.addAmountToBalance(-shippingField.rent);
                             shippingField.owner.addAmountToBalance(shippingField.rent);
-                        }
-                        else {
+                        } else {
                             shippingField.rent = shippingField.shippingRents[0];
                             player.addAmountToBalance(-shippingField.rent);
                             shippingField.owner.addAmountToBalance(shippingField.rent);
@@ -314,8 +330,7 @@ public class GameController {
                 }
                 guiController.updatePlayer(ownableField.owner);
             }
-        }
-        else if (landedOn instanceof ChanceField) {
+        } else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
             guiController.displayChanceCard(chanceCard);
             int tmpPos = player.getCurrentPos();
@@ -371,8 +386,7 @@ public class GameController {
             if (tmpFields.length == 2 && tmpFields[0].owner == tmpFields[1].owner) {
                 // Tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
                 ownsAll = true;
-            }
-            else if (tmpFields.length == 3 && tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner) {
+            } else if (tmpFields.length == 3 && tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner) {
                 ownsAll = true;
             }
         }
@@ -386,19 +400,17 @@ public class GameController {
     public void setGameEnded() {
         String winner = getWinner(playerList).name;
 
-        if (playerList.length == 1){
+        if (playerList.length == 1) {
             guiController.showMessage("Spillet er slut!\n" +
                     winner + " er den eneste spiller tilbage og\n" +
                     winner + " har derfor vundet med " + playerList[0].getBalance() + " kr.");
-        }
-        else if (playerList.length == 3) {
+        } else if (playerList.length == 3) {
             guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                     playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                     winner + " har vundet!");
-        }
-        else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
+        } else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
                 playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                 playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                 playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
@@ -450,16 +462,15 @@ public class GameController {
 
     /**
      * Fjerner en player fra et array af typen Player
+     *
      * @param oldArray Det array vi vil fjerne et element fra
-     * @param index Den spiller vi vil fjerne fra arrayet
+     * @param index    Den spiller vi vil fjerne fra arrayet
      * @return Det gamle array uden den spiller vi hat fjernet
      */
-    public static Player[] removeElementFromOldArray(Player[] oldArray, int index) {
+    public Player[] removeElementFromOldArray(Player[] oldArray, int index) {
         // Hvis array'et er tomt, eller hvis index'et ikke er i array rækkevidden
         // returneres det originale array
-        if (oldArray == null || index < 0
-                || index >= oldArray.length) {
-
+        if (oldArray == null || index < 0 || index >= oldArray.length) {
             return oldArray;
         }
 
@@ -476,6 +487,14 @@ public class GameController {
 
             // Hvis index'et ikke er den element man vil fjerne
             anotherArray[k++] = oldArray[i];
+        }
+
+        for (int i = 0; i < anotherArray.length; i++) {
+            for (Player player : oldArray) {
+                if (oldArray[i].getIndex() == i) {
+                    anotherArray[i].setIndex(player.getIndex());
+                }
+            }
         }
         return anotherArray;
     }

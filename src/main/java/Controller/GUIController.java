@@ -147,6 +147,13 @@ public class GUIController extends ViewController {
         guiPlayer.setBalance(player.getBalance());
     }
 
+    @Override
+    public void removeCar(Player player) {
+        GUI_Player guiPlayer = getGuiVersion(player);
+        // gui_fieldArray[player.getPreviousPos()].setCar(guiPlayer, false);
+        gui_fieldArray[player.getCurrentPos()].setCar(guiPlayer, false);
+    }
+
     /**
      * Displays one die with the given value, at a random position on the board
      *
