@@ -3,6 +3,7 @@ package Model.Fields;
 import Controller.GameController;
 import Model.Die;
 import Model.GameBoard;
+import Model.GlobalValues;
 import Model.Player;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,40 +35,21 @@ public class BreweryFieldTest {
         gameController = new GameController(guiController, gameBoard, die, die);
     }
 
-
-
-    @Test
-    public void testCheckInstanceOf() {
-        Player player1 = players[0];
-        Player player2 = players[1];
-        BreweryField breweryField = (BreweryField) fields[0];
-        breweryField.owner = player2;
-        int balanceBefore = player1.getBalance();
-        gameController.checkIfInstanceOf(players[0], 1, fields[0]);
-        int balanceAfter = player1.getBalance();
-
-        Assert.assertTrue(balanceBefore > balanceAfter);
-        Assert.assertEquals(500, balanceBefore);
-        Assert.assertEquals(400, balanceAfter);
-    }
-
     @Test
     public void testCheckInstanceOfBothBreweryFieldsOwned(){
         Player player1 = players[0];
         Player player2 = players[1];
         BreweryField breweryField1 = (BreweryField) fields[0];
         BreweryField breweryField2 = (BreweryField) fields[1];
-        breweryField1.owner = player2;
-        breweryField2.owner = player2;
-        int balanceBefore = player1.getBalance();
-        gameController.checkIfInstanceOf(players[0], 1, fields[0]);
-        int balanceafter = player1.getBalance();
+        int faceValue = 1;
+        gameController.checkIfInstanceOf(player1, faceValue, breweryField1);
+        gameController.checkIfInstanceOf(player2, faceValue, breweryField1);
 
-        Assert.assertTrue(balanceBefore > balanceafter);
-        Assert.assertEquals(balanceBefore, 500);
-        Assert.assertEquals(balanceafter, 300);
+        Assert.assertEquals(faceValue * 100, breweryField1.rent);
 
+        gameController.checkIfInstanceOf(player1, faceValue, breweryField2);
+        gameController.checkIfInstanceOf(player2, faceValue, breweryField2);
 
-
+        Assert.assertEquals(faceValue * 200, breweryField2.rent);
     }
 }

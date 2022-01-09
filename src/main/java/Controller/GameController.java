@@ -176,8 +176,8 @@ public class GameController {
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
 
-        landedOn.fieldAction(player);
         checkIfInstanceOf(player, faceValue, landedOn);
+        landedOn.fieldAction(player);
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
@@ -271,32 +271,33 @@ public class GameController {
                     player.addAmountToBalance(-ownableField.price);
                     ownableField.owner = player;
                     guiController.setOwner(player);
-                }
-                // Efter den aktive spiller har købt en færge
-                if (ownableField instanceof ShippingField) {
-                    int count = 0;
-                    for (ShippingField f : gameBoard.shippingFields)
-                        if (f.owner == player)
-                            count++;
 
-                    int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, --count));
-                    for (ShippingField f : gameBoard.shippingFields)
-                        if (f.owner == player)
-                            f.rent = rent;
-                }
+                    // Opdaterer spillerens ejede færgers rente efter spilleren køber en færge
+                    if (ownableField instanceof ShippingField) {
+                        int count = 0;
+                        for (ShippingField f : gameBoard.shippingFields)
+                            if (f.owner == player)
+                                count++;
 
-                //------------------------------------------------------------------------------------------------------
-                // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
-                //------------------------------------------------------------------------------------------------------
-                // FIXME fjern køb hus og hustjek
-                if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0) {
-                        PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
-                        for (PropertyField tmpField : tmpFields) {
-                            tmpField.rent *= 2;
+                        int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, count - 1));
+                        for (ShippingField f : gameBoard.shippingFields)
+                            if (f.owner == player)
+                                f.rent = rent;
+                    }
+
+                    //------------------------------------------------------------------------------------------------------
+                    // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
+                    //------------------------------------------------------------------------------------------------------
+                    // FIXME fjern køb hus og hustjek
+                    if (landedOn instanceof PropertyField propertyField) {
+                        if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0) {
+                            PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
+                            for (PropertyField tmpField : tmpFields) {
+                                tmpField.rent *= 2;
+                            }
+                            // Fordobler renten den.
+                            // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                         }
-                        // Fordobler renten den.
-                        // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     }
                 }
             }
@@ -310,17 +311,15 @@ public class GameController {
                         propertyField.buyBuilding(player);
                     }
                 }
-                else if (ownableField instanceof BreweryField breweryField) {
+                // Har brug for en faceValue og står derfor ikke samme sted som shippingField
+                else if (ownableField instanceof BreweryField) {
+                    Player owner = ownableField.owner;
                     int counter = 0;
                     for (BreweryField f: gameBoard.breweryFields)
-                        if (f.owner == player)
+                        if (f.owner == owner)
                             counter++;
 
-                    int rent = faceValue * (100 * ++counter);
-                    for (BreweryField f : gameBoard.breweryFields) {
-                        if (f.owner == player)
-                            f.rent = rent;
-                    }
+                    ownableField.rent = faceValue * (100 * counter);
                 }
                 guiController.updatePlayer(ownableField.owner);
             }
