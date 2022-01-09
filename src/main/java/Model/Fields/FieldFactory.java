@@ -1,5 +1,7 @@
 package Model.Fields;
 
+import Model.GlobalValues;
+
 import java.awt.*;
 
 public final class FieldFactory {
@@ -21,7 +23,7 @@ public final class FieldFactory {
                 new TaxField("Betal\nindkomst-\nskat", "Betal 4000 kr.", "Betal indkomstskat\n10% eller kr. 4000,-", 4000),
 
                 // Index 5-9
-                new ShippingField("Øresund", "Pris: kr. 4000", "Øresundsredderiet\nHelsingør-Helsingborg", 500),
+                new ShippingField("Øresund", "Pris: kr. 4000", "Øresundsredderiet\nHelsingør-Helsingborg", GlobalValues.SHIPPING_RENT),
                 new PropertyField("Roskildevej", "Pris: kr. 2000", "Roskildevej", 100, 2000,
                         new Color(255, 128, 0), new Color(0, 0, 0), 1000, new int[]{600, 1800, 5400, 8000, 11000}),
                 new ChanceField(),
@@ -41,7 +43,7 @@ public final class FieldFactory {
                         new Color(102, 204, 0), new Color(0, 0, 0), 2000, new int[]{1250, 3750, 10000, 14000, 18000}),
 
                 // Index 15-19
-                new ShippingField("D.F.D.S.", "Pris: kr. 4000", "D.F.D.S.\nMols-Linien", 500),
+                new ShippingField("D.F.D.S.", "Pris: kr. 4000", "D.F.D.S.\nMols-Linien", GlobalValues.SHIPPING_RENT),
                 new PropertyField("Bernstorffsvej", "Pris: kr. 3600", "Bernstorffsvej", 300, 3600,
                         new Color(96, 96, 96), new Color(0, 0, 0), 2000, new int[]{1400, 4000, 11000, 15000, 19000}),
                 new ChanceField(),
@@ -61,7 +63,7 @@ public final class FieldFactory {
                         new Color(153, 0, 0), new Color(255, 255, 255), 3000, new int[]{2000, 6000, 15000, 18500, 22000}),
 
                 // Index 25-29
-                new ShippingField("Ø.S.", "Pris: kr. 4000", "Ø.S. redderiet\nGedser-Rostock", 500),
+                new ShippingField("Ø.S.", "Pris: kr. 4000", "Ø.S. redderiet\nGedser-Rostock", GlobalValues.SHIPPING_RENT),
                 new PropertyField("Bredgade", "Pris: kr. 5200", "Bredgade", 450, 5200,
                         new Color(255, 255, 255), new Color(0, 0, 0), 3000, new int[]{2200, 6600, 16000, 19500, 23000}),
                 new PropertyField("Kgs. Nytorv", "Pris: kr. 5200", "Kongens Nytorv", 450, 5200,
@@ -82,7 +84,7 @@ public final class FieldFactory {
                         new Color(255, 255, 50), new Color(0, 0, 0), 4000, new int[]{3000, 9000, 20000, 24000, 28000}),
 
                 // Index 35-39
-                new ShippingField("Bornholm", "Pris: kr. 4000", "Bornholms redderi\nRødby-Puttgarden", 500),
+                new ShippingField("Bornholm", "Pris: kr. 4000", "Bornholms redderi\nRødby-Puttgarden", GlobalValues.SHIPPING_RENT),
                 new ChanceField(),
                 new PropertyField("Frederiks-\nberggade", "Pris: kr. 7000", "Frederiksberggade", 700, 7000,
                         new Color(102, 0, 102), new Color(255, 255, 255), 4000, new int[]{3500, 10000, 22000, 26000, 30000}),

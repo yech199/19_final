@@ -10,6 +10,8 @@ public class GlobalValues {
     public static final int JAIL_PRICE = 1000;
     public static final int JAIL_INDEX = 10;
 
+    public static final int SHIPPING_RENT = 500;
+
     public static final int MIN_PLAYERS = 3;
     public static final int MAX_PLAYERS = 6;
 
