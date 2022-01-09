@@ -297,7 +297,6 @@ public class GameControllerTest {
         for (int i = 0; i < 41; i++) {
             gameController.playRound();
         }
-
         Assert.assertTrue(gameController.gameEnded);
     }
 }

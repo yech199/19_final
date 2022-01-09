@@ -185,10 +185,7 @@ public class GameController {
         if (player.getBalance() <= 0) {
             guiController.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
             guiController.removeCar(player);
-            tmpPlayerList = removeElementFromOldArray(playerList, player.getIndex());
-            // if (player == playerList[player.index]) {
-            //     playRound();
-            // }
+            tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
         }
         if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
                 tmpPlayerList.length == 1) {
@@ -249,12 +246,10 @@ public class GameController {
                 guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
             }
         }
-        for (int i = 0; i < orderOfPlayers.length; i++) {
-            for (Player player : orderOfPlayers) {
-                if (orderOfPlayers[i].getIndex() == i) {
-                    playerList[i].setIndex(player.getIndex());
-                }
-            }
+        int i = 0;
+        for (Player player : orderOfPlayers) {
+            playerList[i].setIndex(i);
+            i++;
         }
     }
 
@@ -297,8 +292,8 @@ public class GameController {
                     BreweryField[] breweryFields = new BreweryField[]{};
                     BreweryField[] tmpFields = gameBoard.findAllBreweryFields(breweryFields);
 
-                    if (tmpFields.length == 2){
-                        if (tmpFields[0].owner == tmpFields[1].owner){
+                    if (tmpFields.length == 2) {
+                        if (tmpFields[0].owner == tmpFields[1].owner) {
                             breweryField.rent = faceValue * 200;
                             player.addAmountToBalance(-breweryField.rent);
                             breweryField.owner.addAmountToBalance(breweryField.rent);
@@ -420,26 +415,26 @@ public class GameController {
      * Giver en slut-besked med spillernes endelige scorer.
      */
     public void setGameEnded() {
-        String winner = getWinner(playerList).name;
+        Player winner = getWinner(playerList);
 
         if (playerList.length == 1) {
             guiController.showMessage("Spillet er slut!\n" +
-                    winner + " er den eneste spiller tilbage og\n" +
-                    winner + " har derfor vundet med " + playerList[0].getBalance() + " kr.");
+                    winner.name + " er den eneste spiller tilbage og\n" +
+                    winner.name + " har derfor vundet med " + winner.getBalance() + " kr.");
         }
         else if (playerList.length == 3) {
             guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                     playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
-                    winner + " har vundet!");
+                    winner.name + " har vundet!");
         }
         else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
                 playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                 playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                 playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                 playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
-                winner + " har vundet!");
+                winner.name + " har vundet!");
 
         else if (playerList.length == 5) guiController.showMessage("Spillet er slut!\n" +
                 playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
@@ -447,7 +442,7 @@ public class GameController {
                 playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                 playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
                 playerList[4].name + " har " + playerList[4].getBalance() + " point.\n" +
-                winner + " har vundet!");
+                winner.name + " har vundet!");
 
         else guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
@@ -456,7 +451,7 @@ public class GameController {
                     playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
                     playerList[4].name + " har " + playerList[4].getBalance() + " point.\n" +
                     playerList[5].name + " har " + playerList[5].getBalance() + " point.\n" +
-                    winner + " har vundet!");
+                    winner.name + " har vundet!");
 
         guiController.showMessage("Luk spillet?");
         guiController.close();
@@ -512,13 +507,10 @@ public class GameController {
             // Hvis index'et ikke er den element man vil fjerne
             anotherArray[k++] = oldArray[i];
         }
-
-        for (int i = 0; i < anotherArray.length; i++) {
-            for (Player player : oldArray) {
-                if (oldArray[i].getIndex() == i) {
-                    anotherArray[i].setIndex(player.getIndex());
-                }
-            }
+        int i = 0;
+        for (Player player : anotherArray) {
+            anotherArray[i].setIndex(i);
+            i++;
         }
         return anotherArray;
     }
