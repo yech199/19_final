@@ -15,12 +15,8 @@ public class ShippingField extends OwnableField {
         this(name, subText, description, rent, 4000);
     }
 
-    public ShippingField(int rent, int price) {
-        this("", "", "", rent, price);
-    }
-
-    @Override
-    public void fieldAction(Player player) {
+    public ShippingField(int price) {
+        this("", "", "", 0, price);
     }
 
     @Override

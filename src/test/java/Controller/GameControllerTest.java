@@ -120,7 +120,7 @@ public class GameControllerTest {
 
         Field[] fields = new Field[]{
                 new StartField("", "", "", Color.BLACK),
-                new ShippingField(0, 0),
+                new ShippingField(0),
                 new ChanceField(),
         };
 
@@ -133,6 +133,7 @@ public class GameControllerTest {
 
             int tmpBalance = player.getBalance();
             gameController.playTurn(player);
+            ((OwnableField) fields[1]).owner = null;
 
             // Tjekker at spilleren kun får pengene én gang
             assertEquals(tmpBalance + GlobalValues.START_FIELD_VALUE, player.getBalance());

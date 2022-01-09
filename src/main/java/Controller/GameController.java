@@ -273,13 +273,13 @@ public class GameController {
                     guiController.setOwner(player);
                 }
                 // Efter den aktive spiller har købt en færge
-                if (ownableField instanceof ShippingField shippingField) {
+                if (ownableField instanceof ShippingField) {
                     int count = 0;
                     for (ShippingField f : gameBoard.shippingFields)
                         if (f.owner == player)
                             count++;
 
-                    int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, count));
+                    int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, --count));
                     for (ShippingField f : gameBoard.shippingFields)
                         if (f.owner == player)
                             f.rent = rent;
@@ -359,7 +359,7 @@ public class GameController {
      * @param player    Den aktive player
      * @param faceValue terningens faceValue
      */
-    public void movePlayerForward(Player player, int faceValue) {
+    private void movePlayerForward(Player player, int faceValue) {
         player.setCurrentPos((player.getCurrentPos() + faceValue) % gameBoard.fields.length);
 
         // Spilleren passerer Start
@@ -397,7 +397,7 @@ public class GameController {
      * Tjekker hvilken spiller der har vundet spillet.
      * Giver en slut-besked med spillernes endelige scorer.
      */
-    public void setGameEnded() {
+    private void setGameEnded() {
         Player winner = getWinner(playerList);
 
         if (playerList.length == 1) {
@@ -447,7 +447,7 @@ public class GameController {
      * @param playerList tager listen af players som input
      * @return returnerer den spiller der har vundet
      */
-    public Player getWinner(Player[] playerList) {
+    private Player getWinner(Player[] playerList) {
         Player winner = new Player("", 0); //tom spiller, da den udskiftes med en ny spiller efter første runde i for-loop
         for (Player player : playerList) {
             if (winner.getBalance() < player.getBalance()) {
@@ -457,7 +457,7 @@ public class GameController {
         return winner;
     }
 
-    public ChanceCard drawChanceCard() {
+    private ChanceCard drawChanceCard() {
         int rng = new Random().nextInt(gameBoard.chanceCards.length);
         return gameBoard.chanceCards[rng];
     }
@@ -469,7 +469,7 @@ public class GameController {
      * @param index    Den spiller vi vil fjerne fra arrayet
      * @return Det gamle array uden den spiller vi hat fjernet
      */
-    public Player[] removeElementFromOldArray(Player[] oldArray, int index) {
+    private Player[] removeElementFromOldArray(Player[] oldArray, int index) {
         // Hvis array'et er tomt, eller hvis index'et ikke er i array rækkevidden
         // returneres det originale array
         if (oldArray == null || index < 0 || index >= oldArray.length) {
