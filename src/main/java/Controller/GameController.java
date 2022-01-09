@@ -311,19 +311,15 @@ public class GameController {
                     }
                 }
                 else if (ownableField instanceof BreweryField breweryField) {
-                    BreweryField[] tmpFields = gameBoard.breweryFields;
+                    int counter = 0;
+                    for (BreweryField f: gameBoard.breweryFields)
+                        if (f.owner == player)
+                            counter++;
 
-                    if (tmpFields.length == 2) {
-                        if (tmpFields[0].owner == tmpFields[1].owner) {
-                            breweryField.rent = faceValue * 200;
-                            player.addAmountToBalance(-breweryField.rent);
-                            breweryField.owner.addAmountToBalance(breweryField.rent);
-                        }
-                        else {
-                            breweryField.rent = faceValue * 100;
-                            player.addAmountToBalance(-breweryField.rent);
-                            breweryField.owner.addAmountToBalance(breweryField.rent);
-                        }
+                    int rent = faceValue * (100 * ++counter);
+                    for (BreweryField f : gameBoard.breweryFields) {
+                        if (f.owner == player)
+                            f.rent = rent;
                     }
                 }
                 guiController.updatePlayer(ownableField.owner);

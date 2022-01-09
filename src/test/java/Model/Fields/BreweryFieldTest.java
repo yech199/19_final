@@ -47,8 +47,8 @@ public class BreweryFieldTest {
         int balanceAfter = player1.getBalance();
 
         Assert.assertTrue(balanceBefore > balanceAfter);
-        Assert.assertEquals(balanceBefore, 500);
-        Assert.assertEquals(balanceAfter, 400);
+        Assert.assertEquals(500, balanceBefore);
+        Assert.assertEquals(400, balanceAfter);
     }
 
     @Test

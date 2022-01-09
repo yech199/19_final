@@ -12,10 +12,6 @@ public class BreweryField extends OwnableField {
     }
 
     @Override
-    public void fieldAction(Player player) {
-    }
-
-    @Override
     public GUI_Brewery getGUIversion() {
         return new GUI_Brewery("default", this.fieldName, this.subText, this.description, this.rent + "kr.", this.backgroundColor, this.textColor);
     }
