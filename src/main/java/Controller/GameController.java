@@ -61,7 +61,7 @@ public class GameController {
 
     private static Player[] setUpPlayers(ViewController guiController) {
         int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?",
-                        GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS),
+                GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS),
                 GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
 
         // Laver x antal nye spillere med navn
@@ -123,7 +123,8 @@ public class GameController {
                         "men har et benådelseskort fra Kongen, og kommer derfor gratis ud af fængslet", "OK");
                 player.getOutOfJailFree = false;
                 player.inJail = false;
-            } else {
+            }
+            else {
 
                 if (guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
                         "Hvordan vil du komme ud?", "Betal " + GlobalValues.JAIL_PRICE + " kr", "Rul 2 ens").equals("Rul 2 ens")) {
@@ -161,7 +162,8 @@ public class GameController {
                         // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
                         return;
                     }
-                } else {
+                }
+                else {
                     player.setJailTryRollCounter(1);
                     player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
                     player.inJail = false;
@@ -176,7 +178,6 @@ public class GameController {
 
         landedOn.fieldAction(player);
         checkIfInstanceOf(player, faceValue, landedOn);
-
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
@@ -222,7 +223,8 @@ public class GameController {
                 duplicates = true;
                 dieValues.clear();
                 break;
-            } else {
+            }
+            else {
                 dieValues.put(rollResult, playerList[i]);
             }
         }
@@ -242,8 +244,9 @@ public class GameController {
                 for (int i = 0; i < orderOfPlayers.length; i++) {
                     orderOfPlayers[i] = dieValues.get(keys[i]);
                 }
-            } else {
-                guiController.getUserButtonPressed("Der er ens antal øjne " + orderOfPlayers[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
+            }
+            else {
+                guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
             }
         }
         for (int i = 0; i < orderOfPlayers.length; i++) {
@@ -279,7 +282,9 @@ public class GameController {
                         // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     }
                 }
-            } else {
+            }
+
+            else {
                 if (landedOn instanceof PropertyField propertyField) {
                     if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
@@ -287,14 +292,26 @@ public class GameController {
 
                         propertyField.buyBuilding(player);
                     }
-                } else if (ownableField instanceof BreweryField breweryField) {
+                }
+                else if (ownableField instanceof BreweryField breweryField) {
                     BreweryField[] breweryFields = new BreweryField[]{};
                     BreweryField[] tmpFields = gameBoard.findAllBreweryFields(breweryFields);
 
-                    breweryField.rent = faceValue * 100;
-                    player.addAmountToBalance(-breweryField.rent);
-                    breweryField.owner.addAmountToBalance(breweryField.rent);
-                } else if (ownableField instanceof ShippingField shippingField) {
+                    if (tmpFields.length == 2){
+                        if (tmpFields[0].owner == tmpFields[1].owner){
+                            breweryField.rent = faceValue * 200;
+                            player.addAmountToBalance(-breweryField.rent);
+                            breweryField.owner.addAmountToBalance(breweryField.rent);
+                        }
+                        else {
+                            breweryField.rent = faceValue * 100;
+                            player.addAmountToBalance(-breweryField.rent);
+                            breweryField.owner.addAmountToBalance(breweryField.rent);
+                        }
+                    }
+
+                }
+                else if (ownableField instanceof ShippingField shippingField) {
                     ShippingField[] shippingFields = new ShippingField[]{};
                     ShippingField[] tmpFields = gameBoard.findAllShippingFields(shippingFields);
 
@@ -304,7 +321,8 @@ public class GameController {
                             shippingField.rent = shippingField.shippingRents[3];
                             player.addAmountToBalance(-shippingField.rent);
                             shippingField.owner.addAmountToBalance(shippingField.rent);
-                        } else if ((tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner ||
+                        }
+                        else if ((tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner ||
                                 tmpFields[1].owner == tmpFields[2].owner && tmpFields[2].owner == tmpFields[3].owner ||
                                 tmpFields[2].owner == tmpFields[3].owner && tmpFields[3].owner == tmpFields[0].owner ||
                                 tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[3].owner) &&
@@ -312,7 +330,8 @@ public class GameController {
                             shippingField.rent = shippingField.shippingRents[2];
                             player.addAmountToBalance(-shippingField.rent);
                             shippingField.owner.addAmountToBalance(shippingField.rent);
-                        } else if ((tmpFields[0].owner == tmpFields[1].owner) && (tmpFields[0].owner != null) ||
+                        }
+                        else if ((tmpFields[0].owner == tmpFields[1].owner) && (tmpFields[0].owner != null) ||
                                 (tmpFields[0].owner == tmpFields[2].owner) && (tmpFields[0].owner != null) ||
                                 (tmpFields[0].owner == tmpFields[3].owner) && (tmpFields[0].owner != null) ||
                                 (tmpFields[1].owner == tmpFields[2].owner) && (tmpFields[1].owner != null) ||
@@ -321,7 +340,8 @@ public class GameController {
                             shippingField.rent = shippingField.shippingRents[1];
                             player.addAmountToBalance(-shippingField.rent);
                             shippingField.owner.addAmountToBalance(shippingField.rent);
-                        } else {
+                        }
+                        else {
                             shippingField.rent = shippingField.shippingRents[0];
                             player.addAmountToBalance(-shippingField.rent);
                             shippingField.owner.addAmountToBalance(shippingField.rent);
@@ -330,7 +350,8 @@ public class GameController {
                 }
                 guiController.updatePlayer(ownableField.owner);
             }
-        } else if (landedOn instanceof ChanceField) {
+        }
+        else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
             guiController.displayChanceCard(chanceCard);
             int tmpPos = player.getCurrentPos();
@@ -386,7 +407,8 @@ public class GameController {
             if (tmpFields.length == 2 && tmpFields[0].owner == tmpFields[1].owner) {
                 // Tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
                 ownsAll = true;
-            } else if (tmpFields.length == 3 && tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner) {
+            }
+            else if (tmpFields.length == 3 && tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner) {
                 ownsAll = true;
             }
         }
@@ -404,13 +426,15 @@ public class GameController {
             guiController.showMessage("Spillet er slut!\n" +
                     winner + " er den eneste spiller tilbage og\n" +
                     winner + " har derfor vundet med " + playerList[0].getBalance() + " kr.");
-        } else if (playerList.length == 3) {
+        }
+        else if (playerList.length == 3) {
             guiController.showMessage("Spillet er slut!\n" +
                     playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                     playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                     playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
                     winner + " har vundet!");
-        } else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
+        }
+        else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
                 playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
                 playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
                 playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +

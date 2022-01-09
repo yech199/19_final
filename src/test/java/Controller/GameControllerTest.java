@@ -144,7 +144,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void testPlayerGetsReleasedFromPrisonWhenHavingCardAndDoesNotLooseMoney() {
+    public void testPlayerGetsReleasedFromPrisonWhenHavingCardAndDoesNotLoseMoney() {
         int money = 1000;
         ChanceCard[] chanceCards = new ChanceCard[]{
                 new ReleaseFromPrisonCard("", "")

@@ -6,6 +6,7 @@ import gui_fields.GUI_Brewery;
 import java.awt.*;
 
 public class BreweryField extends OwnableField {
+
     public BreweryField(String name, String subText, String description) {
         super(name, subText, description, 0, 3000, Color.BLACK, Color.WHITE);
     }
