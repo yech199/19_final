@@ -30,8 +30,7 @@ public class StubGUIController extends ViewController {
     }
 
     @Override
-    public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {
-    }
+    public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {}
 
     @Override
     public String getUserButtonPressed(String msg, String... menuOptions) {
@@ -40,6 +39,10 @@ public class StubGUIController extends ViewController {
 
     @Override
     public void setOwner(Player player) {
+    }
+
+    @Override
+    public void removeOwner(int index) {
     }
 
     @Override

@@ -20,6 +20,8 @@ public abstract class ViewController {
 
     public abstract void setOwner(Player player);
 
+    public abstract void removeOwner(int index);
+
     public abstract void showMessage(String msg);
 
     public abstract void close();

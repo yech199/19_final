@@ -184,8 +184,19 @@ public class GameController {
         //--------------------------------------------------------------------------------------------------------------
         if (player.getBalance() <= 0) {
             guiController.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
+            // Slet næste linje hvis du vil sætte taberen i endnu mere evig skam
             guiController.removeCar(player);
+
+            for (int i = 0; i < gameBoard.fields.length; i++) {
+                Field f = gameBoard.fields[i];
+                if (f instanceof OwnableField ownableField && player == ownableField.owner) {
+                    ownableField.owner = null;
+                    guiController.removeOwner(i);
+                }
+            }
+
             tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
+
         }
         if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
                 tmpPlayerList.length == 1) {
@@ -268,7 +279,7 @@ public class GameController {
                         if (f.owner == player)
                             count++;
 
-                    int rent = shippingField.rent * ((int) Math.pow(2, count));
+                    int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, count));
                     for (ShippingField f : gameBoard.shippingFields)
                         if (f.owner == player)
                             f.rent = rent;

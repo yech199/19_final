@@ -191,6 +191,13 @@ public class GUIController extends ViewController {
         playerField.setOwnerName(player.name);
     }
 
+    @Override
+    public void removeOwner(int index) {
+        GUI_Ownable playerField = ((GUI_Ownable) gui_fieldArray[index]);
+        playerField.setBorder(null);
+        playerField.setOwnerName(null);
+    }
+
     /**
      * Displays a message to the user, along with an 'OK'-button.
      * The program stops/hangs at the method call until the button is pressed.
