@@ -271,9 +271,19 @@ public class GameController {
                     BreweryField[] breweryFields = new BreweryField[]{};
                     BreweryField[] tmpFields = gameBoard.findAllBreweryFields(breweryFields);
 
-                    breweryField.rent = faceValue * 100;
-                    player.addAmountToBalance(-breweryField.rent);
-                    breweryField.owner.addAmountToBalance(breweryField.rent);
+                    if (tmpFields.length == 2){
+                        if (tmpFields[0].owner == tmpFields[1].owner){
+                            breweryField.rent = faceValue * 200;
+                            player.addAmountToBalance(-breweryField.rent);
+                            breweryField.owner.addAmountToBalance(breweryField.rent);
+                        }
+                        else {
+                            breweryField.rent = faceValue * 100;
+                            player.addAmountToBalance(-breweryField.rent);
+                            breweryField.owner.addAmountToBalance(breweryField.rent);
+                        }
+                    }
+
                 }
                 else if (ownableField instanceof ShippingField shippingField) {
                     ShippingField[] shippingFields = new ShippingField[]{};
