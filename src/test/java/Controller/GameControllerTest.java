@@ -72,7 +72,7 @@ public class GameControllerTest {
         Player player = players[0];
         int[] rolls = {1, 0};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die);
+        gameController = new GameController(guiController, gameBoard, die, die, players);
 
         gameController.playTurn(player);
 
@@ -97,7 +97,7 @@ public class GameControllerTest {
         Player player = players[0];
         int[] rolls = {1, 0};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die);
+        gameController = new GameController(guiController, gameBoard, die, die, players);
 
         int tmpBalance = player.getBalance();
         gameController.playTurn(player);
@@ -129,7 +129,7 @@ public class GameControllerTest {
             Player player = new Player("");
             int[] rolls = {1, 1};
             die = new StubDie(rolls);
-            gameController = new GameController(guiController, gameBoard, die, die);
+            gameController = new GameController(guiController, gameBoard, die, die, players);
 
             int tmpBalance = player.getBalance();
             gameController.playTurn(player);
@@ -160,7 +160,7 @@ public class GameControllerTest {
         Player player = players[0];
         int[] rolls = {1, 0, 0, 0};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die);
+        gameController = new GameController(guiController, gameBoard, die, die, players);
         player.setBalance(money);
 
         gameController.playTurn(player);
@@ -231,7 +231,7 @@ public class GameControllerTest {
         player2.inJail = true;
         int[] rolls = {1, 2, 3, 4, 0, 1};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die);
+        gameController = new GameController(guiController, gameBoard, die, die, players);
         gameController.playTurn(player1);
 
         Assert.assertTrue(player1.inJail);
@@ -262,7 +262,7 @@ public class GameControllerTest {
         player1.setCurrentPos(2);
         player1.inJail = true;
         die = new StubDie(0);
-        gameController = new GameController(guiController, gameBoard, die, die);
+        gameController = new GameController(guiController, gameBoard, die, die, players);
         gameController.playTurn(player1);
 
         Assert.assertFalse(player1.inJail);
