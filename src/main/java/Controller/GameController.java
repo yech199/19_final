@@ -206,9 +206,7 @@ public class GameController {
                     guiController.removeOwner(i);
                 }
             }
-
             tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
-
         }
         if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
                 tmpPlayerList.length == 1) {
@@ -250,7 +248,6 @@ public class GameController {
         }
         return duplicates;
     }
-
 
     private void decideStartingOrder() {
         HashMap<Integer, Player> dieValues = new HashMap<>();
@@ -327,7 +324,7 @@ public class GameController {
                 else if (ownableField instanceof BreweryField) {
                     Player owner = ownableField.owner;
                     int counter = 0;
-                    for (BreweryField f: gameBoard.breweryFields)
+                    for (BreweryField f : gameBoard.breweryFields)
                         if (f.owner == owner)
                             counter++;
 
