@@ -19,7 +19,6 @@ public class GameBoard {
     public final ShippingField[] shippingFields;
     public final BreweryField[] breweryFields;
 
-
     //------------------------------------------------------------------------------------------------------------------
     // Constructor der laver et GameBoard
     //------------------------------------------------------------------------------------------------------------------

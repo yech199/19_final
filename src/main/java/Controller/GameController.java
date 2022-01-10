@@ -87,7 +87,7 @@ public class GameController {
         choice = guiController.getUserButtonPressed("Hvordan vil I slutte spillet?\n\t1. Spil til der kun er en spiller tilbage." +
                 "\n\t2. Slut spillet efter 40 runder", action1, action2);
 
-        decideStartingOrder();
+        makeStartingOrderPlayerList();
         while (!gameEnded) {
             playRound();
         }
@@ -188,7 +188,7 @@ public class GameController {
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
 
-        checkIfInstanceOf(player, faceValue, landedOn);
+        updateOwnerAndRent(player, faceValue, landedOn);
         landedOn.fieldAction(player);
 
         //--------------------------------------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ public class GameController {
         return faceValue;
     }
 
-    private boolean rollDice(HashMap<Integer, Player> dieValues) {
+    private boolean rollDiceToDecideStartingOrder(HashMap<Integer, Player> dieValues) {
         boolean duplicates = false;
         for (Player player : playerList) {
             guiController.getUserButtonPressed(player.name + " skal rulle med terningen for, " +
@@ -250,13 +250,13 @@ public class GameController {
         return duplicates;
     }
 
-    private void decideStartingOrder() {
+    private void makeStartingOrderPlayerList() {
         HashMap<Integer, Player> dieValues = new HashMap<>();
         Player[] orderOfPlayers = playerList;
 
         boolean rollAgain = true;
         while (rollAgain) {
-            rollAgain = rollDice(dieValues);
+            rollAgain = rollDiceToDecideStartingOrder(dieValues);
             if (!rollAgain) {
                 Object[] keys = dieValues.keySet().toArray();
                 Arrays.sort(keys, Collections.reverseOrder());
@@ -274,7 +274,7 @@ public class GameController {
         }
     }
 
-    public void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
+    public void updateOwnerAndRent(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField) {
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
@@ -301,8 +301,8 @@ public class GameController {
                         if (ownsAll(propertyField)) {
                             PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
                             // Fordobler renten
-                            for (PropertyField tmpField : tmpFields) {
-                                tmpField.rent *= 2;
+                            for (PropertyField field : tmpFields) {
+                                field.rent *= 2;
                             }
                         }
                     }
@@ -404,7 +404,7 @@ public class GameController {
             guiController.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
             // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig
             if (player.getCurrentPos() != tmpPos)
-                checkIfInstanceOf(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
+                updateOwnerAndRent(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
         }
 
         guiController.updatePlayer(player);
