@@ -424,7 +424,7 @@ public class GameController {
      * @param playerList tager listen af players som input
      * @return returnerer den spiller der har vundet
      */
-    private Player getWinner(Player[] playerList) {
+    Player getWinner(Player[] playerList) {
         Player winner = new Player("", 0); //tom spiller, da den udskiftes med en ny spiller efter første runde i for-loop
         for (Player player : playerList) {
             if (winner.getBalance() < player.getBalance()) {
