@@ -249,7 +249,7 @@ public class GameControllerTest {
         player2.inJail = true;
         int[] rolls;
         for (int i = 0; i < 3 ; i++) {
-            rolls= new int[]{1, 2, 3, 4, 0, 1};
+            rolls= new int[]{1, 2, 3, 4, -1, 1};
             die = new StubDie(rolls);
             gameController = new GameController(guiController, gameBoard, die, die, players);
             gameController.playTurn(player1);

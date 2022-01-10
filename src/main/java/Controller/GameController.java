@@ -22,6 +22,7 @@ public class GameController {
     public boolean afterAuction = false;
     public int roundCounter;
     private Player[] tmpPlayerList;
+    private Player[] playerRankList = new Player[]{};
     public String choice;
     public String action1;
     public String action2;
@@ -103,8 +104,10 @@ public class GameController {
      * Spiller en runde for hver spiller i player listen
      */
     public void playRound() {
-        roundCounter++;
-        guiController.showMessage("Runde " + roundCounter);
+        if (tmpPlayerList.length != 1) {
+            roundCounter++;
+            guiController.showMessage("Runde " + roundCounter);
+        }
         for (Player player : playerList) {
 
             if (choice.equals(action2)) {
@@ -116,6 +119,7 @@ public class GameController {
 
             if (tmpPlayerList.length == 1) {
                 gameEnded = true;
+                playerRankList = makePlayerRankArray(playerRankList, player);
                 return;
             }
             playTurn(player);
@@ -177,7 +181,6 @@ public class GameController {
                             // Vi returner fordi spilleren ikke må rykke, hvis spilleren har valgt at rulle 2 ens,
                             // men stadig fejler efter 3 runders forsøg. Man er da tvunget til at betale sig ud af fængslet,
                             // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
-                            // return;
                         }
                         if (player.inJail) return;
                     }
@@ -205,6 +208,7 @@ public class GameController {
         // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
         //--------------------------------------------------------------------------------------------------------------
         if (player.getBalance() <= 0) {
+            extraTurn = false;
             guiController.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
             // Slet næste linje hvis du vil sætte taberen i endnu mere evig skam
             guiController.removeCar(player);
@@ -217,6 +221,7 @@ public class GameController {
                 }
             }
             tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
+            playerRankList = makePlayerRankArray(playerRankList, player);
         }
         if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
                 tmpPlayerList.length == 1) {
@@ -398,7 +403,7 @@ public class GameController {
                 + ownableField.price + " kr.");
         int numOfPlayersBidding;
 
-        numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, playerList);
+        numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, tmpPlayerList);
 
         if (numOfPlayersBidding > 0) {
             bidOnAuction(player, ownableField, numOfPlayersBidding);
@@ -411,10 +416,10 @@ public class GameController {
      * @param ownableField Det felt der sættes på auktion
      */
     public int checksWhoWantsToTryBidding(Player player, OwnableField ownableField, Player[] playerList) {
-        int numOfPlayersBidding = playerList.length - 1;
+        int numOfPlayersBidding = tmpPlayerList.length - 1;
         action1 = "Ja";
         action2 = "Nej";
-        for (Player p : playerList) {
+        for (Player p : tmpPlayerList) {
             if (p == player)
                 p.wantToTryBidding = false;
 
@@ -442,7 +447,7 @@ public class GameController {
         Player prevPlayer = null;
 
         while (numOfPlayersBidding > 1) {
-            for (Player p : playerList) {
+            for (Player p : tmpPlayerList) {
                 if (numOfPlayersBidding == 1) break;
 
                 if (p.wantToTryBidding) {
@@ -482,7 +487,7 @@ public class GameController {
             }
         }
 
-            for (Player p : playerList) {
+            for (Player p : tmpPlayerList) {
                 if (p.wantToTryBidding) {
                     ownableField.owner = p;
                     p.addAmountToBalance(-prevBid);
@@ -565,20 +570,29 @@ public class GameController {
      */
     public void setGameEnded() {
         Player winner = getWinner(playerList);
-        if (playerList.length == 1) {
-            guiController.showMessage("Spillet er slut!\n" +
-                    winner.name + " er den eneste spiller tilbage og\n" +
-                    winner.name + " har derfor vundet med " + winner.getBalance() + " kr.");
-        }
         StringBuilder winnerMessage = null;
 
-        for (Player player : playerList) {
-            if (winnerMessage != null) {
-                winnerMessage.append(player.name).append(" har ").append(player.getBalance()).append(" point.\n");
+        if (tmpPlayerList.length == 1) {
+            for (int i = playerRankList.length - 1, k = 1 ; i >= 0 ; i--, k++) {
+                Player player = playerRankList[i];
+                if (winnerMessage != null) {
+                    winnerMessage.append(player.name).append(" fik ").append(k).append(". pladsen.\n");
+                }
+                else winnerMessage = new StringBuilder(player.name + " fik " + k + ". pladsen.\n");
             }
-            else winnerMessage = new StringBuilder(player.name + " har " + player.getBalance() + " point.\n");
+            guiController.showMessage("Spillet er slut!\n" +
+                    winner.name + " er den eneste spiller tilbage og\n" +
+                    winner.name + " har derfor vundet med " + winner.getBalance() + " kr.\n");
         }
-        winnerMessage.append(winner.name).append(" har vundet!");
+        else {
+            for (Player player : playerList) {
+                if (winnerMessage != null) {
+                    winnerMessage.append(player.name).append(" har ").append(player.getBalance()).append(" point.\n");
+                }
+                else winnerMessage = new StringBuilder(player.name + " har " + player.getBalance() + " point.\n");
+            }
+        }
+        winnerMessage.append(winner.name).append(" har vundet! ");
 
         guiController.showMessage(winnerMessage.toString());
         guiController.showMessage("Luk spillet?");
@@ -639,5 +653,19 @@ public class GameController {
             anotherArray[i].setIndex(i);
         }
         return anotherArray;
+    }
+
+    private static Player[] makePlayerRankArray(Player[] oldArray, Player newElement) {
+        int n = oldArray.length;
+        Player[] newArray = new Player[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (int i = 0; i < n; i++)
+            newArray[i] = oldArray[i];
+
+        newArray[n] = newElement;
+        return newArray;
     }
 }
