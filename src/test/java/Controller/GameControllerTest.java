@@ -295,6 +295,9 @@ public class GameControllerTest {
         Player player3 = new Player("3", 1000);
         die = new StubDie(0);
         gameController = new GameController(guiController, gameBoard, die, die, new Player[]{player1, player2, player3});
+
+        gameController.action2 = "Hurtigt spil";
+        gameController.choice = "Hurtigt spil";
         for (int i = 0; i < 41; i++) {
             gameController.playRound();
         }
