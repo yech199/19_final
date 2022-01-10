@@ -156,6 +156,7 @@ public class GameController {
 
                             // Tjekker om der er blevet rullet 2 ens
                             if (faceValue1 == faceValue2) {
+                                extraTurn = true;
                                 player.inJail = false;
                                 i = 3; //stopper loopet
                                 player.setJailTryRollCounter(1);
@@ -224,12 +225,13 @@ public class GameController {
                 playTurn(player);
             }
             else {
-                player.inJail = true;
                 guiController.showMessage("Du har slået 2 ens 3 gange i træk. Du fængsles");
-                guiController.updatePlayer(player);
+                player.putInJail();
+
             }
         }
         turnCounter = 0;
+        guiController.updatePlayer(player);
     }
 
     //------------------------------------------------------------------------------------------------------------------

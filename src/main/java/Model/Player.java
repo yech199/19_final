@@ -113,4 +113,9 @@ public class Player {
     public void setIndex(int index) {
         this.index = index;
     }
+
+    public void putInJail(){
+        inJail = true;
+        setCurrentPos(GlobalValues.JAIL_INDEX);
+    }
 }
