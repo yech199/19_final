@@ -482,9 +482,13 @@ public class GameController {
             }
         }
 
-        ownableField.owner = prevPlayer;
-        prevPlayer.addAmountToBalance(-prevBid);
-        guiController.setOwner(prevPlayer, player.getCurrentPos());
+            for (Player p : playerList) {
+                if (p.wantToTryBidding) {
+                    ownableField.owner = p;
+                    p.addAmountToBalance(-prevBid);
+                    guiController.setOwner(p, player.getCurrentPos());
+                }
+            }
 
         if (ownableField instanceof ShippingField)
             updateShippingFieldRent(prevPlayer);
