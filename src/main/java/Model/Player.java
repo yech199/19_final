@@ -29,7 +29,7 @@ public class Player {
         this.name = name;
         this.balance = balance;
         this.index = index;
-        this.jailTryRollCounter = 1;
+        this.jailTryRollCounter = 0;
     }
 
     /**

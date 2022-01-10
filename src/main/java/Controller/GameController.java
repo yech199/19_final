@@ -146,7 +146,6 @@ public class GameController {
                 if (choice.equals(action2)) {
 
                     if (player.jailTryRollCounter < 3) {
-                        player.jailTryRollCounter++;
                         for (int i = 0; i < 3; i++) {
                             guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
                             faceValue1 = this.die1.roll();
