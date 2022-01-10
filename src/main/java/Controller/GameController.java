@@ -307,61 +307,9 @@ public class GameController {
                         }
                     }
                 }
-                // FIXME: Auktion
+                // TODO: Test Auktion
                 else {
-                    guiController.showMessage("Alle andre spillere kan nu byde på denne grund. Laveste bud starter på "
-                            + ownableField.price);
-                    int numOfPlayersBidding = playerList.length - 1;
-
-                    for (Player p : playerList) {
-                        if (p == player)
-                            p.wantToTryBidding = false;
-
-                        else {
-                            choice = guiController.getUserButtonPressed("Vil du være med i auktionen og byde på "
-                                    + landedOn.fieldName + "?", action1, action2);
-
-                            if (choice.equals(action2)) {
-                                p.wantToTryBidding = false;
-                                numOfPlayersBidding -= 1;
-                            }
-                        }
-                    }
-                    int prevBid = ownableField.price;
-                    int bid;
-                    Player prevPlayer = null;
-
-                    for (int i = numOfPlayersBidding; i > 1; i = numOfPlayersBidding) {
-                        for (Player p : playerList) {
-                            if (p.wantToTryBidding) {
-
-                                if (prevPlayer != null) {
-                                    choice = guiController.getUserButtonPressed(prevPlayer.name + " bød " + prevBid + " kr. " +
-                                            "Vil du stadig byde på " + ownableField.fieldName + "?", action1, action2);
-                                    if (choice.equals(action2)) {
-                                        p.wantToTryBidding = false;
-                                        numOfPlayersBidding -= 1;
-                                        continue;
-                                    }
-                                }
-
-                                bid = guiController.getUserInteger("Hvad vil du byde på " + ownableField.fieldName
-                                        + "? Buddet starter på " + prevBid + " kr.", prevBid, Integer.MAX_VALUE);
-                                // Det er ikke muligt at byde lavere. Derfor er dette ikke inkluderet i if statementet
-                                if (bid == prevBid && prevPlayer != null) {
-                                    bid = guiController.getUserInteger("Dette bud er ugyldigt. Giv et nyt bud" +
-                                            "\nHvad vil du byde på " + ownableField.fieldName + "? Buddet starter på "
-                                            + prevBid + " kr.", prevBid, Integer.MAX_VALUE);
-                                }
-                                prevPlayer = p;
-                                prevBid = bid;
-                            }
-                        }
-                    }
-
-                    ownableField.owner = prevPlayer;
-                    player.addAmountToBalance(-prevBid);
-                    guiController.setOwner(prevPlayer);
+                    doAuction(player, ownableField);
                 }
             }
 
@@ -408,6 +356,101 @@ public class GameController {
         }
 
         guiController.updatePlayer(player);
+    }
+
+    public void doAuction(Player player, OwnableField ownableField) {
+        guiController.showMessage("Alle andre spillere har nu mulighed for at byde på " + ownableField.fieldName + ". Laveste bud starter på "
+                + ownableField.price + " kr.");
+        int numOfPlayersBidding;
+
+        numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, playerList);
+
+        bidOnAuction(ownableField, numOfPlayersBidding);
+    }
+
+    /**
+     *
+     * @param player der ikke købte feltet
+     * @param ownableField Det felt der sættes på auktion
+     * @return
+     */
+    public int checksWhoWantsToTryBidding(Player player, OwnableField ownableField, Player[] playerList) {
+        int numOfPlayersBidding = playerList.length - 1;
+        action1 = "Ja";
+        action2 = "Nej";
+        for (Player p : playerList) {
+            if (p == player)
+                p.wantToTryBidding = false;
+
+            else {
+                choice = guiController.getUserButtonPressed("Vil du være med i auktionen og byde på "
+                        + ownableField.fieldName + "?", action1, action2);
+
+                if (choice.equals(action2)) {
+                    p.wantToTryBidding = false;
+                    numOfPlayersBidding -= 1;
+                }
+            }
+        }
+        return numOfPlayersBidding;
+    }
+
+    /**
+     *
+     * @param ownableField Det felt der sættes på auktion
+     */
+    public void bidOnAuction(OwnableField ownableField, int numOfPlayersBidding) {
+        action1 = "Ja";
+        action2 = "Nej";
+        int prevBid = ownableField.price;
+        int bid;
+        Player prevPlayer = null;
+
+        for (int i = numOfPlayersBidding; i > 1; i = numOfPlayersBidding) {
+            for (Player p : playerList) {
+                if (p.wantToTryBidding) {
+
+                    if (p.getBalance() < prevBid && prevPlayer != p) {
+                        guiController.showMessage("Du har desværre ikke nok penge til at overbyde den forrige spiller, " +
+                                "og udgår derfor fra denne auktion");
+                        p.wantToTryBidding = false;
+                        numOfPlayersBidding -= 1;
+                        continue;
+                    }
+                    if (prevPlayer != null) {
+                        choice = guiController.getUserButtonPressed(prevPlayer.name + " bød " + prevBid + " kr. " +
+                                "Vil du stadig byde på " + ownableField.fieldName + "?", action1, action2);
+                        if (choice.equals(action2)) {
+                            p.wantToTryBidding = false;
+                            numOfPlayersBidding -= 1;
+                            continue;
+                        }
+
+                        bid = guiController.getUserInteger("Hvad vil du byde på " + ownableField.fieldName
+                                + "? Buddet starter på " + (prevBid + 1) + " kr.", (prevBid + 1), p.getBalance());
+                    }
+                    else {
+                        bid = guiController.getUserInteger("Hvad vil du byde på " + ownableField.fieldName
+                                + "? Buddet starter på " + prevBid + " kr.", prevBid, p.getBalance());
+                    }
+                    // Det er ikke muligt at byde lavere. Derfor er dette ikke inkluderet i if statementet
+                    if (bid == prevBid && prevPlayer != null && prevPlayer != p) {
+                        bid = guiController.getUserInteger("Dette bud er ugyldigt. Giv et nyt bud" +
+                                "\nHvad vil du byde på " + ownableField.fieldName + "? Buddet starter på "
+                                + prevBid + " kr.", prevBid, p.getBalance());
+                    }
+                    prevPlayer = p;
+                    prevBid = bid;
+                }
+            }
+        }
+
+        ownableField.owner = prevPlayer;
+        prevPlayer.addAmountToBalance(-prevBid);
+        guiController.setOwner(prevPlayer);
+
+        if (ownableField instanceof ShippingField)
+            updateShippingFieldRent(prevPlayer);
     }
 
     private static Player[] addPlayerToOldArray(Player[] oldArray, Player newElement) {

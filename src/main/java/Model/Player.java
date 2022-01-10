@@ -18,7 +18,7 @@ public class Player {
     private int jailTryRollCounter;
     public boolean inJail;
     public boolean getOutOfJailFree;
-    public boolean wantToTryBidding;
+    public boolean wantToTryBidding = true;
 
     /**
      * Alle constructerer fører tilbage til denne constructor.
