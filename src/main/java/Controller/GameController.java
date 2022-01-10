@@ -85,8 +85,10 @@ public class GameController {
     public void runGame() {
         action1 = "Normalt spil";
         action2 = "Hurtigt spil";
-        choice = guiController.getUserButtonPressed("Hvordan vil I slutte spillet?\n\t1. Spil til der kun er en spiller tilbage." +
-                "\n\t2. Slut spillet efter 40 runder", action1, action2);
+        choice = guiController.getUserButtonPressed("""
+                Hvordan vil I slutte spillet?
+                \t1. Spil til der kun er en spiller tilbage.
+                \t2. Slut spillet efter 40 runder""", action1, action2);
 
         makeStartingOrderPlayerList();
         while (!gameEnded) {
@@ -324,9 +326,11 @@ public class GameController {
 
             else {
                 if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0 &&
+                    if (propertyField.owner == player && ownsAll(propertyField) &&
+                            propertyField.getAmountOfBuildings() == 0 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
+                                    "Vil du købe et hus for "+ propertyField.buildingPrice +
+                                    " kr til dette felt?", "Ja", "Nej").equals("Ja")) {
 
                         propertyField.buyBuilding(player);
                         guiController.setHouses(1, propertyField);
@@ -544,17 +548,17 @@ public class GameController {
                     winner.name + " er den eneste spiller tilbage og\n" +
                     winner.name + " har derfor vundet med " + winner.getBalance() + " kr.");
         }
-        String winnerMessage = null;
+        StringBuilder winnerMessage = null;
 
         for (Player player : playerList) {
             if (winnerMessage != null) {
-                winnerMessage = winnerMessage + player.name + " har " + player.getBalance() + " point.\n";
+                winnerMessage.append(player.name).append(" har ").append(player.getBalance()).append(" point.\n");
             }
-            else winnerMessage = player.name + " har " + player.getBalance() + " point.\n";
+            else winnerMessage = new StringBuilder(player.name + " har " + player.getBalance() + " point.\n");
         }
-        winnerMessage = winnerMessage + winner.name + " har vundet!";
+        winnerMessage.append(winner.name).append(" har vundet!");
 
-        guiController.showMessage(winnerMessage);
+        guiController.showMessage(winnerMessage.toString());
         guiController.showMessage("Luk spillet?");
         guiController.close();
     }
