@@ -25,6 +25,8 @@ public class GameController {
     public String choice;
     public String action1;
     public String action2;
+    private int turnCounter;
+    private boolean extraTurn;
 
     public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
@@ -158,6 +160,7 @@ public class GameController {
 
                             // Tjekker om der er blevet rullet 2 ens
                             if (faceValue1 == faceValue2) {
+                                extraTurn = true;
                                 player.inJail = false;
                                 i = 3; //stopper loopet
                                 player.jailTryRollCounter = 1;
@@ -218,6 +221,21 @@ public class GameController {
                 tmpPlayerList.length == 1) {
             playerList = tmpPlayerList;
         }
+        if (extraTurn){
+            extraTurn = false;
+            if (turnCounter < 2) {
+                turnCounter++;
+                guiController.showMessage("Du har slået 2 ens. Du får en tur til!");
+                playTurn(player);
+            }
+            else {
+                guiController.showMessage("Du har slået 2 ens 3 gange i træk. Du fængsles");
+                player.putInJail();
+
+            }
+        }
+        turnCounter = 0;
+        guiController.updatePlayer(player);
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -234,9 +252,8 @@ public class GameController {
         faceValue = faceValue1 + faceValue2;
 
         if (faceValue1 == faceValue2) {
-            player.extraTurn = true;
+            extraTurn = true;
         }
-
         return faceValue;
     }
 
