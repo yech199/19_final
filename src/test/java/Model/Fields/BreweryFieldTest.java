@@ -3,7 +3,6 @@ package Model.Fields;
 import Controller.GameController;
 import Model.Die;
 import Model.GameBoard;
-import Model.GlobalValues;
 import Model.Player;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,13 +41,13 @@ public class BreweryFieldTest {
         BreweryField breweryField1 = (BreweryField) fields[0];
         BreweryField breweryField2 = (BreweryField) fields[1];
         int faceValue = 1;
-        gameController.checkIfInstanceOf(player1, faceValue, breweryField1);
-        gameController.checkIfInstanceOf(player2, faceValue, breweryField1);
+        gameController.updateOwnerAndRent(player1, faceValue, breweryField1);
+        gameController.updateOwnerAndRent(player2, faceValue, breweryField1);
 
         Assert.assertEquals(faceValue * 100, breweryField1.rent);
 
-        gameController.checkIfInstanceOf(player1, faceValue, breweryField2);
-        gameController.checkIfInstanceOf(player2, faceValue, breweryField2);
+        gameController.updateOwnerAndRent(player1, faceValue, breweryField2);
+        gameController.updateOwnerAndRent(player2, faceValue, breweryField2);
 
         Assert.assertEquals(faceValue * 200, breweryField2.rent);
     }

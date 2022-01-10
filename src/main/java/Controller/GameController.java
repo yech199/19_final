@@ -21,6 +21,9 @@ public class GameController {
     public boolean gameEnded;
     public int roundCounter;
     private Player[] tmpPlayerList;
+    public String choice;
+    public String action1;
+    public String action2;
     private int turnCounter;
     private boolean extraTurn;
 
@@ -81,7 +84,12 @@ public class GameController {
      * Kører spillet indtil spillet slutter (Dette sker hvis en player får en balance under nul - Se if statement i playTurn)
      */
     public void runGame() {
-        decideStartingOrder();
+        action1 = "Normalt spil";
+        action2 = "Hurtigt spil";
+        choice = guiController.getUserButtonPressed("Hvordan vil I slutte spillet?\n\t1. Spil til der kun er en spiller tilbage." +
+                "\n\t2. Slut spillet efter 40 runder", action1, action2);
+
+        makeStartingOrderPlayerList();
         while (!gameEnded) {
             playRound();
         }
@@ -95,13 +103,17 @@ public class GameController {
         roundCounter++;
         guiController.showMessage("Runde " + roundCounter);
         for (Player player : playerList) {
+
+            if (choice.equals(action2)) {
+                if (roundCounter > 40) {
+                    gameEnded = true;
+                    break;
+                }
+            }
+
             if (tmpPlayerList.length == 1) {
                 gameEnded = true;
                 return;
-            }
-            if (roundCounter > 40) {
-                gameEnded = true;
-                break;
             }
             playTurn(player);
         }
@@ -178,7 +190,7 @@ public class GameController {
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
 
-        checkIfInstanceOf(player, faceValue, landedOn);
+        updateOwnerAndRent(player, faceValue, landedOn);
         landedOn.fieldAction(player);
 
         //--------------------------------------------------------------------------------------------------------------
@@ -196,9 +208,7 @@ public class GameController {
                     guiController.removeOwner(i);
                 }
             }
-
             tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
-
         }
         if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
                 tmpPlayerList.length == 1) {
@@ -237,7 +247,7 @@ public class GameController {
         return faceValue;
     }
 
-    private boolean rollDice(HashMap<Integer, Player> dieValues) {
+    private boolean rollDiceToDecideStartingOrder(HashMap<Integer, Player> dieValues) {
         boolean duplicates = false;
         for (Player player : playerList) {
             guiController.getUserButtonPressed(player.name + " skal rulle med terningen for, " +
@@ -250,21 +260,21 @@ public class GameController {
                 duplicates = true;
                 dieValues.clear();
                 break;
-            } else {
+            }
+            else {
                 dieValues.put(rollResult, player);
             }
         }
         return duplicates;
     }
 
-
-    private void decideStartingOrder() {
+    private void makeStartingOrderPlayerList() {
         HashMap<Integer, Player> dieValues = new HashMap<>();
         Player[] orderOfPlayers = playerList;
 
         boolean rollAgain = true;
         while (rollAgain) {
-            rollAgain = rollDice(dieValues);
+            rollAgain = rollDiceToDecideStartingOrder(dieValues);
             if (!rollAgain) {
                 Object[] keys = dieValues.keySet().toArray();
                 Arrays.sort(keys, Collections.reverseOrder());
@@ -282,51 +292,52 @@ public class GameController {
         }
     }
 
-    public void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
+    public void updateOwnerAndRent(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField) {
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
-                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
-                        ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
+
+                action1 = "Ja";
+                action2 = "Nej";
+                choice = guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
+                        ". Vil du købe denne ejendom?", action1, action2);
+
+                if (choice.equals(action1)) {
                     player.addAmountToBalance(-ownableField.price);
                     ownableField.owner = player;
                     guiController.setOwner(player);
 
                     // Opdaterer spillerens ejede færgers rente efter spilleren køber en færge
                     if (ownableField instanceof ShippingField) {
-                        int count = 0;
-                        for (ShippingField f : gameBoard.shippingFields)
-                            if (f.owner == player)
-                                count++;
-
-                        int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, count - 1));
-                        for (ShippingField f : gameBoard.shippingFields)
-                            if (f.owner == player)
-                                f.rent = rent;
+                        updateShippingFieldRent(player);
                     }
 
-                    //------------------------------------------------------------------------------------------------------
-                    // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
-                    //------------------------------------------------------------------------------------------------------
-                    // FIXME fjern køb hus og hustjek
+                    // FIXME fjern hustjek
+                    //  OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     if (landedOn instanceof PropertyField propertyField) {
-                        if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0) {
+                        // Tjekker om ejeren af det nyligt købte felt også ejer de andre af samme farve
+                        if (ownsAll(propertyField)) {
                             PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
-                            for (PropertyField tmpField : tmpFields) {
-                                tmpField.rent *= 2;
+                            // Fordobler renten
+                            for (PropertyField field : tmpFields) {
+                                field.rent *= 2;
                             }
-                            // Fordobler renten den.
-                            // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                         }
                     }
+                }
+                // TODO: Test Auktion
+                else {
+                    doAuction(player, ownableField);
                 }
             }
 
             else {
                 if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0 &&
+                    if (propertyField.owner == player && ownsAll(propertyField) &&
+                            propertyField.getAmountOfBuildings() == 0 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
+                                    "Vil du købe et hus for "+ propertyField.buildingPrice +
+                                    " kr til dette felt?", "Ja", "Nej").equals("Ja")) {
 
                         propertyField.buyBuilding(player);
                         guiController.setHouses(1, propertyField);
@@ -336,7 +347,7 @@ public class GameController {
                 else if (ownableField instanceof BreweryField) {
                     Player owner = ownableField.owner;
                     int counter = 0;
-                    for (BreweryField f: gameBoard.breweryFields)
+                    for (BreweryField f : gameBoard.breweryFields)
                         if (f.owner == owner)
                             counter++;
 
@@ -361,10 +372,125 @@ public class GameController {
             guiController.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
             // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig
             if (player.getCurrentPos() != tmpPos)
-                checkIfInstanceOf(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
+                updateOwnerAndRent(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
         }
 
         guiController.updatePlayer(player);
+    }
+
+    public void doAuction(Player player, OwnableField ownableField) {
+        guiController.showMessage("Alle andre spillere har nu mulighed for at byde på " + ownableField.fieldName + ". Laveste bud starter på "
+                + ownableField.price + " kr.");
+        int numOfPlayersBidding;
+
+        numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, playerList);
+
+        bidOnAuction(ownableField, numOfPlayersBidding);
+    }
+
+    /**
+     * @param player der ikke købte feltet
+     * @param ownableField Det felt der sættes på auktion
+     */
+    public int checksWhoWantsToTryBidding(Player player, OwnableField ownableField, Player[] playerList) {
+        int numOfPlayersBidding = playerList.length - 1;
+        action1 = "Ja";
+        action2 = "Nej";
+        for (Player p : playerList) {
+            if (p == player)
+                p.wantToTryBidding = false;
+
+            else {
+                choice = guiController.getUserButtonPressed("Vil du være med i auktionen og byde på "
+                        + ownableField.fieldName + "?", action1, action2);
+
+                if (choice.equals(action2)) {
+                    p.wantToTryBidding = false;
+                    numOfPlayersBidding -= 1;
+                }
+            }
+        }
+        return numOfPlayersBidding;
+    }
+
+    /**
+     * @param ownableField Det felt der sættes på auktion
+     */
+    public void bidOnAuction(OwnableField ownableField, int numOfPlayersBidding) {
+        action1 = "Ja";
+        action2 = "Nej";
+        int prevBid = ownableField.price;
+        int bid;
+        Player prevPlayer = null;
+
+        for (int i = numOfPlayersBidding; i > 1; i = numOfPlayersBidding) {
+            for (Player p : playerList) {
+                if (p.wantToTryBidding) {
+
+                    if (p.getBalance() < prevBid && prevPlayer != p) {
+                        guiController.showMessage("Du har desværre ikke nok penge til at overbyde den forrige spiller, " +
+                                "og udgår derfor fra denne auktion");
+                        p.wantToTryBidding = false;
+                        numOfPlayersBidding -= 1;
+                        continue;
+                    }
+                    if (prevPlayer != null) {
+                        choice = guiController.getUserButtonPressed(prevPlayer.name + " bød " + prevBid + " kr. " +
+                                "Vil du stadig byde på " + ownableField.fieldName + "?", action1, action2);
+                        if (choice.equals(action2)) {
+                            p.wantToTryBidding = false;
+                            numOfPlayersBidding -= 1;
+                            continue;
+                        }
+
+                        bid = guiController.getUserInteger("Hvad vil du byde på " + ownableField.fieldName
+                                + "? Buddet starter på " + (prevBid + 1) + " kr.", (prevBid + 1), p.getBalance());
+                    }
+                    else {
+                        bid = guiController.getUserInteger("Hvad vil du byde på " + ownableField.fieldName
+                                + "? Buddet starter på " + prevBid + " kr.", prevBid, p.getBalance());
+                    }
+                    // Det er ikke muligt at byde lavere. Derfor er dette ikke inkluderet i if statementet
+                    if (bid == prevBid && prevPlayer != null && prevPlayer != p) {
+                        bid = guiController.getUserInteger("Dette bud er ugyldigt. Giv et nyt bud" +
+                                "\nHvad vil du byde på " + ownableField.fieldName + "? Buddet starter på "
+                                + prevBid + " kr.", prevBid, p.getBalance());
+                    }
+                    prevPlayer = p;
+                    prevBid = bid;
+                }
+            }
+        }
+
+        ownableField.owner = prevPlayer;
+        prevPlayer.addAmountToBalance(-prevBid);
+        guiController.setOwner(prevPlayer);
+
+        if (ownableField instanceof ShippingField)
+            updateShippingFieldRent(prevPlayer);
+
+        if (ownableField instanceof PropertyField propertyField) {
+            // Tjekker om ejeren af det nyligt købte felt også ejer de andre af samme farve
+            if (ownsAll(propertyField)) {
+                PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
+                // Fordobler renten
+                for (PropertyField field : tmpFields) {
+                    field.rent *= 2;
+                }
+            }
+        }
+    }
+
+    private void updateShippingFieldRent(Player player) {
+        int count = 0;
+        for (ShippingField f : gameBoard.shippingFields)
+            if (f.owner == player)
+                count++;
+
+        int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, count - 1));
+        for (ShippingField f : gameBoard.shippingFields)
+            if (f.owner == player)
+                f.rent = rent;
     }
 
     /**

@@ -55,7 +55,7 @@ public class GameBoard {
                 }
                 else if (counter == 2) {
                     if (propertyField != tmpFields[0] && propertyField != tmpFields[1] && propertyField.backgroundColor.equals(color))
-                        tmpFields = addPropertyToOldArray(tmpFields.length, tmpFields, propertyField);
+                        tmpFields = addPropertyToOldArray(tmpFields, propertyField);
                 }
             }
         }
@@ -67,7 +67,7 @@ public class GameBoard {
 
         for (Field field : this.fields) {
             if (field instanceof ShippingField shippingField) {
-                    tmpFields = addShippingFieldToOldArray(tmpFields.length, tmpFields, shippingField);
+                    tmpFields = addShippingFieldToOldArray(tmpFields, shippingField);
             }
         }
         return tmpFields;
@@ -78,7 +78,7 @@ public class GameBoard {
 
         for (Field field : this.fields) {
             if (field instanceof BreweryField breweryField) {
-                    tmpFields = addBreweryFieldToOldArray(tmpFields.length, tmpFields, breweryField);
+                    tmpFields = addBreweryFieldToOldArray(tmpFields, breweryField);
             }
         }
         return tmpFields;
@@ -90,10 +90,10 @@ public class GameBoard {
 
         for (int i = 0; i < fields.length; i++) {
             if (fields[i] instanceof ShippingField) {
-                ferryIndices = addPropertyToOldArray(ferryIndices.length, ferryIndices, i);
+                ferryIndices = addPropertyToOldArray(ferryIndices, i);
             }
             else if (fields[i] instanceof BreweryField) {
-                breweryIndices = addPropertyToOldArray(breweryIndices.length, breweryIndices, i);
+                breweryIndices = addPropertyToOldArray(breweryIndices, i);
             }
         }
 
@@ -112,13 +112,12 @@ public class GameBoard {
     /**
      * Funktion der tilføjer x til arrayet på plads n + 1
      *
-     * @param n           Antallet af elementer i det gamle array
      * @param oldArray    Det gamle array
      * @param newElement  Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static PropertyField[] addPropertyToOldArray(int n, PropertyField[] oldArray, PropertyField newElement) {
-        
+    private static PropertyField[] addPropertyToOldArray(PropertyField[] oldArray, PropertyField newElement) {
+        int n = oldArray.length;
         PropertyField[] newArray = new PropertyField[n + 1];
 
         //--------------------------------------------------------------------------------------------------------------
@@ -131,7 +130,8 @@ public class GameBoard {
         return newArray;
     }
 
-    private static ShippingField[] addShippingFieldToOldArray(int n, ShippingField[] oldArray, ShippingField newElement) {
+    private static ShippingField[] addShippingFieldToOldArray(ShippingField[] oldArray, ShippingField newElement) {
+        int n = oldArray.length;
         ShippingField[] newArray = new ShippingField[n + 1];
 
         //--------------------------------------------------------------------------------------------------------------
@@ -144,7 +144,8 @@ public class GameBoard {
         return newArray;
     }
 
-    private static BreweryField[] addBreweryFieldToOldArray(int n, BreweryField[] oldArray, BreweryField newElement) {
+    private static BreweryField[] addBreweryFieldToOldArray(BreweryField[] oldArray, BreweryField newElement) {
+        int n = oldArray.length;
         BreweryField[] newArray = new BreweryField[n + 1];
 
         //--------------------------------------------------------------------------------------------------------------
@@ -160,12 +161,12 @@ public class GameBoard {
     /**
      * Funktion der tilføjer x til arrayet på plads n + 1
      *
-     * @param n          Antallet af elementer i det gamle array
      * @param oldArray   Det gamle array
      * @param newElement Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static int[] addPropertyToOldArray(int n, int[] oldArray, int newElement) {
+    private static int[] addPropertyToOldArray(int[] oldArray, int newElement) {
+        int n = oldArray.length;
         int i;
         int[] newArray = new int[n + 1];
 

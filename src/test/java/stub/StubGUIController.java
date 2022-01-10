@@ -10,7 +10,7 @@ public class StubGUIController extends ViewController {
 
     @Override
     public int getUserInteger(String msg, int min, int max) {
-        return 0;
+        return max;
     }
 
     @Override

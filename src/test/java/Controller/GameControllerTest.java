@@ -31,7 +31,8 @@ public class GameControllerTest {
     public void setUp() {
         players = new Player[]{
                 new Player("Test 1"),
-                new Player("Test 2")
+                new Player("Test 2"),
+                new Player("Test 3")
         };
         gameBoard = new GameBoard();
         guiController = new StubGUIController();
@@ -180,11 +181,11 @@ public class GameControllerTest {
             playerList[i] = new Player("" + i);
         }
         int counter = 0;
-        for (Player player : playerList){
+        for (Player player : playerList) {
             player.addAmountToBalance(counter);
             counter++;
         }
-        assertEquals(gameController.getWinner(playerList), playerList[playerList.length-1]);
+        assertEquals(gameController.getWinner(playerList), playerList[playerList.length - 1]);
     }
 
     @Test
@@ -310,9 +311,99 @@ public class GameControllerTest {
         Player player3 = new Player("3", 1000);
         die = new StubDie(0);
         gameController = new GameController(guiController, gameBoard, die, die, new Player[]{player1, player2, player3});
+
+        gameController.action2 = "Hurtigt spil";
+        gameController.choice = "Hurtigt spil";
         for (int i = 0; i < 41; i++) {
             gameController.playRound();
         }
         Assert.assertTrue(gameController.gameEnded);
+    }
+
+    @Test
+    public void testchecksWhoWantsToTryBidding() {
+        gameBoard = new GameBoard(new Field[]{
+                new ShippingField(-1)},
+                new ChanceCard[]{});
+        Player player1 = new Player("1", 0);
+        Player player2 = new Player("2", 0);
+        Player player3 = new Player("3", 0);
+        Player[] playerList = new Player[] {player1, player2, player3};
+        die = new StubDie(0);
+
+        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        OwnableField ownableField = (OwnableField) gameBoard.fields[0];
+
+        int numOfPlayersBidding = gameController.checksWhoWantsToTryBidding(player1, ownableField, playerList);
+
+        Assert.assertEquals(2, numOfPlayersBidding);
+        Assert.assertFalse(player1.wantToTryBidding);
+        Assert.assertTrue(player2.wantToTryBidding);
+        Assert.assertTrue(player3.wantToTryBidding);
+
+        guiController.customChoice = "Nej";
+        numOfPlayersBidding = gameController.checksWhoWantsToTryBidding(player2, ownableField, playerList);
+        Assert.assertEquals(0, numOfPlayersBidding);
+        Assert.assertFalse(player1.wantToTryBidding);
+        Assert.assertFalse(player2.wantToTryBidding);
+        Assert.assertFalse(player3.wantToTryBidding);
+    }
+
+    @Test
+    public void testbidOnAuction() {
+        gameBoard = new GameBoard(new Field[]{
+                new ShippingField(1000)},
+                new ChanceCard[]{});
+        Player player1 = new Player("1", 1000);
+        Player player2 = new Player("2", 3000);
+        Player player3 = new Player("3", 5000);
+        Player[] playerList = new Player[] {player1, player2, player3};
+
+        die = new StubDie(0);
+        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        OwnableField ownableField = (OwnableField) gameBoard.fields[0];
+        int numOfPlayersBidding = playerList.length;
+
+        gameController.bidOnAuction(ownableField, numOfPlayersBidding);
+
+        Assert.assertEquals(1000, player1.getBalance());
+        Assert.assertEquals(3000, player2.getBalance());
+        Assert.assertEquals(0, player3.getBalance());
+        Assert.assertFalse(player1.wantToTryBidding);
+        Assert.assertFalse(player2.wantToTryBidding);
+        Assert.assertTrue(player3.wantToTryBidding);
+
+        player1 = new Player("1", 1000);
+        player2 = new Player("2", 7000);
+        player3 = new Player("3", 5000);
+        playerList = new Player[] {player1, player2, player3};
+
+        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        ownableField = (OwnableField) gameBoard.fields[0];
+        gameController.bidOnAuction(ownableField, numOfPlayersBidding);
+
+        Assert.assertEquals(1000, player1.getBalance());
+        Assert.assertEquals(0, player2.getBalance());
+        Assert.assertEquals(5000, player3.getBalance());
+        Assert.assertFalse(player1.wantToTryBidding);
+        Assert.assertTrue(player2.wantToTryBidding);
+        Assert.assertFalse(player3.wantToTryBidding);
+
+        player1 = new Player("1", 1000);
+        player2 = new Player("2", 7000);
+        player3 = new Player("3", 5000);
+        playerList = new Player[] {player1, player2, player3};
+        guiController.customChoice = "Nej";
+
+        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        ownableField = (OwnableField) gameBoard.fields[0];
+        gameController.bidOnAuction(ownableField, numOfPlayersBidding);
+
+        Assert.assertEquals(0, player1.getBalance());
+        Assert.assertEquals(7000, player2.getBalance());
+        Assert.assertEquals(5000, player3.getBalance());
+        Assert.assertTrue(player1.wantToTryBidding);
+        Assert.assertFalse(player2.wantToTryBidding);
+        Assert.assertFalse(player3.wantToTryBidding);
     }
 }
