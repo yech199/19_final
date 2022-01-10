@@ -320,6 +320,7 @@ public class GameController {
 
                 if (choice.equals(action1)) {
                     player.addAmountToBalance(-ownableField.price);
+                    player.addToNetWorth(ownableField.price);
                     ownableField.owner = player;
                     guiController.setOwner(player, player.getCurrentPos());
 

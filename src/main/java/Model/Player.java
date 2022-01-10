@@ -19,6 +19,7 @@ public class Player {
     public boolean inJail;
     public boolean getOutOfJailFree;
     public boolean wantToTryBidding = true;
+    public int netWorth;
 
     /**
      * Alle constructerer fører tilbage til denne constructor.
@@ -45,6 +46,7 @@ public class Player {
      */
     public Player(int index, String name) {
         this(name, index, GlobalValues.START_MONEY);
+        addToNetWorth(GlobalValues.START_MONEY);
     }
 
     public Player(String name) {
@@ -58,6 +60,7 @@ public class Player {
      */
     public void addAmountToBalance(int amount) {
         this.balance += amount;
+        addToNetWorth(amount);
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -114,5 +117,13 @@ public class Player {
     public void putInJail(){
         inJail = true;
         setCurrentPos(GlobalValues.JAIL_INDEX);
+    }
+
+    public void addToNetWorth (int amount){
+        this.netWorth += amount;
+    }
+
+    public int getNetWorth (){
+        return netWorth;
     }
 }

@@ -23,6 +23,7 @@ public class PropertyField extends OwnableField {
         if (amountOfBuildings < 5) {
             amountOfBuildings++;
             player.addAmountToBalance(-buildingPrice);
+            player.addToNetWorth(buildingPrice);
             rent = rents[amountOfBuildings];
         }
     }
@@ -31,6 +32,7 @@ public class PropertyField extends OwnableField {
         if (amountOfBuildings > 0) {
             amountOfBuildings--;
             player.addAmountToBalance(buildingPrice);
+            player.addToNetWorth(-buildingPrice);
             rent = rents[amountOfBuildings];
         }
     }
