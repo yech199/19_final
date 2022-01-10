@@ -120,7 +120,7 @@ public class Player {
     }
 
     public void addToNetWorth (int amount){
-        this.netWorth += amount;
+        netWorth += amount;
     }
 
     public int getNetWorth (){
