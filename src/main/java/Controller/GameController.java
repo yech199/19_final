@@ -21,6 +21,9 @@ public class GameController {
     public boolean gameEnded;
     public int roundCounter;
     private Player[] tmpPlayerList;
+    private String choice;
+    private String action1;
+    private String action2;
 
     public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
@@ -79,6 +82,11 @@ public class GameController {
      * Kører spillet indtil spillet slutter (Dette sker hvis en player får en balance under nul - Se if statement i playTurn)
      */
     public void runGame() {
+        action1 = "1";
+        action2 = "2";
+        choice = guiController.getUserButtonPressed("Hvordan vil I slutte spillet?\n\t1. Spil til der kun er en spiller tilbage." +
+                "\n\t2. Slut spillet efter 40 runder", action1, action2);
+
         decideStartingOrder();
         while (!gameEnded) {
             playRound();
@@ -93,13 +101,17 @@ public class GameController {
         roundCounter++;
         guiController.showMessage("Runde " + roundCounter);
         for (Player player : playerList) {
+
+            if (choice.equals(action2)) {
+                if (roundCounter > 40) {
+                    gameEnded = true;
+                    break;
+                }
+            }
+
             if (tmpPlayerList.length == 1) {
                 gameEnded = true;
                 return;
-            }
-            if (roundCounter > 40) {
-                gameEnded = true;
-                break;
             }
             playTurn(player);
         }
