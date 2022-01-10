@@ -229,6 +229,7 @@ public class GameController {
                 guiController.updatePlayer(player);
             }
         }
+        turnCounter = 0;
     }
 
     //------------------------------------------------------------------------------------------------------------------
