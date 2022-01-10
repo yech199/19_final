@@ -231,8 +231,9 @@ public class GameController {
 
     private boolean rollDice(HashMap<Integer, Player> dieValues) {
         boolean duplicates = false;
-        for (int i = 0; i < playerList.length; i++) {
-            guiController.getUserButtonPressed(playerList[i].name + " skal rulle med terningen for, at se hvem der skal starte!", "Rul");
+        for (Player player : playerList) {
+            guiController.getUserButtonPressed(player.name + " skal rulle med terningen for, " +
+                    "at se hvem der skal starte!", "Rul");
             int rollResult1 = die1.roll();
             int rollResult2 = die2.roll();
             int rollResult = rollResult1 + rollResult2;
@@ -241,9 +242,8 @@ public class GameController {
                 duplicates = true;
                 dieValues.clear();
                 break;
-            }
-            else {
-                dieValues.put(rollResult, playerList[i]);
+            } else {
+                dieValues.put(rollResult, player);
             }
         }
         return duplicates;
@@ -264,7 +264,8 @@ public class GameController {
                 }
             }
             else {
-                guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle igen med terningen for hvem der skal starte!", "Rul");
+                guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle" +
+                        " igen med terningen for hvem der skal starte!", "Rul");
             }
         }
         for (int i = 0; i < orderOfPlayers.length; i++) {
@@ -276,7 +277,8 @@ public class GameController {
         if (landedOn instanceof OwnableField ownableField) {
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
-                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName + ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
+                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
+                        ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
                     player.addAmountToBalance(-ownableField.price);
                     ownableField.owner = player;
                     guiController.setOwner(player);
@@ -318,6 +320,7 @@ public class GameController {
                                     "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
 
                         propertyField.buyBuilding(player);
+                        guiController.setHouses(1, propertyField);
                     }
                 }
                 // Har brug for en faceValue og står derfor ikke samme sted som shippingField
@@ -401,45 +404,24 @@ public class GameController {
      * Tjekker hvilken spiller der har vundet spillet.
      * Giver en slut-besked med spillernes endelige scorer.
      */
-    private void setGameEnded() {
+    public void setGameEnded() {
         Player winner = getWinner(playerList);
-
         if (playerList.length == 1) {
             guiController.showMessage("Spillet er slut!\n" +
                     winner.name + " er den eneste spiller tilbage og\n" +
                     winner.name + " har derfor vundet med " + winner.getBalance() + " kr.");
         }
-        else if (playerList.length == 3) {
-            guiController.showMessage("Spillet er slut!\n" +
-                    playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
-                    playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
-                    playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
-                    winner.name + " har vundet!");
+        String winnerMessage = null;
+
+        for (Player player : playerList) {
+            if (winnerMessage != null) {
+                winnerMessage = winnerMessage + player.name + " har " + player.getBalance() + " point.\n";
+            }
+            else winnerMessage = player.name + " har " + player.getBalance() + " point.\n";
         }
-        else if (playerList.length == 4) guiController.showMessage("Spillet er slut!\n" +
-                playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
-                playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
-                playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
-                playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
-                winner.name + " har vundet!");
+        winnerMessage = winnerMessage + winner.name + " har vundet!";
 
-        else if (playerList.length == 5) guiController.showMessage("Spillet er slut!\n" +
-                playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
-                playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
-                playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
-                playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
-                playerList[4].name + " har " + playerList[4].getBalance() + " point.\n" +
-                winner.name + " har vundet!");
-
-        else guiController.showMessage("Spillet er slut!\n" +
-                    playerList[0].name + " har " + playerList[0].getBalance() + " point.\n" +
-                    playerList[1].name + " har " + playerList[1].getBalance() + " point.\n" +
-                    playerList[2].name + " har " + playerList[2].getBalance() + " point.\n" +
-                    playerList[3].name + " har " + playerList[3].getBalance() + " point.\n" +
-                    playerList[4].name + " har " + playerList[4].getBalance() + " point.\n" +
-                    playerList[5].name + " har " + playerList[5].getBalance() + " point.\n" +
-                    winner.name + " har vundet!");
-
+        guiController.showMessage(winnerMessage);
         guiController.showMessage("Luk spillet?");
         guiController.close();
     }
@@ -451,7 +433,7 @@ public class GameController {
      * @param playerList tager listen af players som input
      * @return returnerer den spiller der har vundet
      */
-    private Player getWinner(Player[] playerList) {
+    Player getWinner(Player[] playerList) {
         Player winner = new Player("", 0); //tom spiller, da den udskiftes med en ny spiller efter første runde i for-loop
         for (Player player : playerList) {
             if (winner.getBalance() < player.getBalance()) {

@@ -173,6 +173,21 @@ public class GameControllerTest {
     }
 
     @Test
+    public void correctWinnerIsDecided() {
+        Player[] playerList = new Player[6];
+        this.guiController.setUpPlayers(playerList);
+        for (int i = 0; i < playerList.length; i++) {
+            playerList[i] = new Player("" + i);
+        }
+        int counter = 0;
+        for (Player player : playerList){
+            player.addAmountToBalance(counter);
+            counter++;
+        }
+        assertEquals(gameController.getWinner(playerList), playerList[playerList.length-1]);
+    }
+
+    @Test
     public void testOwnsAllReturnCorrect() {
         ChanceCard[] chanceCards = new ChanceCard[]{
         };
