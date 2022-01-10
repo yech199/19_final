@@ -369,10 +369,8 @@ public class GameController {
     }
 
     /**
-     *
      * @param player der ikke købte feltet
      * @param ownableField Det felt der sættes på auktion
-     * @return
      */
     public int checksWhoWantsToTryBidding(Player player, OwnableField ownableField, Player[] playerList) {
         int numOfPlayersBidding = playerList.length - 1;
@@ -396,7 +394,6 @@ public class GameController {
     }
 
     /**
-     *
      * @param ownableField Det felt der sættes på auktion
      */
     public void bidOnAuction(OwnableField ownableField, int numOfPlayersBidding) {
@@ -451,17 +448,17 @@ public class GameController {
 
         if (ownableField instanceof ShippingField)
             updateShippingFieldRent(prevPlayer);
-    }
 
-    private static Player[] addPlayerToOldArray(Player[] oldArray, Player newElement) {
-        int n = oldArray.length;
-        Player[] newArray = new Player[n + 1];
-
-        // Indsætter det gamle array i det nye array
-        System.arraycopy(oldArray, 0, newArray, 0, n);
-
-        newArray[n] = newElement;
-        return newArray;
+        if (ownableField instanceof PropertyField propertyField) {
+            // Tjekker om ejeren af det nyligt købte felt også ejer de andre af samme farve
+            if (ownsAll(propertyField)) {
+                PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
+                // Fordobler renten
+                for (PropertyField field : tmpFields) {
+                    field.rent *= 2;
+                }
+            }
+        }
     }
 
     private void updateShippingFieldRent(Player player) {

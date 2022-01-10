@@ -388,5 +388,22 @@ public class GameControllerTest {
         Assert.assertFalse(player1.wantToTryBidding);
         Assert.assertTrue(player2.wantToTryBidding);
         Assert.assertFalse(player3.wantToTryBidding);
+
+        player1 = new Player("1", 1000);
+        player2 = new Player("2", 7000);
+        player3 = new Player("3", 5000);
+        playerList = new Player[] {player1, player2, player3};
+        guiController.customChoice = "Nej";
+
+        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        ownableField = (OwnableField) gameBoard.fields[0];
+        gameController.bidOnAuction(ownableField, numOfPlayersBidding);
+
+        Assert.assertEquals(0, player1.getBalance());
+        Assert.assertEquals(7000, player2.getBalance());
+        Assert.assertEquals(5000, player3.getBalance());
+        Assert.assertTrue(player1.wantToTryBidding);
+        Assert.assertFalse(player2.wantToTryBidding);
+        Assert.assertFalse(player3.wantToTryBidding);
     }
 }
