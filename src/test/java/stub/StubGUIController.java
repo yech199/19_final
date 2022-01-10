@@ -59,7 +59,7 @@ public class StubGUIController extends ViewController {
     }
 
     @Override
-    public void setHouses(int houseCount, PropertyField propertyField){
+    public void setHouses(int houseCount, int index){
 
     }
 }

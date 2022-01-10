@@ -106,6 +106,11 @@ public class Player {
         this.index = index;
     }
 
+
+    /**
+     * Sætter spilleren i fængsel og opdaterer deres position i Model.
+     * Opdaterer ikke deres position i GUI
+     */
     public void putInJail(){
         inJail = true;
         setCurrentPos(GlobalValues.JAIL_INDEX);

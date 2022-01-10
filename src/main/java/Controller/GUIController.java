@@ -222,8 +222,7 @@ public class GUIController extends ViewController {
     }
 
     @Override
-    public void setHouses(int houseCount, PropertyField propertyField){
-        GUI_Street gui_street = propertyField.getGUIversion();
-        gui_street.setHouses(houseCount);
+    public void setHouses(int houseCount, int index){
+        ((GUI_Street) gui_fieldArray[index]).setHouses(houseCount);
     }
 }
