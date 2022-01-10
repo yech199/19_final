@@ -222,6 +222,11 @@ public class GameController {
                 tmpPlayerList.length == 1) {
             playerList = tmpPlayerList;
         }
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Tjekker om spilleren har fået en ekstra tur ved at slå 2 ens. Hvis de har slået 2 ens 3 gange i træk ryger
+        // de i fængsel.
+        //--------------------------------------------------------------------------------------------------------------
         if (extraTurn){
             extraTurn = false;
             if (turnCounter < 2) {
@@ -351,7 +356,7 @@ public class GameController {
                                     " kr til dette felt?", "Ja", "Nej").equals("Ja")) {
 
                         propertyField.buyBuilding(player);
-                        guiController.setHouses(1, propertyField);
+                        guiController.setHouses(1, player.getCurrentPos());
                     }
                 }
                 // Har brug for en faceValue og står derfor ikke samme sted som shippingField

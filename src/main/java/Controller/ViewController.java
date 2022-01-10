@@ -29,5 +29,5 @@ public abstract class ViewController {
 
     public abstract void displayChanceCard(ChanceCard chanceCard);
 
-    public abstract void setHouses(int houseCount, PropertyField propertyField);
+    public abstract void setHouses(int houseCount, int index);
 }
