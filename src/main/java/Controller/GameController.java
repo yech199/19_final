@@ -315,9 +315,11 @@ public class GameController {
 
             else {
                 if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0 &&
+                    if (propertyField.owner == player && ownsAll(propertyField) &&
+                            propertyField.getAmountOfBuildings() == 0 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
+                                    "Vil du købe et hus for "+ propertyField.buildingPrice +
+                                    " kr til dette felt?", "Ja", "Nej").equals("Ja")) {
 
                         propertyField.buyBuilding(player);
                         guiController.setHouses(1, propertyField);
