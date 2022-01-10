@@ -19,7 +19,7 @@ public abstract class ViewController {
 
     public abstract String getUserButtonPressed(String msg, String... menuOptions);
 
-    public abstract void setOwner(Player player);
+    public abstract void setOwner(Player player, int index);
 
     public abstract void removeOwner(int index);
 

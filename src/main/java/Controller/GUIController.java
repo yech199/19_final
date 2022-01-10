@@ -2,6 +2,7 @@ package Controller;
 
 import Model.ChanceCards.ChanceCard;
 import Model.Fields.Field;
+import Model.Fields.OwnableField;
 import Model.Fields.PropertyField;
 import Model.Player;
 import gui_fields.GUI_Car;
@@ -185,9 +186,9 @@ public class GUIController extends ViewController {
      * @param player active player
      */
     @Override
-    public void setOwner(Player player) {
+    public void setOwner(Player player, int index) {
         GUI_Player guiPlayer = getGuiVersion(player);
-        GUI_Ownable playerField = ((GUI_Ownable) gui_fieldArray[player.getCurrentPos()]);
+        GUI_Ownable playerField = ((GUI_Ownable) gui_fieldArray[index]);
         playerField.setBorder(guiPlayer.getCar().getPrimaryColor());
         playerField.setOwnerName(player.name);
     }

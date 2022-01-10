@@ -39,7 +39,7 @@ public class StubGUIController extends ViewController {
     }
 
     @Override
-    public void setOwner(Player player) {
+    public void setOwner(Player player, int index) {
     }
 
     @Override

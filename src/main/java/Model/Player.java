@@ -15,10 +15,11 @@ public class Player {
     public final String name;
     private int index;
     private int balance;
-    private int jailTryRollCounter;
+    public int jailTryRollCounter;
     public boolean inJail;
     public boolean getOutOfJailFree;
     public boolean wantToTryBidding = true;
+    public boolean extraTurn = false;
 
     /**
      * Alle constructerer fører tilbage til denne constructor.
@@ -96,14 +97,6 @@ public class Player {
      */
     public int getPreviousPos() {
         return previousPos;
-    }
-
-    public int getJailTryRollCounter() {
-        return jailTryRollCounter;
-    }
-
-    public void setJailTryRollCounter(int jailTryRollCounter) {
-        this.jailTryRollCounter = jailTryRollCounter;
     }
 
     public int getIndex() {
