@@ -43,7 +43,7 @@ public class GameControllerTest {
     @Test
     public void testPlayerGetsMoneyWhenPassingStart() {
         Player player = players[0];
-        int[] rolls = {1, 1};
+        int[] rolls = {2, 0};
         die = new StubDie(rolls);
         gameController.die1 = die;
         gameController.die2 = die;
@@ -128,7 +128,7 @@ public class GameControllerTest {
         for (ChanceCard chanceCard : chanceCards) {
             gameBoard = new GameBoard(fields, new ChanceCard[]{chanceCard});
             Player player = new Player("");
-            int[] rolls = {1, 1};
+            int[] rolls = {2, 0};
             die = new StubDie(rolls);
             gameController = new GameController(guiController, gameBoard, die, die, players);
 
@@ -247,35 +247,24 @@ public class GameControllerTest {
         player2.setCurrentPos(2);
         player1.inJail = true;
         player2.inJail = true;
-        int[] rolls = {1, 2, 3, 4, 0, 1};
-        die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die, players);
-        gameController.playTurn(player1);
-
-        Assert.assertTrue(player1.inJail);
-        Assert.assertEquals(2, player1.getCurrentPos());
-
-        rolls = new int[]{1, 2, 3, 4, 0, 1};
-        die = new StubDie(rolls);
-        gameController.die1 = die;
-        gameController.die2 = die;
-        gameController.playTurn(player1);
-
-        Assert.assertTrue(player1.inJail);
-        Assert.assertEquals(2, player1.getCurrentPos());
-
-        rolls = new int[]{1, 2, 3, 4, 0, 1};
-        die = new StubDie(rolls);
-        gameController.die1 = die;
-        gameController.die2 = die;
-        gameController.playTurn(player1);
-
-        Assert.assertFalse(player1.inJail);
-        Assert.assertEquals(2, player1.getCurrentPos());
-        Assert.assertEquals(prevBalance - GlobalValues.JAIL_PRICE, player1.getBalance());
-
-
-        die = new StubDie(new int[]{1, 2, 3, 4, 1, 1});
+        int[] rolls;
+        for (int i = 0; i < 3 ; i++) {
+            rolls= new int[]{1, 2, 3, 4, 0, 1};
+            die = new StubDie(rolls);
+            gameController = new GameController(guiController, gameBoard, die, die, players);
+            gameController.playTurn(player1);
+            if (i == 2) {
+                Assert.assertFalse(player1.inJail);
+                Assert.assertEquals(2, player1.getCurrentPos());
+                Assert.assertEquals(prevBalance - GlobalValues.JAIL_PRICE, player1.getBalance());
+            }
+            else {
+                Assert.assertTrue(player1.inJail);
+                Assert.assertEquals(2, player1.getCurrentPos());
+            }
+        }
+        // Det sidste terningekast sørger for at spilleren bliver stående efter sin ekstra tur
+        die = new StubDie(new int[]{1, 2, 3, 4, 1, 1, -1, 1});
         gameController.die1 = die;
         gameController.die2 = die;
         gameController.playTurn(player2);
@@ -299,7 +288,8 @@ public class GameControllerTest {
         Player player1 = new Player("1", balance);
         player1.setCurrentPos(2);
         player1.inJail = true;
-        die = new StubDie(0);
+        int[] rolls = {-1, 1, -1, 1};
+        die = new StubDie(rolls);
         gameController = new GameController(guiController, gameBoard, die, die, players);
         gameController.playTurn(player1);
 
@@ -316,7 +306,7 @@ public class GameControllerTest {
         Player player3 = new Player("3", 1000);
         // De første 3 rul er de rul der tjekker hvem der starter vha. metoden decideStartingOrder().
         // Derefter spilles der er runder for hver spiller i spillerlisten.
-        int[] rolls = {0, 3, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0};
+        int[] rolls = {0, 3, 0, 2, 0, 1, -1, 1, -1, 1, -1, 1};
         die = new StubDie(rolls);
         gameController = new GameController(guiController, gameBoard, die, die, new Player[]{player1, player2, player3});
         gameController.runGame();
@@ -330,8 +320,9 @@ public class GameControllerTest {
         Player player1 = new Player("1", 1000);
         Player player2 = new Player("2", 1000);
         Player player3 = new Player("3", 1000);
-        die = new StubDie(0);
-        gameController = new GameController(guiController, gameBoard, die, die, new Player[]{player1, player2, player3});
+        Die die1 = new StubDie(-1);
+        Die die2 = new StubDie(1);
+        gameController = new GameController(guiController, gameBoard, die1, die2, new Player[]{player1, player2, player3});
 
         gameController.action2 = "Hurtigt spil";
         gameController.choice = "Hurtigt spil";

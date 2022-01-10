@@ -166,19 +166,20 @@ public class GameController {
                                 player.jailTryRollCounter = 1;
                             }
                         }
-                        if (player.inJail) return;
+                        player.jailTryRollCounter++;
 
-                    }
-                    if (player.jailTryRollCounter == 3) {
-                        player.jailTryRollCounter = 1;
-                        guiController.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
-                                "Du er derfor nødt til at betale dig ud af fængslet. Du kan rykke igen næste gang det bliver din tur");
-                        player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
-                        player.inJail = false;
-                        // Vi returner fordi spilleren ikke må rykke, hvis spilleren har valgt at rulle 2 ens,
-                        // men stadig fejler efter 3 runders forsøg. Man er da tvunget til at betale sig ud af fængslet,
-                        // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
-                        return;
+                        if (player.inJail && player.jailTryRollCounter == 3) {
+                            player.jailTryRollCounter = 1;
+                            guiController.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
+                                    "Du er derfor nødt til at betale dig ud af fængslet. Du kan rykke igen næste gang det bliver din tur");
+                            player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
+                            player.inJail = false;
+                            // Vi returner fordi spilleren ikke må rykke, hvis spilleren har valgt at rulle 2 ens,
+                            // men stadig fejler efter 3 runders forsøg. Man er da tvunget til at betale sig ud af fængslet,
+                            // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
+                            return;
+                        }
+                        if (player.inJail) return;
                     }
                 }
                 else {
@@ -399,7 +400,7 @@ public class GameController {
 
         numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, playerList);
 
-        if (numOfPlayersBidding > 1) {
+        if (numOfPlayersBidding > 0) {
             bidOnAuction(player, ownableField, numOfPlayersBidding);
             afterAuction = true;
         }
