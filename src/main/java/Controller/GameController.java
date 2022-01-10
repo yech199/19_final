@@ -177,7 +177,7 @@ public class GameController {
                             // Vi returner fordi spilleren ikke må rykke, hvis spilleren har valgt at rulle 2 ens,
                             // men stadig fejler efter 3 runders forsøg. Man er da tvunget til at betale sig ud af fængslet,
                             // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
-                            return;
+                            // return;
                         }
                         if (player.inJail) return;
                     }
