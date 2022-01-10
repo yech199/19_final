@@ -242,7 +242,8 @@ public class GameController {
                 duplicates = true;
                 dieValues.clear();
                 break;
-            } else {
+            }
+            else {
                 dieValues.put(rollResult, player);
             }
         }
@@ -282,6 +283,7 @@ public class GameController {
                 action2 = "Nej";
                 choice = guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
                         ". Vil du købe denne ejendom?", action1, action2);
+
                 if (choice.equals(action1)) {
                     player.addAmountToBalance(-ownableField.price);
                     ownableField.owner = player;
@@ -289,35 +291,77 @@ public class GameController {
 
                     // Opdaterer spillerens ejede færgers rente efter spilleren køber en færge
                     if (ownableField instanceof ShippingField) {
-                        int count = 0;
-                        for (ShippingField f : gameBoard.shippingFields)
-                            if (f.owner == player)
-                                count++;
-
-                        int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, count - 1));
-                        for (ShippingField f : gameBoard.shippingFields)
-                            if (f.owner == player)
-                                f.rent = rent;
+                        updateShippingFieldRent(player);
                     }
 
-                    //------------------------------------------------------------------------------------------------------
-                    // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
-                    //------------------------------------------------------------------------------------------------------
-                    // FIXME fjern køb hus og hustjek
+                    // FIXME fjern hustjek
+                    //  OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     if (landedOn instanceof PropertyField propertyField) {
-                        if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0) {
+                        // Tjekker om ejeren af det nyligt købte felt også ejer de andre af samme farve
+                        if (ownsAll(propertyField)) {
                             PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
+                            // Fordobler renten
                             for (PropertyField tmpField : tmpFields) {
                                 tmpField.rent *= 2;
                             }
-                            // Fordobler renten den.
-                            // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                         }
                     }
                 }
                 // FIXME: Auktion
                 else {
-                    
+                    guiController.showMessage("Alle andre spillere kan nu byde på denne grund. Laveste bud starter på "
+                            + ownableField.price);
+                    int numOfPlayersBidding = playerList.length - 1;
+
+                    for (Player p : playerList) {
+                        if (p == player)
+                            p.wantToTryBidding = false;
+
+                        else {
+                            choice = guiController.getUserButtonPressed("Vil du være med i auktionen og byde på "
+                                    + landedOn.fieldName + "?", action1, action2);
+
+                            if (choice.equals(action2)) {
+                                p.wantToTryBidding = false;
+                                numOfPlayersBidding -= 1;
+                            }
+                        }
+                    }
+                    int prevBid = ownableField.price;
+                    int bid;
+                    Player prevPlayer = null;
+
+                    for (int i = numOfPlayersBidding; i > 1; i = numOfPlayersBidding) {
+                        for (Player p : playerList) {
+                            if (p.wantToTryBidding) {
+
+                                if (prevPlayer != null) {
+                                    choice = guiController.getUserButtonPressed(prevPlayer.name + " bød " + prevBid + " kr. " +
+                                            "Vil du stadig byde på " + ownableField.fieldName + "?", action1, action2);
+                                    if (choice.equals(action2)) {
+                                        p.wantToTryBidding = false;
+                                        numOfPlayersBidding -= 1;
+                                        continue;
+                                    }
+                                }
+
+                                bid = guiController.getUserInteger("Hvad vil du byde på " + ownableField.fieldName
+                                        + "? Buddet starter på " + prevBid + " kr.", prevBid, Integer.MAX_VALUE);
+                                // Det er ikke muligt at byde lavere. Derfor er dette ikke inkluderet i if statementet
+                                if (bid == prevBid && prevPlayer != null) {
+                                    bid = guiController.getUserInteger("Dette bud er ugyldigt. Giv et nyt bud" +
+                                            "\nHvad vil du byde på " + ownableField.fieldName + "? Buddet starter på "
+                                            + prevBid + " kr.", prevBid, Integer.MAX_VALUE);
+                                }
+                                prevPlayer = p;
+                                prevBid = bid;
+                            }
+                        }
+                    }
+
+                    ownableField.owner = prevPlayer;
+                    player.addAmountToBalance(-prevBid);
+                    guiController.setOwner(prevPlayer);
                 }
             }
 
@@ -364,6 +408,29 @@ public class GameController {
         }
 
         guiController.updatePlayer(player);
+    }
+
+    private static Player[] addPlayerToOldArray(Player[] oldArray, Player newElement) {
+        int n = oldArray.length;
+        Player[] newArray = new Player[n + 1];
+
+        // Indsætter det gamle array i det nye array
+        System.arraycopy(oldArray, 0, newArray, 0, n);
+
+        newArray[n] = newElement;
+        return newArray;
+    }
+
+    private void updateShippingFieldRent(Player player) {
+        int count = 0;
+        for (ShippingField f : gameBoard.shippingFields)
+            if (f.owner == player)
+                count++;
+
+        int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, count - 1));
+        for (ShippingField f : gameBoard.shippingFields)
+            if (f.owner == player)
+                f.rent = rent;
     }
 
     /**
