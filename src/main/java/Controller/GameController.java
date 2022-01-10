@@ -277,8 +277,12 @@ public class GameController {
         if (landedOn instanceof OwnableField ownableField) {
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
-                if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
-                        ". Vil du købe denne ejendom?", "Ja", "Nej").equals("Ja")) {
+
+                action1 = "Ja";
+                action2 = "Nej";
+                choice = guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
+                        ". Vil du købe denne ejendom?", action1, action2);
+                if (choice.equals(action1)) {
                     player.addAmountToBalance(-ownableField.price);
                     ownableField.owner = player;
                     guiController.setOwner(player);
@@ -310,6 +314,10 @@ public class GameController {
                             // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                         }
                     }
+                }
+                // FIXME: Auktion
+                else {
+                    
                 }
             }
 
