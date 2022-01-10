@@ -1,6 +1,5 @@
 package Model.Fields;
 
-import Model.GlobalValues;
 import Model.Player;
 import gui_fields.GUI_Jail;
 

@@ -19,7 +19,6 @@ public class Player {
     public boolean inJail;
     public boolean getOutOfJailFree;
     public boolean wantToTryBidding = true;
-    public boolean extraTurn = false;
 
     /**
      * Alle constructerer fører tilbage til denne constructor.
