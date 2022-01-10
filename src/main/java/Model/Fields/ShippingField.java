@@ -6,12 +6,17 @@ import gui_fields.GUI_Shipping;
 import java.awt.*;
 
 public class ShippingField extends OwnableField {
-    public ShippingField(String name, String subText, String description, int rent) {
-        super(name, subText, description, rent, 4000, Color.WHITE, Color.BLACK);
+
+    public ShippingField(String name, String subText, String description, int rent, int price) {
+        super(name, subText, description, rent, price, Color.WHITE, Color.BLACK);
     }
 
-    @Override
-    public void fieldAction(Player player) {
+    public ShippingField(String name, String subText, String description, int rent) {
+        this(name, subText, description, rent, 4000);
+    }
+
+    public ShippingField(int price) {
+        this("", "", "", 0, price);
     }
 
     @Override

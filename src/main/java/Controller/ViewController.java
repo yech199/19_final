@@ -13,11 +13,15 @@ public abstract class ViewController {
 
     public abstract void updatePlayer(Player player);
 
+    public abstract void removeCar(Player player);
+
     public abstract void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2);
 
     public abstract String getUserButtonPressed(String msg, String... menuOptions);
 
     public abstract void setOwner(Player player);
+
+    public abstract void removeOwner(int index);
 
     public abstract void showMessage(String msg);
 

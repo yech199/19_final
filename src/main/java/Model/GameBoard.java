@@ -16,6 +16,8 @@ public class GameBoard {
     public final Field[] fields; // Array af fields
     public final int[] ferryIndices;
     public final int[] breweryIndices;
+    public final ShippingField[] shippingFields;
+    public final BreweryField[] breweryFields;
 
     //------------------------------------------------------------------------------------------------------------------
     // Constructor der laver et GameBoard
@@ -23,15 +25,12 @@ public class GameBoard {
     public GameBoard(Field[] fields, ChanceCard[] chanceCards) {
         this.fields = fields;
         this.chanceCards = chanceCards;
+        
+        ferryIndices = findAllShippingAndBreweryFieldIndices(fields, FieldType.SHIPPING);
+        breweryIndices = findAllShippingAndBreweryFieldIndices(fields, FieldType.BREWERY);
 
-        int[] indices = new int[]{};
-        FieldType fieldType;
-
-        fieldType = FieldType.SHIPPING;
-        ferryIndices = findAllShippingAndBreweryFields(fields, indices, fieldType);
-
-        fieldType = FieldType.BREWERY;
-        breweryIndices = findAllShippingAndBreweryFields(fields, indices, fieldType);
+        shippingFields = findAllShippingFields();
+        breweryFields = findAllBreweryFields();
     }
 
     public GameBoard() {
@@ -56,69 +55,117 @@ public class GameBoard {
                 }
                 else if (counter == 2) {
                     if (propertyField != tmpFields[0] && propertyField != tmpFields[1] && propertyField.backgroundColor.equals(color))
-                        tmpFields = addElementToOldArray(tmpFields.length, tmpFields, propertyField);
+                        tmpFields = addPropertyToOldArray(tmpFields.length, tmpFields, propertyField);
                 }
             }
         }
         return tmpFields;
     }
 
-    public int[] findAllShippingAndBreweryFields(Field[] fields, int[] indices, FieldType fieldType) {
-        int[] ferryIndices = indices;
-        int[] breweryIndices = indices;
+    public ShippingField[] findAllShippingFields() {
+        ShippingField[] tmpFields = new ShippingField[]{};
 
-        final int[] fieldIndice;
+        for (Field field : this.fields) {
+            if (field instanceof ShippingField shippingField) {
+                    tmpFields = addShippingFieldToOldArray(tmpFields.length, tmpFields, shippingField);
+            }
+        }
+        return tmpFields;
+    }
+
+    public BreweryField[] findAllBreweryFields() {
+        BreweryField[] tmpFields = new BreweryField[]{};
+
+        for (Field field : this.fields) {
+            if (field instanceof BreweryField breweryField) {
+                    tmpFields = addBreweryFieldToOldArray(tmpFields.length, tmpFields, breweryField);
+            }
+        }
+        return tmpFields;
+    }
+
+    public int[] findAllShippingAndBreweryFieldIndices(Field[] fields, FieldType fieldType) {
+        int[] ferryIndices = new int[]{};
+        int[] breweryIndices = new int[]{};
+
         for (int i = 0; i < fields.length; i++) {
             if (fields[i] instanceof ShippingField) {
-                ferryIndices = addElementToOldArray(ferryIndices.length, ferryIndices, i);
+                ferryIndices = addPropertyToOldArray(ferryIndices.length, ferryIndices, i);
             }
             else if (fields[i] instanceof BreweryField) {
-                breweryIndices = addElementToOldArray(breweryIndices.length, breweryIndices, i);
+                breweryIndices = addPropertyToOldArray(breweryIndices.length, breweryIndices, i);
             }
         }
 
         switch (fieldType) {
-            case SHIPPING -> indices = ferryIndices;
-            case BREWERY -> indices = breweryIndices;
+            case SHIPPING -> {
+                return ferryIndices;
+            }
+            case BREWERY -> {
+                return breweryIndices;
+            }
         }
-        fieldIndice = new int[indices.length];
-        for (int i = 0; i < fieldIndice.length; i++) {
-            fieldIndice[i] = indices[i];
-        }
-        return fieldIndice;
+        // Denne case sker aldrig        
+        return new int[]{};
     }
 
     /**
      * Funktion der tilføjer x til arrayet på plads n + 1
      *
-     * @param n              Antallet af elementer i det gamle array
-     * @param propertyFields Det gamle array
-     * @param propertyField  Det der skal tilføjes i arrayet på plads n + 1
+     * @param n           Antallet af elementer i det gamle array
+     * @param oldArray    Det gamle array
+     * @param newElement  Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static PropertyField[] addElementToOldArray(int n, PropertyField[] propertyFields, PropertyField propertyField) {
-        int i;
+    private static PropertyField[] addPropertyToOldArray(int n, PropertyField[] oldArray, PropertyField newElement) {
+        
         PropertyField[] newArray = new PropertyField[n + 1];
 
         //--------------------------------------------------------------------------------------------------------------
         // Indsætter det gamle array i det nye array
         //--------------------------------------------------------------------------------------------------------------
-        for (i = 0; i < n; i++)
-            newArray[i] = propertyFields[i];
+        for (int i = 0; i < n; i++)
+            newArray[i] = oldArray[i];
 
-        newArray[n] = propertyField;
+        newArray[n] = newElement;
+        return newArray;
+    }
+
+    private static ShippingField[] addShippingFieldToOldArray(int n, ShippingField[] oldArray, ShippingField newElement) {
+        ShippingField[] newArray = new ShippingField[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (int i = 0; i < n; i++)
+            newArray[i] = oldArray[i];
+
+        newArray[n] = newElement;
+        return newArray;
+    }
+
+    private static BreweryField[] addBreweryFieldToOldArray(int n, BreweryField[] oldArray, BreweryField newElement) {
+        BreweryField[] newArray = new BreweryField[n + 1];
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Indsætter det gamle array i det nye array
+        //--------------------------------------------------------------------------------------------------------------
+        for (int i = 0; i < n; i++)
+            newArray[i] = oldArray[i];
+
+        newArray[n] = newElement;
         return newArray;
     }
 
     /**
      * Funktion der tilføjer x til arrayet på plads n + 1
      *
-     * @param n              Antallet af elementer i det gamle array
-     * @param propertyFields Det gamle array
-     * @param propertyField  Det der skal tilføjes i arrayet på plads n + 1
+     * @param n          Antallet af elementer i det gamle array
+     * @param oldArray   Det gamle array
+     * @param newElement Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static int[] addElementToOldArray(int n, int[] propertyFields, int propertyField) {
+    private static int[] addPropertyToOldArray(int n, int[] oldArray, int newElement) {
         int i;
         int[] newArray = new int[n + 1];
 
@@ -126,9 +173,9 @@ public class GameBoard {
         // Indsætter det gamle array i det nye array
         //--------------------------------------------------------------------------------------------------------------
         for (i = 0; i < n; i++)
-            newArray[i] = propertyFields[i];
+            newArray[i] = oldArray[i];
 
-        newArray[n] = propertyField;
+        newArray[n] = newElement;
         return newArray;
     }
 }

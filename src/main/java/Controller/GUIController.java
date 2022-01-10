@@ -79,8 +79,6 @@ public class GUIController extends ViewController {
         // Sætter spillernes startbalance alt efter hvor mange spillere der spiller
         //--------------------------------------------------------------------------------------------------------------
         for (int i = 0; i < playerList.length; i++) {
-            playerList[i].addAmountToBalance(30000);
-
             GUI_Car tmpCar = new GUI_Car();
             tmpCar.setPrimaryColor(colors[i]);
 
@@ -150,6 +148,13 @@ public class GUIController extends ViewController {
         guiPlayer.setBalance(player.getBalance());
     }
 
+    @Override
+    public void removeCar(Player player) {
+        GUI_Player guiPlayer = getGuiVersion(player);
+        // gui_fieldArray[player.getPreviousPos()].setCar(guiPlayer, false);
+        gui_fieldArray[player.getCurrentPos()].setCar(guiPlayer, false);
+    }
+
     /**
      * Displays one die with the given value, at a random position on the board
      *
@@ -187,6 +192,13 @@ public class GUIController extends ViewController {
         playerField.setOwnerName(player.name);
     }
 
+    @Override
+    public void removeOwner(int index) {
+        GUI_Ownable playerField = ((GUI_Ownable) gui_fieldArray[index]);
+        playerField.setBorder(null);
+        playerField.setOwnerName(null);
+    }
+
     /**
      * Displays a message to the user, along with an 'OK'-button.
      * The program stops/hangs at the method call until the button is pressed.
@@ -205,6 +217,7 @@ public class GUIController extends ViewController {
     public void close() {
         gui.close();
     }
+
 
     @Override
     public void displayChanceCard(ChanceCard chanceCard) {

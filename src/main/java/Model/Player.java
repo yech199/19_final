@@ -13,18 +13,41 @@ public class Player {
     private int previousPos;
 
     public final String name;
+    private int index;
     private int balance;
+    private int jailTryRollCounter;
     public boolean inJail;
     public boolean getOutOfJailFree;
 
     /**
-     * Constructor der laver en player med et navn og en startbalance på 0
-     *
-     * @param name of the Player being made
+     * Alle constructerer fører tilbage til denne constructor.
+     * Dermed har alle constructorer alt der skal bruges for at spilleren kan bruges alle steder
      */
-    public Player(String name) {
+    public Player(String name, int index, int balance) {
         this.name = name;
-        this.balance = 0;
+        this.balance = balance;
+        this.index = index;
+        this.jailTryRollCounter = 1;
+    }
+
+    /**
+     * Spiller der har custom-made navn og pengebeholdning (bruges til test)
+     */
+    public Player(String name, int balance) {
+        this(name, 0, balance);
+    }
+
+    /**
+     * Spiller der har custom-made index og navn
+     *
+     * @param index Player index i playerList i gameControlleren
+     */
+    public Player(int index, String name) {
+        this(name, index, GlobalValues.START_MONEY);
+    }
+
+    public Player(String name) {
+        this(-1, name);
     }
 
     /**
@@ -72,5 +95,21 @@ public class Player {
      */
     public int getPreviousPos() {
         return previousPos;
+    }
+
+    public int getJailTryRollCounter() {
+        return jailTryRollCounter;
+    }
+
+    public void setJailTryRollCounter(int jailTryRollCounter) {
+        this.jailTryRollCounter = jailTryRollCounter;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

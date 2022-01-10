@@ -1,9 +1,11 @@
 package Controller;
 
 import Model.ChanceCards.ChanceCard;
+import Model.ChanceCards.MovementCard;
 import Model.Die;
 import Model.Fields.*;
 import Model.GameBoard;
+import Model.GlobalValues;
 import Model.Player;
 
 import java.util.Arrays;
@@ -16,8 +18,18 @@ public class GameController {
     public Die die1, die2;
     public GameBoard gameBoard;
     public Player[] playerList;
-    private boolean gameEnded;
+    public boolean gameEnded;
     public int roundCounter;
+    private Player[] tmpPlayerList;
+
+    public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
+        this.die1 = die1;
+        this.die2 = die2;
+        this.gameBoard = gameBoard;
+        this.guiController = guiController;
+        this.playerList = players;
+        this.tmpPlayerList = this.playerList;
+    }
 
     /**
      * Denne controller laver alle de objekter som spillet skal bruge for at kunne køre
@@ -26,20 +38,7 @@ public class GameController {
      * Player constructoren skal bruge et navn i parameteren, desuden sættes den enkelte spillers start balance til 0 automatisk
      */
     public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2) {
-        this.die1 = die1;
-        this.die2 = die2;
-        this.gameBoard = gameBoard;
-        this.guiController = guiController;
-
-        int playerCount = guiController.getUserInteger("Hvor mange spillere (3-6)?", 3, 6);
-
-        // Laver x antal nye spillere med navn
-        playerList = new Player[playerCount];
-        for (int i = 0; i < playerList.length; i++) {
-            playerList[i] = new Player(this.guiController.getUserString("Player " + (i + 1) + " skriv dit navn:"));
-        }
-
-        this.guiController.setUpPlayers(playerList);
+        this(guiController, gameBoard, die1, die2, setUpPlayers(guiController));
     }
 
     /**
@@ -48,7 +47,7 @@ public class GameController {
      * <p> Denne constructor kalder på ovenstående constructor
      */
     private GameController(GameBoard gameBoard) {
-        this(new GUIController(gameBoard.fields), gameBoard, new Die(1, 6), new Die(1, 6));
+        this(new GUIController(gameBoard.fields), gameBoard, new Die(), new Die());
     }
 
     /**
@@ -58,6 +57,22 @@ public class GameController {
      */
     public GameController() {
         this(new GameBoard());
+    }
+
+    private static Player[] setUpPlayers(ViewController guiController) {
+        int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?",
+                        GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS),
+                GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
+
+        // Laver x antal nye spillere med navn
+        Player[] playerList = new Player[playerCount];
+        for (int i = 0; i < playerList.length; i++) {
+            playerList[i] = new Player(i, guiController.getUserString("Player " + (i + 1) + " skriv dit navn:"));
+        }
+
+        guiController.setUpPlayers(playerList);
+
+        return playerList;
     }
 
     /**
@@ -78,6 +93,10 @@ public class GameController {
         roundCounter++;
         guiController.showMessage("Runde " + roundCounter);
         for (Player player : playerList) {
+            if (tmpPlayerList.length == 1) {
+                gameEnded = true;
+                return;
+            }
             if (roundCounter > 40) {
                 gameEnded = true;
                 break;
@@ -90,37 +109,65 @@ public class GameController {
      * Logik til den enkeltes spillers tur
      */
     public void playTurn(Player player) {
-        guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
-        int faceValue1 = die1.roll();
-        int faceValue2 = die2.roll();
-        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
-        int faceValue = faceValue1 + faceValue2;
+        int faceValue1;
+        int faceValue2;
+        int faceValue = 0;
 
-        if (player.inJail) {
+        if (!player.inJail) {
+            faceValue = rollDice(player);
+        }
+        else {
+
             if (player.getOutOfJailFree) {
-                guiController.getUserButtonPressed(player.name + " er røget i fængsel, men du har et " +
-                        "benådelseskort fra Kongen.", "OK");
+                guiController.getUserButtonPressed(player.name + " er røget i fængsel, " +
+                        "men har et benådelseskort fra Kongen, og kommer derfor gratis ud af fængslet", "OK");
                 player.getOutOfJailFree = false;
                 player.inJail = false;
-            } else {
+            }
+            else {
+
                 if (guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
-                        "Hvordan vil du komme ud?", "Betal 1000 kr", "Rul 2 ens").equals("Rul 2 ens")) {
-                    for (int i = 0; i < 3; i++) {
-                        guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
-                        int die1 = this.die1.roll();
-                        int die2 = this.die1.roll();
+                        "Hvordan vil du komme ud?", "Betal " + GlobalValues.JAIL_PRICE + " kr", "Rul 2 ens").equals("Rul 2 ens")) {
 
-                        guiController.setDice(die1, 2, 8, die2, 3, 8);
+                    if (player.getJailTryRollCounter() < 3) {
+                        for (int i = 0; i < 3; i++) {
+                            guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
+                            faceValue1 = this.die1.roll();
+                            faceValue2 = this.die1.roll();
+                            faceValue = faceValue1 + faceValue2;
 
-                        if (die1 == die2) { //tjekker om der er blevet rullet 2 ens
-                            player.inJail = false;
-                            faceValue = die1 + die2;
-                            i = 3; //stopper loopet
-                        } else faceValue = 0;
+                            guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+
+                            // Tjekker om der er blevet rullet 2 ens
+                            if (faceValue1 == faceValue2) {
+                                player.inJail = false;
+                                i = 3; //stopper loopet
+                                player.setJailTryRollCounter(1);
+                            }
+                        }
+
+                        if (player.inJail) {
+                            player.setJailTryRollCounter(player.getJailTryRollCounter() + 1);
+                            return;
+                        }
                     }
-                } else {
-                    player.addAmountToBalance(-1000);
+                    if (player.getJailTryRollCounter() == 3) {
+                        player.setJailTryRollCounter(1);
+                        guiController.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
+                                "Du er derfor nødt til at betale dig ud af fængslet. Du kan rykke igen næste gang det bliver din tur");
+                        player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
+                        player.inJail = false;
+                        // Vi returner fordi spilleren ikke må rykke, hvis spilleren har valgt at rulle 2 ens,
+                        // men stadig fejler efter 3 runders forsøg. Man er da tvunget til at betale sig ud af fængslet,
+                        // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
+                        return;
+                    }
+                }
+                else {
+                    player.setJailTryRollCounter(1);
+                    player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
                     player.inJail = false;
+                    faceValue = rollDice(player);
                 }
             }
         }
@@ -129,20 +176,49 @@ public class GameController {
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
 
-        landedOn.fieldAction(player);
         checkIfInstanceOf(player, faceValue, landedOn);
+        landedOn.fieldAction(player);
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
         //--------------------------------------------------------------------------------------------------------------
         if (player.getBalance() <= 0) {
-            gameEnded = true;
+            guiController.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
+            // Slet næste linje hvis du vil sætte taberen i endnu mere evig skam
+            guiController.removeCar(player);
+
+            for (int i = 0; i < gameBoard.fields.length; i++) {
+                Field f = gameBoard.fields[i];
+                if (f instanceof OwnableField ownableField && player == ownableField.owner) {
+                    ownableField.owner = null;
+                    guiController.removeOwner(i);
+                }
+            }
+
+            tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
+
+        }
+        if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
+                tmpPlayerList.length == 1) {
+            playerList = tmpPlayerList;
         }
     }
 
     //------------------------------------------------------------------------------------------------------------------
     // Metoder der bruges ovenover
     //------------------------------------------------------------------------------------------------------------------
+    private int rollDice(Player player) {
+        int faceValue2;
+        int faceValue1;
+        int faceValue;
+        guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
+        faceValue1 = die1.roll();
+        faceValue2 = die2.roll();
+        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+        faceValue = faceValue1 + faceValue2;
+        return faceValue;
+    }
+
     private boolean rollDice(HashMap<Integer, Player> dieValues) {
         boolean duplicates = false;
         for (Player player : playerList) {
@@ -163,16 +239,19 @@ public class GameController {
         return duplicates;
     }
 
+
     private void decideStartingOrder() {
         HashMap<Integer, Player> dieValues = new HashMap<>();
+        Player[] orderOfPlayers = playerList;
+
         boolean rollAgain = true;
         while (rollAgain) {
             rollAgain = rollDice(dieValues);
-            if (!rollAgain){
+            if (!rollAgain) {
                 Object[] keys = dieValues.keySet().toArray();
                 Arrays.sort(keys, Collections.reverseOrder());
-                for (int i = 0; i < playerList.length; i++){
-                    playerList[i] = dieValues.get(keys[i]);
+                for (int i = 0; i < orderOfPlayers.length; i++) {
+                    orderOfPlayers[i] = dieValues.get(keys[i]);
                 }
             }
             else {
@@ -180,36 +259,13 @@ public class GameController {
                         " igen med terningen for hvem der skal starte!", "Rul");
             }
         }
+        for (int i = 0; i < orderOfPlayers.length; i++) {
+            playerList[i].setIndex(i);
+        }
     }
 
-    private void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
+    public void checkIfInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField) {
-            if (ownableField instanceof BreweryField breweryField) {
-                int rent = faceValue * 100;
-                if (breweryField.owner != null) {
-                    player.addAmountToBalance(-rent);
-                    breweryField.owner.addAmountToBalance(rent);
-                }
-            }
-            else if (ownableField instanceof ShippingField shippingField) {
-                if (shippingField.owner != null) {
-                    int rent = shippingField.rent;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                } else if (shippingField.owner != null) {
-                    int rent = shippingField.rent * 2;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                } else if (shippingField.owner != null) {
-                    int rent = shippingField.rent * 4;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                } else if (shippingField.owner != null) {
-                    int rent = shippingField.rent * 8;
-                    player.addAmountToBalance(-rent);
-                    shippingField.owner.addAmountToBalance(rent);
-                }
-            }
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
                 if (guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
@@ -217,43 +273,75 @@ public class GameController {
                     player.addAmountToBalance(-ownableField.price);
                     ownableField.owner = player;
                     guiController.setOwner(player);
-                }
-                //------------------------------------------------------------------------------------------------------
-                // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
-                //------------------------------------------------------------------------------------------------------
-                // FIXME fjern køb hus og hustjek
-                if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0) {
-                        PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
-                        for (PropertyField tmpField : tmpFields) {
-                            tmpField.rent += tmpField.rent;
+
+                    // Opdaterer spillerens ejede færgers rente efter spilleren køber en færge
+                    if (ownableField instanceof ShippingField) {
+                        int count = 0;
+                        for (ShippingField f : gameBoard.shippingFields)
+                            if (f.owner == player)
+                                count++;
+
+                        int rent = GlobalValues.SHIPPING_RENT * ((int) Math.pow(2, count - 1));
+                        for (ShippingField f : gameBoard.shippingFields)
+                            if (f.owner == player)
+                                f.rent = rent;
+                    }
+
+                    //------------------------------------------------------------------------------------------------------
+                    // Tjekker om ejeren af det nyligt købte felt også ejer det andet af samme farve
+                    //------------------------------------------------------------------------------------------------------
+                    // FIXME fjern køb hus og hustjek
+                    if (landedOn instanceof PropertyField propertyField) {
+                        if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0) {
+                            PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
+                            for (PropertyField tmpField : tmpFields) {
+                                tmpField.rent *= 2;
+                            }
+                            // Fordobler renten den.
+                            // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                         }
-
-                        // Tilføjer renten til sig selv for at fordoble den.
-                        // OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     }
                 }
-            } else {
-                if (landedOn instanceof PropertyField propertyField) {
-                    if (ownsAll(propertyField) && propertyField.getAmountOfHouses() == 0 &&
-                            ((PropertyField) landedOn).owner.equals(player) &&
-                            guiController.getUserButtonPressed("Du ejer alle felter af denne farve. Vil du købe " +
-                                    "et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
-                        player.addAmountToBalance(-4000);
-                        propertyField.addHouse(1);
-                        guiController.setHouses(1, (PropertyField)landedOn);
-                    }
-                }
-
-                guiController.updatePlayer(ownableField.owner);
             }
 
-        } else if (landedOn instanceof ChanceField) {
+            else {
+                if (landedOn instanceof PropertyField propertyField) {
+                    if (ownsAll(propertyField) && propertyField.getAmountOfBuildings() == 0 &&
+                            guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                                    "Vil du købe et hus for 4.000 kr til dette felt?", "Ja", "Nej").equals("Ja")) {
+
+                        propertyField.buyBuilding(player);
+                        guiController.setHouses(1, propertyField);
+                    }
+                }
+                // Har brug for en faceValue og står derfor ikke samme sted som shippingField
+                else if (ownableField instanceof BreweryField) {
+                    Player owner = ownableField.owner;
+                    int counter = 0;
+                    for (BreweryField f: gameBoard.breweryFields)
+                        if (f.owner == owner)
+                            counter++;
+
+                    ownableField.rent = faceValue * (100 * counter);
+                }
+                guiController.updatePlayer(ownableField.owner);
+            }
+        }
+        else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
             guiController.displayChanceCard(chanceCard);
             int tmpPos = player.getCurrentPos();
             chanceCard.cardAction(player, gameBoard);
+
+            if (chanceCard instanceof MovementCard) {
+                guiController.updatePlayer(player);
+
+                // Sørger for at man laver den handling der svarer til det felt man lander på
+                landedOn = gameBoard.fields[player.getCurrentPos()];
+                landedOn.fieldAction(player);
+            }
             guiController.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
+            // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig
             if (player.getCurrentPos() != tmpPos)
                 checkIfInstanceOf(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
         }
@@ -269,38 +357,38 @@ public class GameController {
      * @param player    Den aktive player
      * @param faceValue terningens faceValue
      */
-    public void movePlayerForward(Player player, int faceValue) {
+    private void movePlayerForward(Player player, int faceValue) {
         player.setCurrentPos((player.getCurrentPos() + faceValue) % gameBoard.fields.length);
 
         // Spilleren passerer Start
-        if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(4000);
+        if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(GlobalValues.START_FIELD_VALUE);
         guiController.updatePlayer(player);
     }
 
     /**
-     * Bruger getPair for at få det andet felt med samme farve.
+     * Bruges til at tjekke om spilleren ejer alle felter med samme farve.
      *
-     * @param field AmusementField input
-     * @return boolean output der siger om ejeren har begge felter med denne farve eller ej.
+     * @param propertyField PropertyField input
+     * @return boolean output der siger om ejeren ejer alle felter med denne farve
      */
-    // FIXME
-    public boolean ownsAll(PropertyField field) {
-
-        Field[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(field.backgroundColor);
+    public boolean ownsAll(PropertyField propertyField) {
+        PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
+        boolean ownsAll = false;
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
         // return statementet.
         //--------------------------------------------------------------------------------------------------------------
-        if (tmpFields.length == 3) {
-            if (((PropertyField) tmpFields[0]).owner == null || ((PropertyField) tmpFields[1]).owner == null ||
-                    ((PropertyField) tmpFields[2]).owner == null) {
-                return false;
+        if (propertyField.owner != null) {
+            if (tmpFields.length == 2 && tmpFields[0].owner == tmpFields[1].owner) {
+                // Tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
+                ownsAll = true;
             }
-            //tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
-            return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner &&
-                    ((PropertyField) tmpFields[2]).owner == ((PropertyField) tmpFields[1]).owner;
-        } else return ((PropertyField) tmpFields[0]).owner == ((PropertyField) tmpFields[1]).owner;
+            else if (tmpFields.length == 3 && tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner) {
+                ownsAll = true;
+            }
+        }
+        return ownsAll;
     }
 
     /**
@@ -308,21 +396,25 @@ public class GameController {
      * Giver en slut-besked med spillernes endelige scorer.
      */
     public void setGameEnded() {
-        String winner = null;
+        Player winner = getWinner(playerList);
+        if (playerList.length == 1) {
+            guiController.showMessage("Spillet er slut!\n" +
+                    winner.name + " er den eneste spiller tilbage og\n" +
+                    winner.name + " har derfor vundet med " + winner.getBalance() + " kr.");
+        }
+        String winnerMessage = null;
 
         for (Player player : playerList) {
-            if (winner != null) {
-                winner = winner + player.name + " har " + player.getBalance() + " point.\n";
+            if (winnerMessage != null) {
+                winnerMessage = winnerMessage + player.name + " har " + player.getBalance() + " point.\n";
             }
-            else winner = player.name + " har " + player.getBalance() + " point.\n";
+            else winnerMessage = player.name + " har " + player.getBalance() + " point.\n";
         }
-        winner = winner + getWinner(playerList).name + " har vundet!";
+        winnerMessage = winnerMessage + winner.name + " har vundet!";
 
-        guiController.showMessage(winner);
+        guiController.showMessage(winnerMessage);
         guiController.showMessage("Luk spillet?");
         guiController.close();
-
-
     }
 
     /**
@@ -332,8 +424,8 @@ public class GameController {
      * @param playerList tager listen af players som input
      * @return returnerer den spiller der har vundet
      */
-    public Player getWinner(Player[] playerList) {
-        Player winner = new Player(""); //tom spiller, da den udskiftes med en ny spiller efter første runde i for-loop
+    private Player getWinner(Player[] playerList) {
+        Player winner = new Player("", 0); //tom spiller, da den udskiftes med en ny spiller efter første runde i for-loop
         for (Player player : playerList) {
             if (winner.getBalance() < player.getBalance()) {
                 winner = player;
@@ -342,8 +434,42 @@ public class GameController {
         return winner;
     }
 
-    public ChanceCard drawChanceCard() {
+    private ChanceCard drawChanceCard() {
         int rng = new Random().nextInt(gameBoard.chanceCards.length);
         return gameBoard.chanceCards[rng];
+    }
+
+    /**
+     * Fjerner en player fra et array af typen Player
+     *
+     * @param oldArray Det array vi vil fjerne et element fra
+     * @param index    Den spiller vi vil fjerne fra arrayet
+     * @return Det gamle array uden den spiller vi hat fjernet
+     */
+    private Player[] removeElementFromOldArray(Player[] oldArray, int index) {
+        // Hvis array'et er tomt, eller hvis index'et ikke er i array rækkevidden
+        // returneres det originale array
+        if (oldArray == null || index < 0 || index >= oldArray.length) {
+            return oldArray;
+        }
+
+        // Laver et array der er et element mindre end det originale array
+        Player[] anotherArray = new Player[oldArray.length - 1];
+
+        // Kopierer alle elementer bortset fra index'et fra det originale array ind i det nye array
+        for (int i = 0, k = 0; i < oldArray.length; i++) {
+
+            // Hvis index'et er det element man vil fjerne
+            if (i == index) {
+                continue;
+            }
+
+            // Hvis index'et ikke er den element man vil fjerne
+            anotherArray[k++] = oldArray[i];
+        }
+        for (int i = 0; i < anotherArray.length; i++) {
+            anotherArray[i].setIndex(i);
+        }
+        return anotherArray;
     }
 }

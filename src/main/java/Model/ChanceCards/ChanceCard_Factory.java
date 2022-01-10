@@ -7,8 +7,6 @@ public class ChanceCard_Factory {
                 new MovementCard("Start", "Ryk frem til START", 0, MovementCard.MovementType.INDEX),
                 new MovementCard("Start", "Ryk frem til START", 0, MovementCard.MovementType.INDEX),
                 new MovementCard("Rådhuspladsen", "Tag til Rådhuspladsen", 39, MovementCard.MovementType.INDEX),
-                new MovementCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start.", 10, MovementCard.MovementType.INDEX),
-                new MovementCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start.", 10, MovementCard.MovementType.INDEX),
 
                 new MovementCard("Frederiksberg Allé", "Ryk frem til Frederiksberg Allé. Hvis De passere START, indkasser da 4000 kr.", 11, MovementCard.MovementType.INDEX),
                 new MovementCard("Mols-Linien", "Tag med Mols-Linien, flyt brikken frem og hvis De passerer START indkassér da kr 4000.", 15, MovementCard.MovementType.INDEX),
@@ -27,6 +25,10 @@ public class ChanceCard_Factory {
                 new MovementCard("3 felter frem", "Ryk tre felter frem", 3, MovementCard.MovementType.NUMBER),
                 new MovementCard("3 felter tilbage" ,"Ryk tre felter tilbage", -3, MovementCard.MovementType.NUMBER),
                 new MovementCard("3 felter tilbage" ,"Ryk tre felter tilbage", -3, MovementCard.MovementType.NUMBER),
+
+                new GoToJailCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start."),
+                new GoToJailCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start."),
+
 
                 // Pay the bank
                 new PayTheBankCard("Fuldt stop", "De har kørt frem for “fuldt stop”, Betal 1000 kroner i bøde.", 1000),

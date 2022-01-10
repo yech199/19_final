@@ -6,6 +6,7 @@ import Model.Fields.PropertyField;
 import Model.Player;
 
 public class StubGUIController extends ViewController {
+    public String customChoice = null;
 
     @Override
     public int getUserInteger(String msg, int min, int max) {
@@ -23,37 +24,38 @@ public class StubGUIController extends ViewController {
 
     @Override
     public void updatePlayer(Player player) {
-
     }
 
     @Override
-    public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {
-
+    public void removeCar(Player player) {
     }
+
+    @Override
+    public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {}
 
     @Override
     public String getUserButtonPressed(String msg, String... menuOptions) {
-        return menuOptions[0];
+        return customChoice == null ? menuOptions[0] : customChoice;
     }
 
     @Override
     public void setOwner(Player player) {
+    }
 
+    @Override
+    public void removeOwner(int index) {
     }
 
     @Override
     public void showMessage(String msg) {
-
     }
 
     @Override
     public void close() {
-
     }
 
     @Override
     public void displayChanceCard(ChanceCard chanceCard) {
-
     }
 
     @Override
