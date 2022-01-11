@@ -175,12 +175,10 @@ public class GameController {
                         if (player.inJail && player.jailTryRollCounter == 3) {
                             player.jailTryRollCounter = 1;
                             guiController.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
-                                    "Du er derfor nødt til at betale dig ud af fængslet. Du kan rykke igen næste gang det bliver din tur");
+                                    "\nDu er derfor nødt til at betale dig ud af fængslet. " +
+                                    "\nDu har slået " + faceValue + ". Du kan nu fortsætte din tur ");
                             player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
                             player.inJail = false;
-                            // Vi returner fordi spilleren ikke må rykke, hvis spilleren har valgt at rulle 2 ens,
-                            // men stadig fejler efter 3 runders forsøg. Man er da tvunget til at betale sig ud af fængslet,
-                            // OG man kan først rykke sin brik væk fra fængslet næste gang det er ens tur
                         }
                         if (player.inJail) return;
                     }
@@ -412,6 +410,9 @@ public class GameController {
      * @param ownableField Det felt der bydes på
      */
     public void doAuction(Player player, OwnableField ownableField) {
+        for (Player p : tmpPlayerList) {
+            p.wantToTryBidding = true;
+        }
         guiController.showMessage("Alle andre spillere har nu mulighed for at byde på " + ownableField.fieldName + ". Laveste bud starter på "
                 + ownableField.price + " kr.");
         int numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, tmpPlayerList);
@@ -448,6 +449,7 @@ public class GameController {
     }
 
     /**
+     * @param player
      * @param ownableField Det felt der sættes på auktion
      */
     public void bidOnAuction(Player player, OwnableField ownableField, int numOfPlayersBidding) {
@@ -487,7 +489,7 @@ public class GameController {
                                 + "? Buddet starter på " + prevBid + " kr.", prevBid, p.getBalance());
                     }
                     // Det er ikke muligt at byde lavere. Derfor er dette ikke inkluderet i if statementet
-                    if (bid == prevBid && prevPlayer != null && prevPlayer != p) {
+                    while (bid == prevBid && prevPlayer != null && prevPlayer != p) {
                         bid = guiController.getUserInteger("Dette bud er ugyldigt. Giv et nyt bud" +
                                 "\nHvad vil " + p.name + " byde på " + ownableField.fieldName + "? Buddet starter på "
                                 + prevBid + " kr.", prevBid, p.getBalance());
@@ -508,9 +510,14 @@ public class GameController {
             if (p.wantToTryBidding) {
                 ownableField.owner = p;
                 p.addAmountToBalance(-prevBid);
-                guiController.setOwner(p, player.getCurrentPos());
+
+                for (int i = 0; i < gameBoard.fields.length; i++) {
+                    Field f = gameBoard.fields[i];
+                    if (f == ownableField) {
+                        guiController.setOwner(p, i);
+                    }
+                }
             }
-            p.wantToTryBidding = true;
         }
 
         if (ownableField instanceof ShippingField)
