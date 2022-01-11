@@ -365,17 +365,7 @@ public class GameController {
                     // FIXME fjern hustjek
                     //  OBS!! Denne metode er kun brugbar når ejeren ikke kan ændres.
                     if (landedOn instanceof PropertyField propertyField) {
-                        // Tjekker om ejeren af det nyligt købte felt også ejer de andre af samme farve
-                        if (ownsAll(propertyField)) {
-                            PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
-                            // Fordobler renten
-                            //FIXME tjek om renten er blevet fordoblet allerede
-                            for (PropertyField field : tmpFields) {
-                                if (field.owner == null) {
-                                    field.rent *= 2;
-                                }
-                            }
-                        }
+                        ownsAll(propertyField);
                     }
                 }
                 // TODO: Test Auktion
@@ -386,22 +376,28 @@ public class GameController {
 
             else {
                 if (landedOn instanceof PropertyField propertyField) {
+                    action1 = "Ja";
+                    action2 = "Nej";
+                    choice = guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                            "Vil du købe huse for " + propertyField.buildingPrice +
+                            " kr. til " + propertyField.fieldName + "?", action1, action2);
+
+                    // Køb x antal huse, hvis du har 0-3 huse
                     if (propertyField.owner == player && ownsAll(propertyField) &&
-                            propertyField.getAmountOfBuildings() <= 3 &&
-                            guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe huse for " + propertyField.buildingPrice +
-                                    " kr til dette felt?", "Ja", "Nej").equals("Ja")) {
+                            propertyField.getAmountOfBuildings() <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1) &&
+                            choice.equals(action1)) {
                         int houseCount = guiController.getUserInteger("Hvor mange huse vil du købe?", 1, 4);
                         for (int i = 0; i < houseCount; i++) {
                             propertyField.buyBuilding(player);
                         }
                         guiController.setHouses(houseCount, player.getCurrentPos());
+                    // Køb hotel, hvis du ejer 4 huse allerede
                     }
                     else if (propertyField.owner == player && ownsAll(propertyField) &&
-                            propertyField.getAmountOfBuildings() == 4 &&
+                            propertyField.getAmountOfBuildings() == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
                             guiController.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
                                             "Vil du købe et hotel for 1000 kr?",
-                                    "Ja", "Nej").equals("Ja")) {
+                                    action1, action2).equals(action1)) {
                         propertyField.buyBuilding(player);
                         guiController.setOrRemoveHotel(true, player.getCurrentPos());
                     }
@@ -602,8 +598,9 @@ public class GameController {
 
     /**
      * Bruges til at tjekke om spilleren ejer alle felter med samme farve.
+     * Hvis alle grunde af samme farve er ejet fordobles renten af disse felter
      *
-     * @param propertyField PropertyField input
+     * @param propertyField PropertyField med den farve vi vil tjekke om spilleren ejer
      * @return boolean output der siger om ejeren ejer alle felter med denne farve
      */
     public boolean ownsAll(PropertyField propertyField) {
@@ -621,6 +618,18 @@ public class GameController {
             }
             else if (tmpFields.length == 3 && tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner) {
                 ownsAll = true;
+            }
+
+            if (ownsAll) {
+                PropertyField[] propertyFieldsOfSameColor = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
+                // Fordobler renten
+                //FIXME tjek om renten er blevet fordoblet allerede
+                for (PropertyField field : propertyFieldsOfSameColor) {
+                    if (field.owner == null && field.getAmountOfBuildings() == 0) {
+                        field.rent = field.rents[0];
+                        field.rent *= 2;
+                    }
+                }
             }
         }
         return ownsAll;
