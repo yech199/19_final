@@ -262,7 +262,7 @@ public class GameController {
             if (choice.equals(action1))
                 player.addAmountToBalance(-incomeTaxField.tax);
             else {
-                player.addAmountToBalance(player.getNetWorth() + (player.getNetWorth() / 100 * incomeTaxField.percent));
+                player.addAmountToBalance(-(player.getNetWorth() / 100 * incomeTaxField.percent));
             }
         }
         else if (landedOn instanceof ChanceField) {
