@@ -196,7 +196,8 @@ public class GameController {
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
 
-        updateOwnerAndRent(player, faceValue, landedOn);
+        checkInstanceOf(player, faceValue, landedOn);
+
         if (!afterAuction) landedOn.fieldAction(player);
         else afterAuction = false;
 
@@ -224,6 +225,7 @@ public class GameController {
             }
             tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
             playerRankList = makePlayerRankArray(playerRankList, player);
+            afterAuction = false;
         }
         if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
                 tmpPlayerList.length == 1) {
@@ -247,6 +249,30 @@ public class GameController {
                 guiController.updatePlayer(player);
                 turnCounter = 0;
             }
+        }
+    }
+
+    private void checkInstanceOf(Player player, int faceValue, Field landedOn) {
+        if (landedOn instanceof IncomeTaxField incomeTaxField) {
+            action1 = "4000 kr.";
+            action2 = "10 %";
+            choice = guiController.getUserButtonPressed("Du skal betale indkomstskat. Du har nu følgende valgmuligheder: " +
+                    "\n\t1. Betal 4000 kr.\n\t2. Betal 10% af alle dine værdier", action1, action2);
+
+            if (choice.equals(action1))
+                player.addAmountToBalance(-incomeTaxField.tax);
+            else {
+                player.addAmountToBalance(player.getNetWorth() + (player.getNetWorth() / 100 * incomeTaxField.percent));
+            }
+        }
+        else if (landedOn instanceof ChanceField) {
+            ChanceCard chanceCard = drawChanceCard();
+            guiController.displayChanceCard(chanceCard);
+            doCardAction(player, faceValue, chanceCard);
+        }
+        // if instanceof OwnableField
+        else {
+            updateOwnerAndRent(player, faceValue, landedOn);
         }
     }
 
@@ -362,7 +388,7 @@ public class GameController {
                     if (propertyField.owner == player && ownsAll(propertyField) &&
                             propertyField.getAmountOfBuildings() <= 3 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe huse for "+ propertyField.buildingPrice +
+                                    "Vil du købe huse for " + propertyField.buildingPrice +
                                     " kr til dette felt?", "Ja", "Nej").equals("Ja")) {
                         int houseCount = guiController.getUserInteger("Hvor mange huse vil du købe?", 1, 4);
                         for (int i = 0; i < houseCount; i++) {
@@ -374,7 +400,7 @@ public class GameController {
                             propertyField.getAmountOfBuildings() == 4 &&
                             guiController.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
                                             "Vil du købe et hotel for 1000 kr?",
-                            "Ja", "Nej").equals("Ja")){
+                                    "Ja", "Nej").equals("Ja")) {
                         propertyField.buyBuilding(player);
                         guiController.setOrRemoveHotel(true, player.getCurrentPos());
                     }
@@ -393,11 +419,6 @@ public class GameController {
                 guiController.updatePlayer(ownableField.owner);
             }
         }
-        else if (landedOn instanceof ChanceField) {
-            ChanceCard chanceCard = drawChanceCard();
-            guiController.displayChanceCard(chanceCard);
-            doCardAction(player, faceValue, chanceCard);
-        }
         guiController.updatePlayer(player);
     }
 
@@ -412,6 +433,7 @@ public class GameController {
             // Sørger for at man laver den handling der svarer til det felt man lander på
             landedOn = gameBoard.fields[player.getCurrentPos()];
             landedOn.fieldAction(player);
+            checkInstanceOf(player, faceValue, landedOn);
         }
         guiController.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
         // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig

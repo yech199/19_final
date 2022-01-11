@@ -20,7 +20,7 @@ public final class FieldFactory {
                 new ChanceField(),
                 new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
                         new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
-                new TaxField("Betal\nindkomst-\nskat", "Betal 4000 kr.", "Betal indkomstskat\n10% eller kr. 4000,-", 4000),
+                new IncomeTaxField("Betal\nindkomst-\nskat", "4000 kr. el. 10%", "Betal indkomstskat\n10% eller kr. 4000,-", 4000, 10),
 
                 // Index 5-9
                 new ShippingField("Øresund", "Pris: kr. 4000", "Øresundsredderiet\nHelsingør-Helsingborg", GlobalValues.SHIPPING_RENT),
@@ -88,7 +88,7 @@ public final class FieldFactory {
                 new ChanceField(),
                 new PropertyField("Frederiks-\nberggade", "Pris: kr. 7000", "Frederiksberggade", 700, 7000,
                         new Color(102, 0, 102), new Color(255, 255, 255), 4000, new int[]{3500, 10000, 22000, 26000, 30000}),
-                new TaxField("Ekstra-\nordinær\nstatsskat", "Betal 2000 kr.", "Betal ekstraordinær\nstatsskat: kr. 2000,-", 2000),
+                new OtherTaxField("Ekstra-\nordinær\nstatsskat", "Betal 2000 kr.", "Betal ekstraordinær\nstatsskat: kr. 2000,-", 2000),
                 new PropertyField("Rådhuspladsen", "Pris: kr. 8000", "Rådhuspladsen", 1000, 8000,
                         new Color(102, 0, 102), new Color(255, 255, 255), 4000, new int[]{4000, 12000, 28000, 34000, 40000})
         };

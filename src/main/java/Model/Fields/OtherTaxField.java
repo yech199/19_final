@@ -5,10 +5,10 @@ import gui_fields.GUI_Tax;
 
 import java.awt.*;
 
-public class TaxField extends Field {
+public class OtherTaxField extends Field {
     public final int tax;
 
-    public TaxField(String name, String subText, String description, int tax) {
+    public OtherTaxField(String name, String subText, String description, int tax) {
         super(name, subText, description, Color.GRAY, Color.BLACK);
         this.tax = tax;
     }
