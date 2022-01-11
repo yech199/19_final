@@ -20,7 +20,7 @@ public class PropertyField extends OwnableField {
     }
 
     public void buyBuilding(Player player) {
-        if (amountOfBuildings < 5) {
+        if (amountOfBuildings <= 5) {
             amountOfBuildings++;
             player.addAmountToBalance(-buildingPrice);
             player.addToNetWorth(buildingPrice);

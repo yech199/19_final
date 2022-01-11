@@ -62,4 +62,9 @@ public class StubGUIController extends ViewController {
     public void setHouses(int houseCount, int index){
 
     }
+
+    @Override
+    public void setOrRemoveHotel(boolean hotelStatus, int index){
+
+    }
 }

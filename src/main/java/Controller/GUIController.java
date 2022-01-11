@@ -225,4 +225,10 @@ public class GUIController extends ViewController {
     public void setHouses(int houseCount, int index){
         ((GUI_Street) gui_fieldArray[index]).setHouses(houseCount);
     }
+
+    public void setOrRemoveHotel(boolean hotelStatus,int index){
+        ((GUI_Street) gui_fieldArray[index]).setHouses(0);
+        ((GUI_Street) gui_fieldArray[index]).setHotel(hotelStatus);
+    }
+
 }

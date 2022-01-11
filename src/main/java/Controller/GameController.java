@@ -341,8 +341,11 @@ public class GameController {
                         if (ownsAll(propertyField)) {
                             PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
                             // Fordobler renten
+                            //FIXME tjek om renten er blevet fordoblet allerede
                             for (PropertyField field : tmpFields) {
-                                field.rent *= 2;
+                                if (field.owner == null) {
+                                    field.rent *= 2;
+                                }
                             }
                         }
                     }
@@ -356,14 +359,25 @@ public class GameController {
             else {
                 if (landedOn instanceof PropertyField propertyField) {
                     if (propertyField.owner == player && ownsAll(propertyField) &&
-                            propertyField.getAmountOfBuildings() == 0 &&
+                            propertyField.getAmountOfBuildings() <= 3 &&
                             guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe et hus for "+ propertyField.buildingPrice +
+                                    "Vil du købe huse for "+ propertyField.buildingPrice +
                                     " kr til dette felt?", "Ja", "Nej").equals("Ja")) {
-
-                        propertyField.buyBuilding(player);
-                        guiController.setHouses(1, player.getCurrentPos());
+                        int houseCount = guiController.getUserInteger("Hvor mange huse vil du købe?", 1, 4);
+                        for (int i = 0; i < houseCount; i++) {
+                            propertyField.buyBuilding(player);
+                        }
+                        guiController.setHouses(houseCount, player.getCurrentPos());
                     }
+                    else if (propertyField.owner == player && ownsAll(propertyField) &&
+                            propertyField.getAmountOfBuildings() == 4 &&
+                            guiController.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
+                                            "Vil du købe et hotel for 1000 kr?",
+                            "Ja", "Nej").equals("Ja")){
+                        propertyField.buyBuilding(player);
+                        guiController.setOrRemoveHotel(true, player.getCurrentPos());
+                    }
+
                 }
                 // Har brug for en faceValue og står derfor ikke samme sted som shippingField
                 else if (ownableField instanceof BreweryField) {
