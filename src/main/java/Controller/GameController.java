@@ -567,14 +567,7 @@ public class GameController {
             updateShippingFieldRent(prevPlayer);
 
         if (ownableField instanceof PropertyField propertyField) {
-            // Tjekker om ejeren af det nyligt købte felt også ejer de andre af samme farve
-            if (ownsAll(propertyField)) {
-                PropertyField[] tmpFields = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
-                // Fordobler renten
-                for (PropertyField field : tmpFields) {
-                    field.rent *= 2;
-                }
-            }
+            ownsAll(propertyField);
         }
     }
 
@@ -609,6 +602,8 @@ public class GameController {
     /**
      * Bruges til at tjekke om spilleren ejer alle felter med samme farve.
      * Hvis alle grunde af samme farve er ejet fordobles renten af disse felter
+     * <p>
+     * OBS! Brug kun lige efter køb af et OwnableField
      *
      * @param propertyField PropertyField med den farve vi vil tjekke om spilleren ejer
      * @return boolean output der siger om ejeren ejer alle felter med denne farve
@@ -621,7 +616,7 @@ public class GameController {
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
         // return statementet.
         //--------------------------------------------------------------------------------------------------------------
-        if (propertyField.owner != null) {
+        if (tmpFields[0].owner != null || tmpFields[1].owner != null || tmpFields[2].owner != null) {
             if (tmpFields.length == 2 && tmpFields[0].owner == tmpFields[1].owner) {
                 // Tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
                 ownsAll = true;
@@ -631,13 +626,15 @@ public class GameController {
             }
 
             if (ownsAll) {
-                PropertyField[] propertyFieldsOfSameColor = gameBoard.findAllPropertyFieldsOfSameColor(propertyField.backgroundColor);
                 // Fordobler renten
                 //FIXME tjek om renten er blevet fordoblet allerede
-                for (PropertyField field : propertyFieldsOfSameColor) {
-                    if (field.owner == null && field.getAmountOfBuildings() == 0) {
-                        field.rent = field.rents[0];
-                        field.rent *= 2;
+                for (int i = 0, k = 0; i < gameBoard.fields.length; i++) {
+                    Field field = gameBoard.fields[i];
+                    if (field instanceof PropertyField pField && pField == tmpFields[k]) {
+                        k++;
+                        // Da denne grund lige er købt ved vi at HouseCount == 0
+                        pField.rent = pField.rents[0];
+                        pField.rent *= 2;
                     }
                 }
             }
