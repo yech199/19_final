@@ -212,18 +212,18 @@ public class GameController {
             // Slet næste linje hvis du vil sætte taberen i endnu mere evig skam
             guiController.removeCar(player);
 
-                for (int i = 0; i < gameBoard.fields.length; i++) {
-                    Field f = gameBoard.fields[i];
-                    if (f instanceof OwnableField ownableField && player == ownableField.owner) {
-                        if (tmpPlayerList.length != 2)
-                            doAuction(player, ownableField);
+            for (int i = 0; i < gameBoard.fields.length; i++) {
+                Field f = gameBoard.fields[i];
+                if (f instanceof OwnableField ownableField && player == ownableField.owner) {
+                    if (tmpPlayerList.length != 2)
+                        doAuction(player, ownableField);
 
-                        if (ownableField.owner == player) {
-                            ownableField.owner = null;
-                            guiController.removeOwner(i);
-                        }
+                    if (ownableField.owner == player) {
+                        ownableField.owner = null;
+                        guiController.removeOwner(i);
                     }
                 }
+            }
             tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
             playerRankList = makePlayerRankArray(playerRankList, player);
             afterAuction = false;
@@ -378,31 +378,41 @@ public class GameController {
                 if (landedOn instanceof PropertyField propertyField) {
                     action1 = "Ja";
                     action2 = "Nej";
-                    choice = guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                            "Vil du købe huse for " + propertyField.buildingPrice +
-                            " kr. til " + propertyField.fieldName + "?", action1, action2);
 
-                    // Køb x antal huse, hvis du har 0-3 huse
-                    if (propertyField.owner == player && ownsAll(propertyField) &&
-                            propertyField.getAmountOfBuildings() <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1) &&
-                            choice.equals(action1)) {
-                        int houseCount = guiController.getUserInteger("Hvor mange huse vil du købe?", 1, 4);
-                        for (int i = 0; i < houseCount; i++) {
-                            propertyField.buyBuilding(player);
+                    if (propertyField.owner == player && ownsAll(propertyField)) {
+
+                        // Køb x antal huse, hvis du har 0-3 huse
+                        if (propertyField.getAmountOfBuildings() <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
+                            choice = guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                                    "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
+                                    + propertyField.fieldName + "?", action1, action2);
+
+                            if (choice.equals(action1)) {
+                                int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.getAmountOfBuildings();
+                                int houseCount = guiController.getUserInteger("Hvor mange huse vil du købe?", 1, max);
+                                for (int i = 0; i < houseCount; i++) {
+                                    propertyField.buyBuilding(player);
+                                }
+                                for (int i = 0; i < gameBoard.fields.length; i++) {
+                                    Field field = gameBoard.fields[i];
+                                    if (field == propertyField) {
+                                        guiController.setHouses(houseCount, i);
+                                    }
+                                }
+                            }
                         }
-                        guiController.setHouses(houseCount, player.getCurrentPos());
-                    // Køb hotel, hvis du ejer 4 huse allerede
-                    }
-                    else if (propertyField.owner == player && ownsAll(propertyField) &&
-                            propertyField.getAmountOfBuildings() == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
-                            guiController.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
-                                            "Vil du købe et hotel for 1000 kr?",
-                                    action1, action2).equals(action1)) {
-                        propertyField.buyBuilding(player);
-                        guiController.setOrRemoveHotel(true, player.getCurrentPos());
-                    }
 
+                        // Køb hotel, hvis du ejer 4 huse allerede
+                        if (propertyField.getAmountOfBuildings() == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
+                                guiController.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
+                                                "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
+                                        action1, action2).equals(action1)) {
+                            propertyField.buyBuilding(player);
+                            guiController.setOrRemoveHotel(true, player.getCurrentPos());
+                        }
+                    }
                 }
+
                 // Har brug for en faceValue og står derfor ikke samme sted som shippingField
                 else if (ownableField instanceof BreweryField) {
                     Player owner = ownableField.owner;
