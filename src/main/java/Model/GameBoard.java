@@ -8,16 +8,19 @@ import java.awt.*;
 
 public class GameBoard {
     public enum FieldType {
+        OWNABLE,
         SHIPPING,
         BREWERY
     }
 
     public final ChanceCard[] chanceCards;
     public final Field[] fields; // Array af fields
+    public final int[] ownableIndices;
     public final int[] ferryIndices;
     public final int[] breweryIndices;
     public final ShippingField[] shippingFields;
     public final BreweryField[] breweryFields;
+
 
     //------------------------------------------------------------------------------------------------------------------
     // Constructor der laver et GameBoard
@@ -25,9 +28,10 @@ public class GameBoard {
     public GameBoard(Field[] fields, ChanceCard[] chanceCards) {
         this.fields = fields;
         this.chanceCards = chanceCards;
-        
-        ferryIndices = findAllShippingAndBreweryFieldIndices(fields, FieldType.SHIPPING);
-        breweryIndices = findAllShippingAndBreweryFieldIndices(fields, FieldType.BREWERY);
+
+        ownableIndices = findAllOwnableFieldIndices(fields, FieldType.OWNABLE);
+        ferryIndices = findAllOwnableFieldIndices(fields, FieldType.SHIPPING);
+        breweryIndices = findAllOwnableFieldIndices(fields, FieldType.BREWERY);
 
         shippingFields = findAllShippingFields();
         breweryFields = findAllBreweryFields();
@@ -67,7 +71,7 @@ public class GameBoard {
 
         for (Field field : this.fields) {
             if (field instanceof ShippingField shippingField) {
-                    tmpFields = addShippingFieldToOldArray(tmpFields, shippingField);
+                tmpFields = addShippingFieldToOldArray(tmpFields, shippingField);
             }
         }
         return tmpFields;
@@ -78,26 +82,34 @@ public class GameBoard {
 
         for (Field field : this.fields) {
             if (field instanceof BreweryField breweryField) {
-                    tmpFields = addBreweryFieldToOldArray(tmpFields, breweryField);
+                tmpFields = addBreweryFieldToOldArray(tmpFields, breweryField);
             }
         }
         return tmpFields;
     }
 
-    public int[] findAllShippingAndBreweryFieldIndices(Field[] fields, FieldType fieldType) {
+    public int[] findAllOwnableFieldIndices(Field[] fields, FieldType fieldType) {
+        int[] ownableIndices = new int[]{};
         int[] ferryIndices = new int[]{};
         int[] breweryIndices = new int[]{};
 
         for (int i = 0; i < fields.length; i++) {
-            if (fields[i] instanceof ShippingField) {
-                ferryIndices = addPropertyToOldArray(ferryIndices, i);
-            }
-            else if (fields[i] instanceof BreweryField) {
-                breweryIndices = addPropertyToOldArray(breweryIndices, i);
+            if (fields[i] instanceof OwnableField)
+                ownableIndices = addFieldIndexToOldArray(ownableIndices, i);
+            {
+                if (fields[i] instanceof ShippingField) {
+                    ferryIndices = addFieldIndexToOldArray(ferryIndices, i);
+                }
+                else if (fields[i] instanceof BreweryField) {
+                    breweryIndices = addFieldIndexToOldArray(breweryIndices, i);
+                }
             }
         }
 
         switch (fieldType) {
+            case OWNABLE -> {
+                return ownableIndices;
+            }
             case SHIPPING -> {
                 return ferryIndices;
             }
@@ -112,8 +124,8 @@ public class GameBoard {
     /**
      * Funktion der tilføjer x til arrayet på plads n + 1
      *
-     * @param oldArray    Det gamle array
-     * @param newElement  Det der skal tilføjes i arrayet på plads n + 1
+     * @param oldArray   Det gamle array
+     * @param newElement Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
     private static PropertyField[] addPropertyToOldArray(PropertyField[] oldArray, PropertyField newElement) {
@@ -165,7 +177,7 @@ public class GameBoard {
      * @param newElement Det der skal tilføjes i arrayet på plads n + 1
      * @return Det gamle array med et ekstra element
      */
-    private static int[] addPropertyToOldArray(int[] oldArray, int newElement) {
+    private static int[] addFieldIndexToOldArray(int[] oldArray, int newElement) {
         int n = oldArray.length;
         int i;
         int[] newArray = new int[n + 1];
