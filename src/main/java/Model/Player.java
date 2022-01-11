@@ -19,7 +19,7 @@ public class Player {
     public boolean inJail;
     public boolean getOutOfJailFree;
     public boolean wantToTryBidding = true;
-    public int netWorth;
+    private int netWorth;
 
     /**
      * Alle constructerer fører tilbage til denne constructor.
