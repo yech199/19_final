@@ -35,12 +35,12 @@ public final class FieldFactory {
                 // Index 10-14
                 new JailField("Fængsel", "Fængsel", "På besøg i fængslet"),
                 new PropertyField("Frederiks-\nberg Allé", "Pris: kr. 2800", "Frederiksberg Allé", 200, 2800,
-                        new Color(102, 204, 0), new Color(0, 0, 0), 2000, new int[]{1000, 3000, 9000, 12500, 15000}),
+                        new Color(0, 153, 0), new Color(0, 0, 0), 2000, new int[]{1000, 3000, 9000, 12500, 15000}),
                 new BreweryField("Tuborg", "Pris: kr. 3000", "Tuborg bryggeri"),
                 new PropertyField("Bülowsvej", "Pris: kr. 2800", "Bülowsvej", 200, 2800,
-                        new Color(102, 204, 0), new Color(0, 0, 0), 2000, new int[]{1000, 3000, 9000, 12500, 15000}),
+                        new Color(0, 153, 0), new Color(0, 0, 0), 2000, new int[]{1000, 3000, 9000, 12500, 15000}),
                 new PropertyField("Gammel Kongevej", "Pris: kr. 3200", "Gammel Kongevej", 250, 3200,
-                        new Color(102, 204, 0), new Color(0, 0, 0), 2000, new int[]{1250, 3750, 10000, 14000, 18000}),
+                        new Color(0, 153, 0), new Color(0, 0, 0), 2000, new int[]{1250, 3750, 10000, 14000, 18000}),
 
                 // Index 15-19
                 new ShippingField("D.F.D.S.", "Pris: kr. 4000", "D.F.D.S.\nMols-Linien", GlobalValues.SHIPPING_RENT),
@@ -76,12 +76,12 @@ public final class FieldFactory {
                 new GoToJailField("Gå i fængsel", "Gå i fængsel",
                         "Du fængsles\nSlå to ens for at komme ud"),
                 new PropertyField("Amagertorv", "Pris: kr. 6000", "Amagertorv", 550, 6000,
-                        new Color(255, 255, 50), new Color(0, 0, 0), 4000, new int[]{2600, 7800, 18000, 22000, 25000}),
+                        new Color(204, 204, 50), new Color(0, 0, 0), 4000, new int[]{2600, 7800, 18000, 22000, 25000}),
                 new PropertyField("Vimmel-\nskaftet", "Pris: kr. 6000", "Vimmelskaftet", 550, 6000,
-                        new Color(255, 255, 50), new Color(0, 0, 0), 4000, new int[]{2600, 7800, 18000, 22000, 25000}),
+                        new Color(204, 204, 50), new Color(0, 0, 0), 4000, new int[]{2600, 7800, 18000, 22000, 25000}),
                 new ChanceField(),
                 new PropertyField("Nygade", "Pris: kr. 6400", "Nygade", 600, 6400,
-                        new Color(255, 255, 50), new Color(0, 0, 0), 4000, new int[]{3000, 9000, 20000, 24000, 28000}),
+                        new Color(204, 204, 50), new Color(0, 0, 0), 4000, new int[]{3000, 9000, 20000, 24000, 28000}),
 
                 // Index 35-39
                 new ShippingField("Bornholm", "Pris: kr. 4000", "Bornholms redderi\nRødby-Puttgarden", GlobalValues.SHIPPING_RENT),

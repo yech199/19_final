@@ -148,7 +148,6 @@ public class GUIController extends ViewController {
     @Override
     public void removeCar(Player player) {
         GUI_Player guiPlayer = getGuiVersion(player);
-        // gui_fieldArray[player.getPreviousPos()].setCar(guiPlayer, false);
         gui_fieldArray[player.getCurrentPos()].setCar(guiPlayer, false);
     }
 

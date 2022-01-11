@@ -216,8 +216,12 @@ public class GameController {
             for (int i = 0; i < gameBoard.fields.length; i++) {
                 Field f = gameBoard.fields[i];
                 if (f instanceof OwnableField ownableField && player == ownableField.owner) {
-                    ownableField.owner = null;
-                    guiController.removeOwner(i);
+                    doAuction(player, ownableField);
+
+                    if (ownableField.owner == player) {
+                        ownableField.owner = null;
+                        guiController.removeOwner(i);
+                    }
                 }
             }
             tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
@@ -232,7 +236,7 @@ public class GameController {
         // Tjekker om spilleren har fået en ekstra tur ved at slå 2 ens. Hvis de har slået 2 ens 3 gange i træk ryger
         // de i fængsel.
         //--------------------------------------------------------------------------------------------------------------
-        if (extraTurn){
+        if (extraTurn) {
             extraTurn = false;
             if (turnCounter < 2) {
                 turnCounter++;
@@ -242,11 +246,10 @@ public class GameController {
             else {
                 guiController.showMessage("Du har slået 2 ens 3 gange i træk. Du fængsles");
                 player.putInJail();
-
+                guiController.updatePlayer(player);
+                turnCounter = 0;
             }
         }
-        turnCounter = 0;
-        guiController.updatePlayer(player);
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -418,12 +421,14 @@ public class GameController {
             updateOwnerAndRent(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
     }
 
+    /**
+     * @param player       Der ikke har købt feltet eller som skal af med feltet
+     * @param ownableField Det felt der bydes på
+     */
     public void doAuction(Player player, OwnableField ownableField) {
         guiController.showMessage("Alle andre spillere har nu mulighed for at byde på " + ownableField.fieldName + ". Laveste bud starter på "
                 + ownableField.price + " kr.");
-        int numOfPlayersBidding;
-
-        numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, tmpPlayerList);
+        int numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, tmpPlayerList);
 
         if (numOfPlayersBidding > 0) {
             bidOnAuction(player, ownableField, numOfPlayersBidding);
@@ -435,7 +440,7 @@ public class GameController {
      * @param player       der ikke købte feltet
      * @param ownableField Det felt der sættes på auktion
      */
-    public int checksWhoWantsToTryBidding(Player player, OwnableField ownableField, Player[] playerList) {
+    public int checksWhoWantsToTryBidding(Player player, OwnableField ownableField, Player[] tmpPlayerList) {
         int numOfPlayersBidding = tmpPlayerList.length - 1;
         action1 = "Ja";
         action2 = "Nej";
@@ -507,13 +512,20 @@ public class GameController {
             }
         }
 
-            for (Player p : tmpPlayerList) {
-                if (p.wantToTryBidding) {
-                    ownableField.owner = p;
-                    p.addAmountToBalance(-prevBid);
-                    guiController.setOwner(p, player.getCurrentPos());
-                }
+        if (numOfPlayersBidding == 1) {
+            guiController.showMessage("Du er den eneste spiller, der har valgt at byde på " + ownableField.fieldName + ", " +
+                    "\nog får derfor " + ownableField.fieldName + " til grundens originale pris, da buddet ville have startet på "
+                    + ownableField.price + "kr.");
+        }
+
+        for (Player p : tmpPlayerList) {
+            if (p.wantToTryBidding) {
+                ownableField.owner = p;
+                p.addAmountToBalance(-prevBid);
+                guiController.setOwner(p, player.getCurrentPos());
             }
+            p.wantToTryBidding = true;
+        }
 
         if (ownableField instanceof ShippingField)
             updateShippingFieldRent(prevPlayer);
@@ -593,7 +605,7 @@ public class GameController {
         StringBuilder winnerMessage = null;
 
         if (tmpPlayerList.length == 1) {
-            for (int i = playerRankList.length - 1, k = 1 ; i >= 0 ; i--, k++) {
+            for (int i = playerRankList.length - 1, k = 1; i >= 0; i--, k++) {
                 Player player = playerRankList[i];
                 if (winnerMessage != null) {
                     winnerMessage.append(player.name).append(" fik ").append(k).append(". pladsen.\n");
