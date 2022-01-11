@@ -616,7 +616,7 @@ public class GameController {
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
         // return statementet.
         //--------------------------------------------------------------------------------------------------------------
-        if (tmpFields[0].owner != null || tmpFields[1].owner != null || tmpFields[2].owner != null) {
+        if (tmpFields[0].owner != null){
             if (tmpFields.length == 2 && tmpFields[0].owner == tmpFields[1].owner) {
                 // Tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
                 ownsAll = true;
@@ -624,21 +624,22 @@ public class GameController {
             else if (tmpFields.length == 3 && tmpFields[0].owner == tmpFields[1].owner && tmpFields[1].owner == tmpFields[2].owner) {
                 ownsAll = true;
             }
+        }
 
-            if (ownsAll) {
-                // Fordobler renten
-                //FIXME tjek om renten er blevet fordoblet allerede
-                for (int i = 0, k = 0; i < gameBoard.fields.length; i++) {
-                    Field field = gameBoard.fields[i];
-                    if (field instanceof PropertyField pField && pField == tmpFields[k]) {
-                        k++;
-                        // Da denne grund lige er købt ved vi at HouseCount == 0
-                        pField.rent = pField.rents[0];
-                        pField.rent *= 2;
-                    }
+        if (ownsAll) {
+            // Fordobler renten
+            //FIXME tjek om renten er blevet fordoblet allerede
+            for (int i = 0, k = 0; i < gameBoard.fields.length && k < tmpFields.length; i++) {
+                Field field = gameBoard.fields[i];
+                if (field instanceof PropertyField pField && pField == tmpFields[k]) {
+                    k++;
+                    // Da denne grund lige er købt ved vi at HouseCount == 0
+                    pField.rent = pField.rents[0];
+                    pField.rent *= 2;
                 }
             }
         }
+
         return ownsAll;
     }
 
