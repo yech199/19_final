@@ -524,6 +524,7 @@ public class GameController {
             if (p.wantToTryBidding) {
                 ownableField.owner = p;
                 p.addAmountToBalance(-prevBid);
+                guiController.updatePlayerBalance(p);
 
                 for (int i = 0; i < gameBoard.fields.length; i++) {
                     Field f = gameBoard.fields[i];

@@ -27,6 +27,9 @@ public class StubGUIController extends ViewController {
     }
 
     @Override
+    public void updatePlayerBalance(Player player) {}
+
+    @Override
     public void removeCar(Player player) {
     }
 
