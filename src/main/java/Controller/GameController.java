@@ -212,17 +212,18 @@ public class GameController {
             // Slet næste linje hvis du vil sætte taberen i endnu mere evig skam
             guiController.removeCar(player);
 
-            for (int i = 0; i < gameBoard.fields.length; i++) {
-                Field f = gameBoard.fields[i];
-                if (f instanceof OwnableField ownableField && player == ownableField.owner) {
-                    doAuction(player, ownableField);
+                for (int i = 0; i < gameBoard.fields.length; i++) {
+                    Field f = gameBoard.fields[i];
+                    if (f instanceof OwnableField ownableField && player == ownableField.owner) {
+                        if (tmpPlayerList.length != 2)
+                            doAuction(player, ownableField);
 
-                    if (ownableField.owner == player) {
-                        ownableField.owner = null;
-                        guiController.removeOwner(i);
+                        if (ownableField.owner == player) {
+                            ownableField.owner = null;
+                            guiController.removeOwner(i);
+                        }
                     }
                 }
-            }
             tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
             playerRankList = makePlayerRankArray(playerRankList, player);
             afterAuction = false;
@@ -454,7 +455,7 @@ public class GameController {
         int numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, tmpPlayerList);
 
         if (numOfPlayersBidding > 0) {
-            bidOnAuction(player, ownableField, numOfPlayersBidding);
+            bidOnAuction(ownableField, numOfPlayersBidding);
             afterAuction = true;
         }
     }
@@ -485,10 +486,9 @@ public class GameController {
     }
 
     /**
-     * @param player
      * @param ownableField Det felt der sættes på auktion
      */
-    public void bidOnAuction(Player player, OwnableField ownableField, int numOfPlayersBidding) {
+    public void bidOnAuction(OwnableField ownableField, int numOfPlayersBidding) {
         action1 = "Ja";
         action2 = "Nej";
         int prevBid = ownableField.price;

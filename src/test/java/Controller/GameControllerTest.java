@@ -376,7 +376,7 @@ public class GameControllerTest {
         OwnableField ownableField = (OwnableField) gameBoard.fields[0];
         int numOfPlayersBidding = playerList.length;
 
-        gameController.bidOnAuction(player1, ownableField, numOfPlayersBidding);
+        gameController.bidOnAuction(ownableField, numOfPlayersBidding);
 
         Assert.assertEquals(1000, player1.getBalance());
         Assert.assertEquals(3000, player2.getBalance());
@@ -392,7 +392,7 @@ public class GameControllerTest {
 
         gameController = new GameController(guiController, gameBoard, die, die, playerList);
         ownableField = (OwnableField) gameBoard.fields[0];
-        gameController.bidOnAuction(player1, ownableField, numOfPlayersBidding);
+        gameController.bidOnAuction(ownableField, numOfPlayersBidding);
 
         Assert.assertEquals(1000, player1.getBalance());
         Assert.assertEquals(0, player2.getBalance());
@@ -409,7 +409,7 @@ public class GameControllerTest {
 
         gameController = new GameController(guiController, gameBoard, die, die, playerList);
         ownableField = (OwnableField) gameBoard.fields[0];
-        gameController.bidOnAuction(player1, ownableField, numOfPlayersBidding);
+        gameController.bidOnAuction(ownableField, numOfPlayersBidding);
 
         Assert.assertEquals(0, player1.getBalance());
         Assert.assertEquals(7000, player2.getBalance());
