@@ -514,7 +514,7 @@ public class GameController {
             }
         }
 
-        if (numOfPlayersBidding == 1) {
+        if (numOfPlayersBidding == 1 && prevPlayer == null) {
             guiController.showMessage("Du er den eneste spiller, der har valgt at byde på " + ownableField.fieldName + ", " +
                     "\nog får derfor " + ownableField.fieldName + " til grundens originale pris, da buddet ville have startet på "
                     + ownableField.price + "kr.");
