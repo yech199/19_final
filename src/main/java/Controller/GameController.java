@@ -16,28 +16,36 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GameController {
-    public GameView guiController;
+    public GameView UI;
     public Die die1, die2;
     public GameBoard gameBoard;
-    public Player[] playerList;
     public boolean gameEnded;
     public boolean afterAuction = false;
     public int roundCounter;
+    public Player[] playerList;
     private Player[] tmpPlayerList;
+    private final Player[] quickGamePlayerList;
     private Player[] playerRankList = new Player[]{};
-    public String choice;
-    public String action1;
-    public String action2;
     private int turnCounter;
     private boolean extraTurn;
+    public boolean quickGame;
 
-    public GameController(GameView guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
+    public GameController(GameView UI, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
         this.die2 = die2;
         this.gameBoard = gameBoard;
-        this.guiController = guiController;
+        this.UI = UI;
         this.playerList = players;
         this.tmpPlayerList = this.playerList;
+        this.quickGamePlayerList = this.playerList;
+
+        String gameAction1 = "Normalt spil";
+        String gameAction2 = "Hurtigt spil";
+        String gameChoice = UI.getUserButtonPressed("""
+                Hvordan vil I slutte spillet?
+                \t1. Spil til der kun er en spiller tilbage.
+                \t2. Slut spillet efter 40 runder""", gameAction1, gameAction2);
+        this.quickGame = gameChoice.equals(gameAction2);
     }
 
     /**
@@ -46,8 +54,8 @@ public class GameController {
      * Der laves et array med "playerCount" antal spillere. playerListen er af typen Player.
      * Player constructoren skal bruge et navn i parameteren, desuden sættes den enkelte spillers start balance til 0 automatisk
      */
-    public GameController(GameView guiController, GameBoard gameBoard, Die die1, Die die2) {
-        this(guiController, gameBoard, die1, die2, setUpPlayers(guiController));
+    public GameController(GameView UI, GameBoard gameBoard, Die die1, Die die2) {
+        this(UI, gameBoard, die1, die2, setUpPlayers(UI));
     }
 
     /**
@@ -88,17 +96,13 @@ public class GameController {
      * Kører spillet indtil spillet slutter (Dette sker hvis en player får en balance under nul - Se if statement i playTurn)
      */
     public void runGame() {
-        action1 = "Normalt spil";
-        action2 = "Hurtigt spil";
-        choice = guiController.getUserButtonPressed("""
-                Hvordan vil I slutte spillet?
-                \t1. Spil til der kun er en spiller tilbage.
-                \t2. Slut spillet efter 40 runder""", action1, action2);
-
-        makeStartingOrderPlayerList();
         while (!gameEnded) {
             playRound();
+            if (quickGame && roundCounter >= 40) {
+                gameEnded = true;
+            }
         }
+
         setGameEnded();
     }
 
@@ -108,16 +112,10 @@ public class GameController {
     public void playRound() {
         if (tmpPlayerList.length != 1) {
             roundCounter++;
-            guiController.showMessage("Runde " + roundCounter);
+
+            UI.showMessage("Runde " + roundCounter);
         }
         for (Player player : playerList) {
-
-            if (choice.equals(action2)) {
-                if (roundCounter > 40) {
-                    gameEnded = true;
-                    break;
-                }
-            }
 
             if (tmpPlayerList.length == 1) {
                 gameEnded = true;
@@ -142,27 +140,27 @@ public class GameController {
         else {
 
             if (player.getOutOfJailFree) {
-                guiController.getUserButtonPressed(player.name + " er røget i fængsel, " +
+                UI.getUserButtonPressed(player.name + " er røget i fængsel, " +
                         "men har et benådelseskort fra Kongen, og kommer derfor gratis ud af fængslet", "OK");
                 player.getOutOfJailFree = false;
                 player.inJail = false;
             }
             else {
 
-                action1 = "Betal " + GlobalValues.JAIL_PRICE + " kr";
-                action2 = "Rul 2 ens";
-                choice = guiController.getUserButtonPressed(player.name + " er røget i fængsel." +
+                String action1 = "Betal " + GlobalValues.JAIL_PRICE + " kr";
+                String action2 = "Rul 2 ens";
+                String choice = UI.getUserButtonPressed(player.name + " er røget i fængsel." +
                         "Hvordan vil du komme ud?", action1, action2);
                 if (choice.equals(action2)) {
 
                     if (player.jailTryRollCounter < 3) {
                         for (int i = 0; i < 3; i++) {
-                            guiController.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
+                            UI.getUserButtonPressed("Rul med terningen for at komme ud", "rul");
                             faceValue1 = this.die1.roll();
                             faceValue2 = this.die1.roll();
                             faceValue = faceValue1 + faceValue2;
 
-                            guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+                            UI.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
 
                             // Tjekker om der er blevet rullet 2 ens
                             if (faceValue1 == faceValue2) {
@@ -176,7 +174,7 @@ public class GameController {
 
                         if (player.inJail && player.jailTryRollCounter == 3) {
                             player.jailTryRollCounter = 1;
-                            guiController.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
+                            UI.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
                                     "\nDu er derfor nødt til at betale dig ud af fængslet. " +
                                     "\nDu har slået " + faceValue + ". Du kan nu fortsætte din tur ");
                             player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
@@ -203,16 +201,16 @@ public class GameController {
         if (!afterAuction) landedOn.fieldAction(player);
         else afterAuction = false;
 
-        guiController.updatePlayer(player);
+        UI.updatePlayer(player);
 
         //--------------------------------------------------------------------------------------------------------------
         // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
         //--------------------------------------------------------------------------------------------------------------
         if (player.getBalance() <= 0) {
             extraTurn = false;
-            guiController.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
+            UI.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
             // Slet næste linje hvis du vil sætte taberen i endnu mere evig skam
-            guiController.removeCar(player);
+            UI.removeCar(player);
 
             for (int i = 0; i < gameBoard.fields.length; i++) {
                 Field f = gameBoard.fields[i];
@@ -222,7 +220,7 @@ public class GameController {
 
                     if (ownableField.owner == player) {
                         ownableField.owner = null;
-                        guiController.removeOwner(i);
+                        UI.removeOwner(i);
                     }
                 }
             }
@@ -243,24 +241,29 @@ public class GameController {
             extraTurn = false;
             if (turnCounter < 2) {
                 turnCounter++;
-                guiController.showMessage("Du har slået 2 ens. Du får en tur til!");
+                UI.showMessage("Du har slået 2 ens. Du får en tur til!");
                 playTurn(player);
             }
             else {
-                guiController.showMessage("Du har slået 2 ens 3 gange i træk. Du fængsles");
+                UI.showMessage("Du har slået 2 ens 3 gange i træk. Du fængsles");
                 player.putInJail();
-                guiController.updatePlayer(player);
+                UI.updatePlayer(player);
                 turnCounter = 0;
             }
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Metoder der bruges ovenover
+    //------------------------------------------------------------------------------------------------------------------
     private void checkInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof IncomeTaxField incomeTaxField) {
-            action1 = "4000 kr.";
-            action2 = "10 %";
-            choice = guiController.getUserButtonPressed("Du skal betale indkomstskat. Du har nu følgende valgmuligheder: " +
-                    "\n\t1. Betal 4000 kr.\n\t2. Betal 10% af alle dine værdier", action1, action2);
+            String action1 = "4000 kr.";
+            String action2 = "10 %";
+            String choice = UI.getUserButtonPressed("""
+                    Du skal betale indkomstskat. Du har nu følgende valgmuligheder:
+                    \t1. Betal 4000 kr.
+                    \t2. Betal 10% af alle dine værdier""", action1, action2);
 
             if (choice.equals(action1))
                 player.addAmountToBalance(-incomeTaxField.tax);
@@ -270,7 +273,7 @@ public class GameController {
         }
         else if (landedOn instanceof ChanceField) {
             ChanceCard chanceCard = drawChanceCard();
-            guiController.displayChanceCard(chanceCard);
+            UI.displayChanceCard(chanceCard);
             doCardAction(player, faceValue, chanceCard);
         }
         // if instanceof OwnableField
@@ -279,17 +282,14 @@ public class GameController {
         }
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Metoder der bruges ovenover
-    //------------------------------------------------------------------------------------------------------------------
     private int rollDice(Player player) {
         int faceValue2;
         int faceValue1;
         int faceValue;
-        guiController.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
+        UI.getUserButtonPressed(player.name + " skal rulle med terningen!", "Rul");
         faceValue1 = die1.roll();
         faceValue2 = die2.roll();
-        guiController.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
+        UI.setDice(faceValue1, 2, 8, faceValue2, 3, 8);
         faceValue = faceValue1 + faceValue2;
 
         if (faceValue1 == faceValue2) {
@@ -301,12 +301,12 @@ public class GameController {
     private boolean rollDiceToDecideStartingOrder(HashMap<Integer, Player> dieValues) {
         boolean duplicates = false;
         for (Player player : playerList) {
-            guiController.getUserButtonPressed(player.name + " skal rulle med terningen for, " +
+            UI.getUserButtonPressed(player.name + " skal rulle med terningen for, " +
                     "at se hvem der skal starte!", "Rul");
             int rollResult1 = die1.roll();
             int rollResult2 = die2.roll();
             int rollResult = rollResult1 + rollResult2;
-            guiController.setDice(rollResult1, 2, 8, rollResult2, 3, 8);
+            UI.setDice(rollResult1, 2, 8, rollResult2, 3, 8);
             if (dieValues.containsKey(rollResult)) {
                 duplicates = true;
                 dieValues.clear();
@@ -319,7 +319,7 @@ public class GameController {
         return duplicates;
     }
 
-    private void makeStartingOrderPlayerList() {
+    public void makeStartingOrderPlayerList() {
         HashMap<Integer, Player> dieValues = new HashMap<>();
         Player[] orderOfPlayers = playerList;
 
@@ -334,7 +334,7 @@ public class GameController {
                 }
             }
             else {
-                guiController.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle" +
+                UI.getUserButtonPressed("Der er ens antal øjne " + playerList[0].name + " skal rulle" +
                         " igen med terningen for hvem der skal starte!", "Rul");
             }
         }
@@ -349,16 +349,16 @@ public class GameController {
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
 
-                action1 = "Ja";
-                action2 = "Nej";
-                choice = guiController.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
+                String action1 = "Ja";
+                String action2 = "Nej";
+                String choice = UI.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
                         ". Vil du købe denne ejendom?", action1, action2);
 
                 if (choice.equals(action1)) {
                     player.addAmountToBalance(-ownableField.price);
                     player.addToNetWorth(ownableField.price);
                     ownableField.owner = player;
-                    guiController.setOwner(player, player.getCurrentPos());
+                    UI.setOwner(player, player.getCurrentPos());
 
                     // Opdaterer spillerens ejede færgers rente efter spilleren køber en færge
                     if (ownableField instanceof ShippingField) {
@@ -379,27 +379,27 @@ public class GameController {
 
             else {
                 if (landedOn instanceof PropertyField propertyField) {
-                    action1 = "Ja";
-                    action2 = "Nej";
+                    String action1 = "Ja";
+                    String action2 = "Nej";
 
                     if (propertyField.owner == player && ownsAll(propertyField)) {
 
                         // Køb x antal huse, hvis du har 0-3 huse
                         if (propertyField.getAmountOfBuildings() <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
-                            choice = guiController.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                            String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
                                     "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
                                     + propertyField.fieldName + "?", action1, action2);
 
                             if (choice.equals(action1)) {
                                 int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.getAmountOfBuildings();
-                                int houseCount = guiController.getUserInteger("Hvor mange huse vil du købe?", 1, max);
+                                int houseCount = UI.getUserInteger("Hvor mange huse vil du købe?", 1, max);
                                 for (int i = 0; i < houseCount; i++) {
                                     propertyField.buyBuilding(player);
                                 }
                                 for (int i = 0; i < gameBoard.fields.length; i++) {
                                     Field field = gameBoard.fields[i];
                                     if (field == propertyField) {
-                                        guiController.setHouses(houseCount, i);
+                                        UI.setHouses(houseCount, i);
                                     }
                                 }
                             }
@@ -407,11 +407,11 @@ public class GameController {
 
                         // Køb hotel, hvis du ejer 4 huse allerede
                         if (propertyField.getAmountOfBuildings() == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
-                                guiController.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
+                                UI.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
                                                 "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
                                         action1, action2).equals(action1)) {
                             propertyField.buyBuilding(player);
-                            guiController.setOrRemoveHotel(true, player.getCurrentPos());
+                            UI.setOrRemoveHotel(true, player.getCurrentPos());
                         }
                     }
                 }
@@ -426,10 +426,10 @@ public class GameController {
 
                     ownableField.rent = faceValue * (100 * counter);
                 }
-                guiController.updatePlayer(ownableField.owner);
+                UI.updatePlayer(ownableField.owner);
             }
         }
-        guiController.updatePlayer(player);
+        UI.updatePlayer(player);
     }
 
     private void doCardAction(Player player, int faceValue, ChanceCard chanceCard) {
@@ -438,14 +438,14 @@ public class GameController {
         chanceCard.cardAction(player, gameBoard);
 
         if (chanceCard instanceof MovementCard) {
-            guiController.updatePlayer(player);
+            UI.updatePlayer(player);
 
             // Sørger for at man laver den handling der svarer til det felt man lander på
             landedOn = gameBoard.fields[player.getCurrentPos()];
             landedOn.fieldAction(player);
             checkInstanceOf(player, faceValue, landedOn);
         }
-        guiController.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
+        UI.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
         // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig
         if (player.getCurrentPos() != tmpPos)
             updateOwnerAndRent(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
@@ -456,7 +456,7 @@ public class GameController {
      * @param ownableField Det felt der bydes på
      */
     public void doAuction(Player player, OwnableField ownableField) {
-        guiController.showMessage("Alle andre spillere har nu mulighed for at byde på " + ownableField.fieldName +
+        UI.showMessage("Alle andre spillere har nu mulighed for at byde på " + ownableField.fieldName +
                 " såfremt at de ikke er i fængsel \nog har råd til at købe " + ownableField.fieldName + ". Laveste bud starter på "
                 + ownableField.price + " kr. \nHvis man er i fængsel eller ikke har penge nok til at betale mindsteprisen mister man sin ret til at deltage i auktionen.");
 
@@ -474,8 +474,8 @@ public class GameController {
      */
     public int checksWhoIsBiddingOnAuction(Player player, OwnableField ownableField, Player[] tmpPlayerList) {
         int numOfPlayersBidding = tmpPlayerList.length;
-        action1 = "Ja";
-        action2 = "Nej";
+        String action1 = "Ja";
+        String action2 = "Nej";
 
         for (Player p : tmpPlayerList) {
             p.wantToTryBidding = true;
@@ -484,7 +484,7 @@ public class GameController {
                 p.wantToTryBidding = false;
 
                 if (numOfPlayersBidding == 1) {
-                    choice = guiController.getUserButtonPressed(p.name + " er den eneste der kan være med i auktionen. Vil " + p.name + " købe "
+                    String choice = UI.getUserButtonPressed(p.name + " er den eneste der kan være med i auktionen. Vil " + p.name + " købe "
                             + ownableField.fieldName + " til mindsteprisen, som er " + ownableField.price + ".", action1, action2);
                     if (choice.equals(action2)) return 0;
                     else return 1;
@@ -495,7 +495,7 @@ public class GameController {
             }
 
             if (p.wantToTryBidding) {
-                choice = guiController.getUserButtonPressed("Vil " + p.name + " byde på "
+                String choice = UI.getUserButtonPressed("Vil " + p.name + " byde på "
                         + ownableField.fieldName + "? Buddet starter på " + ownableField.price + ".", action1, action2);
                 if (choice.equals(action2)) {
                     p.wantToTryBidding = false;
@@ -511,8 +511,8 @@ public class GameController {
      * @param ownableField Det felt der sættes på auktion
      */
     public void bidOnAuction(OwnableField ownableField, int numOfPlayersBidding) {
-        action1 = "Ja";
-        action2 = "Nej";
+        String action1 = "Ja";
+        String action2 = "Nej";
         int prevBid = ownableField.price;
         int bid;
         Player prevPlayer = null;
@@ -524,14 +524,14 @@ public class GameController {
                 if (p.wantToTryBidding) {
 
                     if (p.getBalance() < prevBid && prevPlayer != p) {
-                        guiController.showMessage(p.name + " har desværre ikke nok penge til at overbyde den forrige spiller, " +
+                        UI.showMessage(p.name + " har desværre ikke nok penge til at overbyde den forrige spiller, " +
                                 "og udgår derfor fra denne auktion");
                         p.wantToTryBidding = false;
                         numOfPlayersBidding -= 1;
                         continue;
                     }
                     if (prevPlayer != null && prevPlayer != p) {
-                        choice = guiController.getUserButtonPressed(prevPlayer.name + " bød " + prevBid + " kr. " +
+                        String choice = UI.getUserButtonPressed(prevPlayer.name + " bød " + prevBid + " kr. " +
                                 "Vil " + p.name + " stadig byde på " + ownableField.fieldName + "?", action1, action2);
                         if (choice.equals(action2)) {
                             p.wantToTryBidding = false;
@@ -539,16 +539,16 @@ public class GameController {
                             continue;
                         }
 
-                        bid = guiController.getUserInteger("Hvad vil " + p.name + " byde på " + ownableField.fieldName
+                        bid = UI.getUserInteger("Hvad vil " + p.name + " byde på " + ownableField.fieldName
                                 + "? Buddet starter på " + (prevBid + 1) + " kr.", (prevBid + 1), p.getBalance());
                     }
                     else {
-                        bid = guiController.getUserInteger("Hvad vil " + p.name + " byde på " + ownableField.fieldName
+                        bid = UI.getUserInteger("Hvad vil " + p.name + " byde på " + ownableField.fieldName
                                 + "? Buddet starter på " + prevBid + " kr.", prevBid, p.getBalance());
                     }
                     // Det er ikke muligt at byde lavere. Derfor er dette ikke inkluderet i if statementet
                     while (bid == prevBid && prevPlayer != null && prevPlayer != p) {
-                        bid = guiController.getUserInteger("Dette bud er ugyldigt. Giv et nyt bud" +
+                        bid = UI.getUserInteger("Dette bud er ugyldigt. Giv et nyt bud" +
                                 "\nHvad vil " + p.name + " byde på " + ownableField.fieldName + "? Buddet starter på "
                                 + prevBid + " kr.", prevBid, p.getBalance());
                     }
@@ -562,15 +562,15 @@ public class GameController {
             if (p.wantToTryBidding) {
                 ownableField.owner = p;
                 p.addAmountToBalance(-prevBid);
-                guiController.updatePlayerBalance(p);
+                UI.updatePlayerBalance(p);
 
                 for (int i = 0; i < gameBoard.fields.length; i++) {
                     Field f = gameBoard.fields[i];
                     if (f == ownableField) {
-                        guiController.setOwner(p, i);
+                        UI.setOwner(p, i);
                     }
                 }
-                guiController.showMessage("Tillykke! " + p.name + " har købt " + ownableField.fieldName + " til " + prevBid + " kr.");
+                UI.showMessage("Tillykke! " + p.name + " har købt " + ownableField.fieldName + " til " + prevBid + " kr.");
             }
         }
 
@@ -607,7 +607,7 @@ public class GameController {
 
         // Spilleren passerer Start
         if (player.getCurrentPos() < player.getPreviousPos()) player.addAmountToBalance(GlobalValues.START_FIELD_VALUE);
-        guiController.updatePlayer(player);
+        UI.updatePlayer(player);
     }
 
     /**
@@ -660,33 +660,32 @@ public class GameController {
      */
     public void setGameEnded() {
         Player winner = getWinner(playerList);
-        StringBuilder winnerMessage = null;
+        StringBuilder winnerMessage = new StringBuilder();
 
         if (tmpPlayerList.length == 1) {
+
             for (int i = playerRankList.length - 1, k = 1; i >= 0; i--, k++) {
                 Player player = playerRankList[i];
-                if (winnerMessage != null) {
-                    winnerMessage.append(player.name).append(" fik ").append(k).append(". pladsen.\n");
-                }
-                else winnerMessage = new StringBuilder(player.name + " fik " + k + ". pladsen.\n");
+
+                winnerMessage.append(player.name).append(" fik ").append(k).append(". pladsen.\n");
+
             }
-            guiController.showMessage("Spillet er slut!\n" +
-                    winner.name + " er den eneste spiller tilbage og\n" +
-                    winner.name + " har derfor vundet med " + winner.getBalance() + " kr.\n");
+
+            UI.showMessage(winnerMessage.append("\nSpillet er slut!\n").append(winner.name).
+                    append(" er den eneste spiller tilbage og\n").append(winner.name).
+                    append(" har derfor vundet med ").append(winner.getBalance()).append(" kr.\n").toString());
         }
         else {
-            for (Player player : playerList) {
-                if (winnerMessage != null) {
-                    winnerMessage.append(player.name).append(" har ").append(player.getBalance()).append(" point.\n");
-                }
-                else winnerMessage = new StringBuilder(player.name + " har " + player.getBalance() + " point.\n");
+            for (Player player : quickGamePlayerList) {
+                winnerMessage.append(player.name).append(" har ").append(player.getBalance()).append(" kr.\n");
             }
-        }
-        winnerMessage.append(winner.name).append(" har vundet! ");
 
-        guiController.showMessage(winnerMessage.toString());
-        guiController.showMessage("Luk spillet?");
-        guiController.close();
+            winnerMessage.append(winner.name).append(" har vundet! ");
+            UI.showMessage(winnerMessage.toString());
+        }
+
+        UI.showMessage("Tryk \"OK\" for at lukke spillet");
+        UI.close();
     }
 
     /**

@@ -246,8 +246,8 @@ public class GameControllerTest {
         player1.inJail = true;
         player2.inJail = true;
         int[] rolls;
-        for (int i = 0; i < 3 ; i++) {
-            rolls= new int[]{1, 2, 3, 4, -1, 1};
+        for (int i = 0; i < 3; i++) {
+            rolls = new int[]{1, 2, 3, 4, -1, 1};
             die = new StubDie(rolls);
             gameController = new GameController(guiController, gameBoard, die, die, players);
             gameController.playTurn(player1);
@@ -315,19 +315,20 @@ public class GameControllerTest {
     @Test
     public void testGameEndsAfter40Rounds() {
         gameBoard = new GameBoard(new Field[]{new StartField("", "", "", Color.RED)}, new ChanceCard[]{});
-        Player player1 = new Player("1", 1000);
-        Player player2 = new Player("2", 1000);
-        Player player3 = new Player("3", 1000);
+        int balance = 500000;
+        Player player1 = new Player("1", balance);
+        Player player2 = new Player("2", balance);
+        Player player3 = new Player("3", balance);
         Die die1 = new StubDie(-1);
         Die die2 = new StubDie(1);
+        guiController.customChoice = "Hurtigt spil";
         gameController = new GameController(guiController, gameBoard, die1, die2, new Player[]{player1, player2, player3});
+        guiController.customChoice = null;
 
-        gameController.action2 = "Hurtigt spil";
-        gameController.choice = "Hurtigt spil";
-        for (int i = 0; i < 41; i++) {
-            gameController.playRound();
-        }
+        gameController.runGame();
+
         Assert.assertTrue(gameController.gameEnded);
+        Assert.assertEquals(40, gameController.roundCounter);
     }
 
     @Test
@@ -338,7 +339,7 @@ public class GameControllerTest {
         Player player1 = new Player("1", 0);
         Player player2 = new Player("2", 0);
         Player player3 = new Player("3", 0);
-        Player[] playerList = new Player[] {player1, player2, player3};
+        Player[] playerList = new Player[]{player1, player2, player3};
         die = new StubDie(0);
 
         gameController = new GameController(guiController, gameBoard, die, die, playerList);
@@ -367,7 +368,7 @@ public class GameControllerTest {
         Player player1 = new Player("1", 1000);
         Player player2 = new Player("2", 3000);
         Player player3 = new Player("3", 5000);
-        Player[] playerList = new Player[] {player1, player2, player3};
+        Player[] playerList = new Player[]{player1, player2, player3};
 
         die = new StubDie(0);
         gameController = new GameController(guiController, gameBoard, die, die, playerList);
@@ -386,7 +387,7 @@ public class GameControllerTest {
         player1 = new Player("1", 1000);
         player2 = new Player("2", 7000);
         player3 = new Player("3", 5000);
-        playerList = new Player[] {player1, player2, player3};
+        playerList = new Player[]{player1, player2, player3};
 
         gameController = new GameController(guiController, gameBoard, die, die, playerList);
         ownableField = (OwnableField) gameBoard.fields[0];
@@ -402,7 +403,7 @@ public class GameControllerTest {
         player1 = new Player("1", 1000);
         player2 = new Player("2", 7000);
         player3 = new Player("3", 5000);
-        playerList = new Player[] {player1, player2, player3};
+        playerList = new Player[]{player1, player2, player3};
         guiController.customChoice = "Nej";
 
         gameController = new GameController(guiController, gameBoard, die, die, playerList);
