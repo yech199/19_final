@@ -504,10 +504,6 @@ public class GameController {
 
             }
         }
-        if (numOfPlayersBidding == 1) {
-            guiController.showMessage("Da du er den eneste spiller der har valgt at byde på " + ownableField.fieldName + ", " +
-                    "\nfår du grunden til mindsteprisen, som er " + ownableField.price + ".");
-        }
         return numOfPlayersBidding;
     }
 
@@ -574,6 +570,7 @@ public class GameController {
                         guiController.setOwner(p, i);
                     }
                 }
+                guiController.showMessage("Tillykke! " + p.name + " har købt " + ownableField.fieldName + " til " + prevBid + " kr.");
             }
         }
 
