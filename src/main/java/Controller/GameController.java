@@ -345,6 +345,7 @@ public class GameController {
 
     public void updateOwnerAndRent(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField) {
+
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
 
