@@ -481,6 +481,8 @@ public class GameController {
             p.wantToTryBidding = true;
             if (p == player || p.inJail || p.getBalance() < ownableField.price) {
 
+                p.wantToTryBidding = false;
+
                 if (numOfPlayersBidding == 1) {
                     choice = guiController.getUserButtonPressed(p.name + " er den eneste der kan være med i auktionen. Vil " + p.name + " købe "
                             + ownableField.fieldName + " til mindsteprisen, som er " + ownableField.price + ".", action1, action2);
@@ -488,8 +490,7 @@ public class GameController {
                     else return 1;
                 }
                 else if (numOfPlayersBidding == 0) return 0;
-                
-                p.wantToTryBidding = false;
+
                 numOfPlayersBidding -= 1;
             }
 
@@ -559,12 +560,6 @@ public class GameController {
                     prevBid = bid;
                 }
             }
-        }
-
-        if (numOfPlayersBidding == 1 && prevPlayer == null) {
-            guiController.showMessage("Du er den eneste spiller, der har valgt at byde på " + ownableField.fieldName + ", " +
-                    "\nog får derfor " + ownableField.fieldName + " til grundens originale pris, da buddet ville have startet på "
-                    + ownableField.price + "kr.");
         }
 
         for (Player p : tmpPlayerList) {
