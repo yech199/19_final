@@ -321,9 +321,8 @@ public class GameControllerTest {
         Player player3 = new Player("3", balance);
         Die die1 = new StubDie(-1);
         Die die2 = new StubDie(1);
-        guiController.customChoice = "Hurtigt spil";
         gameController = new GameController(guiController, gameBoard, die1, die2, new Player[]{player1, player2, player3});
-        guiController.customChoice = null;
+        gameController.quickGame = true;
 
         gameController.runGame();
 

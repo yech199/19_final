@@ -38,14 +38,6 @@ public class GameController {
         this.playerList = players;
         this.tmpPlayerList = this.playerList;
         this.quickGamePlayerList = this.playerList;
-
-        String gameAction1 = "Normalt spil";
-        String gameAction2 = "Hurtigt spil";
-        String gameChoice = UI.getUserButtonPressed("""
-                Hvordan vil I slutte spillet?
-                \t1. Spil til der kun er en spiller tilbage.
-                \t2. Slut spillet efter 40 runder""", gameAction1, gameAction2);
-        this.quickGame = gameChoice.equals(gameAction2);
     }
 
     /**
@@ -90,6 +82,18 @@ public class GameController {
         guiController.setUpPlayers(playerList);
 
         return playerList;
+    }
+
+    public void setupGame() {
+        String gameAction1 = "Normalt spil";
+        String gameAction2 = "Hurtigt spil";
+        String gameChoice = UI.getUserButtonPressed("""
+                Hvordan vil I slutte spillet?
+                \t1. Spil til der kun er en spiller tilbage.
+                \t2. Slut spillet efter 40 runder""", gameAction1, gameAction2);
+        this.quickGame = gameChoice.equals(gameAction2);
+
+        makeStartingOrderPlayerList();
     }
 
     /**
