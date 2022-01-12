@@ -7,6 +7,8 @@ import Model.Fields.*;
 import Model.GameBoard;
 import Model.GlobalValues;
 import Model.Player;
+import View.GUIView;
+import View.GameView;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +16,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GameController {
-    public ViewController guiController;
+    public GameView guiController;
     public Die die1, die2;
     public GameBoard gameBoard;
     public Player[] playerList;
@@ -29,7 +31,7 @@ public class GameController {
     private int turnCounter;
     private boolean extraTurn;
 
-    public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
+    public GameController(GameView guiController, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
         this.die2 = die2;
         this.gameBoard = gameBoard;
@@ -44,7 +46,7 @@ public class GameController {
      * Der laves et array med "playerCount" antal spillere. playerListen er af typen Player.
      * Player constructoren skal bruge et navn i parameteren, desuden sættes den enkelte spillers start balance til 0 automatisk
      */
-    public GameController(ViewController guiController, GameBoard gameBoard, Die die1, Die die2) {
+    public GameController(GameView guiController, GameBoard gameBoard, Die die1, Die die2) {
         this(guiController, gameBoard, die1, die2, setUpPlayers(guiController));
     }
 
@@ -54,7 +56,7 @@ public class GameController {
      * <p> Denne constructor kalder på ovenstående constructor
      */
     private GameController(GameBoard gameBoard) {
-        this(new GUIController(gameBoard.fields), gameBoard, new Die(), new Die());
+        this(new GUIView(gameBoard.fields), gameBoard, new Die(), new Die());
     }
 
     /**
@@ -66,7 +68,7 @@ public class GameController {
         this(new GameBoard());
     }
 
-    private static Player[] setUpPlayers(ViewController guiController) {
+    private static Player[] setUpPlayers(GameView guiController) {
         int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?",
                         GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS),
                 GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);

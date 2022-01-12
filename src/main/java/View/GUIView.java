@@ -1,9 +1,7 @@
-package Controller;
+package View;
 
 import Model.ChanceCards.ChanceCard;
 import Model.Fields.Field;
-import Model.Fields.OwnableField;
-import Model.Fields.PropertyField;
 import Model.Player;
 import gui_fields.*;
 import gui_main.GUI;
@@ -13,7 +11,7 @@ import java.awt.*;
 /**
  * Laver alt der har noget med GUI'en at gøre. Ikke fx spilleren som ligger i Player klassen, kun GUI_Player
  */
-public class GUIController extends ViewController {
+public class GUIView extends GameView {
     GUI_Field[] gui_fieldArray;
     GUI gui;
     GUI_Player[] gui_players;
@@ -25,7 +23,7 @@ public class GUIController extends ViewController {
      *
      * @param fields Arrayet af typen fields er allerede lavet i gameBoard klassen --> gameBoard.fields
      */
-    public GUIController(Field[] fields) {
+    public GUIView(Field[] fields) {
         gui_fieldArray = convertFieldArray(fields);
         gui = new GUI(gui_fieldArray, new Color(222, 184, 135));
     }

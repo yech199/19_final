@@ -1,11 +1,10 @@
 package stub;
 
-import Controller.ViewController;
+import View.GameView;
 import Model.ChanceCards.ChanceCard;
-import Model.Fields.PropertyField;
 import Model.Player;
 
-public class StubGUIController extends ViewController {
+public class StubGUIView extends GameView {
     public String customChoice = null;
 
     @Override

@@ -8,12 +8,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import stub.StubDie;
-import stub.StubGUIController;
+import stub.StubGUIView;
 
 public class BreweryFieldTest {
     private GameBoard gameBoard;
     private Player[] players;
-    private StubGUIController guiController;
+    private StubGUIView guiController;
     private GameController gameController;
     private Field[] fields;
 
@@ -28,7 +28,7 @@ public class BreweryFieldTest {
                 new BreweryField("Carlsberg", "", "")
         };
 
-        guiController = new StubGUIController();
+        guiController = new StubGUIView();
         gameBoard = new GameBoard(fields, null);
         Die die = new StubDie(0);
         gameController = new GameController(guiController, gameBoard, die, die);

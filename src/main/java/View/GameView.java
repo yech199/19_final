@@ -1,10 +1,10 @@
-package Controller;
+package View;
 
 import Model.ChanceCards.ChanceCard;
 import Model.Fields.PropertyField;
 import Model.Player;
 
-public abstract class ViewController {
+public abstract class GameView {
     public abstract int getUserInteger(String msg, int min, int max);
 
     public abstract void setUpPlayers(Player[] playerList);
