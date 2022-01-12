@@ -455,12 +455,11 @@ public class GameController {
      * @param ownableField Det felt der bydes på
      */
     public void doAuction(Player player, OwnableField ownableField) {
-        for (Player p : tmpPlayerList) {
-            p.wantToTryBidding = true;
-        }
-        guiController.showMessage("Alle andre spillere har nu mulighed for at byde på " + ownableField.fieldName + ". Laveste bud starter på "
-                + ownableField.price + " kr.");
-        int numOfPlayersBidding = checksWhoWantsToTryBidding(player, ownableField, tmpPlayerList);
+        guiController.showMessage("Alle andre spillere har nu mulighed for at byde på " + ownableField.fieldName +
+                " såfremt at de ikke er i fængsel \nog har råd til at købe " + ownableField.fieldName + ". Laveste bud starter på "
+                + ownableField.price + " kr. \nHvis man er i fængsel eller ikke har penge nok til at betale mindsteprisen mister man sin ret til at deltage i auktionen.");
+
+        int numOfPlayersBidding = checksWhoIsBiddingOnAuction(player, ownableField, tmpPlayerList);
 
         if (numOfPlayersBidding > 0) {
             bidOnAuction(ownableField, numOfPlayersBidding);
@@ -472,23 +471,40 @@ public class GameController {
      * @param player       der ikke købte feltet
      * @param ownableField Det felt der sættes på auktion
      */
-    public int checksWhoWantsToTryBidding(Player player, OwnableField ownableField, Player[] tmpPlayerList) {
-        int numOfPlayersBidding = tmpPlayerList.length - 1;
+    public int checksWhoIsBiddingOnAuction(Player player, OwnableField ownableField, Player[] tmpPlayerList) {
+        int numOfPlayersBidding = tmpPlayerList.length;
         action1 = "Ja";
         action2 = "Nej";
+
         for (Player p : tmpPlayerList) {
-            if (p == player)
+            p.wantToTryBidding = true;
+            if (p == player || p.inJail || p.getBalance() < ownableField.price) {
+
+                if (numOfPlayersBidding == 1) {
+                    choice = guiController.getUserButtonPressed(p.name + " er den eneste der kan være med i auktionen. Vil " + p.name + " købe "
+                            + ownableField.fieldName + " til mindsteprisen, som er " + ownableField.price + ".", action1, action2);
+                    if (choice.equals(action2)) return 0;
+                    else return 1;
+                }
+                else if (numOfPlayersBidding == 0) return 0;
+                
                 p.wantToTryBidding = false;
+                numOfPlayersBidding -= 1;
+            }
 
-            else {
-                choice = guiController.getUserButtonPressed("Vil " + p.name + " være med i auktionen og byde på "
-                        + ownableField.fieldName + "?", action1, action2);
-
+            if (p.wantToTryBidding) {
+                choice = guiController.getUserButtonPressed("Vil " + p.name + " byde på "
+                        + ownableField.fieldName + "? Buddet starter på " + ownableField.price + ".", action1, action2);
                 if (choice.equals(action2)) {
                     p.wantToTryBidding = false;
                     numOfPlayersBidding -= 1;
                 }
+
             }
+        }
+        if (numOfPlayersBidding == 1) {
+            guiController.showMessage("Da du er den eneste spiller der har valgt at byde på " + ownableField.fieldName + ", " +
+                    "\nfår du grunden til mindsteprisen, som er " + ownableField.price + ".");
         }
         return numOfPlayersBidding;
     }
@@ -618,7 +634,7 @@ public class GameController {
         // Tjekker om nogle af felterne ikke har en ejer, da dette er nødvendigt for at kunne sammenligne i
         // return statementet.
         //--------------------------------------------------------------------------------------------------------------
-        if (tmpFields[0].owner != null){
+        if (tmpFields[0].owner != null) {
             if (tmpFields.length == 2 && tmpFields[0].owner == tmpFields[1].owner) {
                 // Tjekker om ejeren af første, andet og tredje felt er den samme. Hvis ikke returnerer den false
                 ownsAll = true;

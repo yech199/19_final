@@ -190,8 +190,7 @@ public class GameControllerTest {
 
     @Test
     public void testOwnsAllReturnCorrect() {
-        ChanceCard[] chanceCards = new ChanceCard[]{
-        };
+        ChanceCard[] chanceCards = new ChanceCard[]{};
 
         PropertyField[] fields = new PropertyField[]{
                 new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
@@ -345,7 +344,7 @@ public class GameControllerTest {
         gameController = new GameController(guiController, gameBoard, die, die, playerList);
         OwnableField ownableField = (OwnableField) gameBoard.fields[0];
 
-        int numOfPlayersBidding = gameController.checksWhoWantsToTryBidding(player1, ownableField, playerList);
+        int numOfPlayersBidding = gameController.checksWhoIsBiddingOnAuction(player1, ownableField, playerList);
 
         Assert.assertEquals(2, numOfPlayersBidding);
         Assert.assertFalse(player1.wantToTryBidding);
@@ -353,7 +352,7 @@ public class GameControllerTest {
         Assert.assertTrue(player3.wantToTryBidding);
 
         guiController.customChoice = "Nej";
-        numOfPlayersBidding = gameController.checksWhoWantsToTryBidding(player2, ownableField, playerList);
+        numOfPlayersBidding = gameController.checksWhoIsBiddingOnAuction(player2, ownableField, playerList);
         Assert.assertEquals(0, numOfPlayersBidding);
         Assert.assertFalse(player1.wantToTryBidding);
         Assert.assertFalse(player2.wantToTryBidding);
