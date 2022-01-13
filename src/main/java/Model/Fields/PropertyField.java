@@ -6,7 +6,7 @@ import gui_fields.GUI_Street;
 import java.awt.*;
 
 public class PropertyField extends OwnableField {
-    private int amountOfBuildings;
+    public int amountOfBuildings;
     public final int[] rents;
     public final int buildingPrice;
 
@@ -23,7 +23,8 @@ public class PropertyField extends OwnableField {
         if (amountOfBuildings < 5) {
             amountOfBuildings++;
             player.addAmountToBalance(-buildingPrice);
-            player.addToNetWorth(buildingPrice);
+            // Bygninger er mindre værd hvis den skal sælges igen
+            player.addToNetWorth(buildingPrice / 2);
             rent = rents[amountOfBuildings];
         }
     }
@@ -31,14 +32,11 @@ public class PropertyField extends OwnableField {
     public void sellBuilding(Player player) {
         if (amountOfBuildings > 0) {
             amountOfBuildings--;
-            player.addAmountToBalance(buildingPrice);
-            player.addToNetWorth(-buildingPrice);
+            // Bygninger sælges for halv pris
+            player.addAmountToBalance(buildingPrice / 2);
+            player.addToNetWorth(-(buildingPrice / 2));
             rent = rents[amountOfBuildings];
         }
-    }
-
-    public int getAmountOfBuildings() {
-        return amountOfBuildings;
     }
 
 

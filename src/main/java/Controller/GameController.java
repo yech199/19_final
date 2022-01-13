@@ -216,9 +216,31 @@ public class GameController {
 
         UI.updatePlayer(player);
 
-        // TODO: Pantsætning
-
         if (player.getBalance() <= 0) {
+            if ((player.getNetWorth() + player.getBalance()) > 0) {
+                String action1 = "Ja";
+                String action2 = "Nej";
+                String choice = UI.getUserButtonPressed("Du har mistet alle dine penge og står nu i gæld til banken, " +
+                        "\nmen du har muligheden for at sælge dine bygninger og ejendomme, og dermed spille videre. " +
+                        "Vil du sælge dine ejendomme?", action1, action2);
+                if (choice.equals(action2)) return;
+                else {
+                    for (Field field : gameBoard.fields) {
+                        if (field instanceof OwnableField ownableField && ownableField.owner == player) {
+                            if (ownableField instanceof PropertyField propertyField && propertyField.amountOfBuildings > 0) {
+                                int buildingCount = UI.getUserInteger("Hvor mange huse vil du sælge?", 1, propertyField.amountOfBuildings);
+                                for (int i = 0; i < buildingCount; i++) {
+                                    propertyField.sellBuilding(player);
+                                }
+                            }
+                            // TODO: Pantsætning
+                            else {
+
+                            }
+                        }
+                    }
+                }
+            }
             updateGameWhenPlayerGoBankerupt(player);
         }
 
@@ -399,7 +421,8 @@ public class GameController {
 
                 if (choice.equals(action1)) {
                     player.addAmountToBalance(-ownableField.price);
-                    player.addToNetWorth(ownableField.price);
+                    // Ejendommen er mindre værd hvis den skal sælges igen
+                    player.addToNetWorth(ownableField.price / 2);
                     ownableField.owner = player;
                     UI.setOwner(player, player.getCurrentPos());
 
@@ -428,13 +451,13 @@ public class GameController {
                     if (propertyField.owner == player && ownsAll(propertyField)) {
 
                         // Køb x antal huse, hvis du har 0-3 huse
-                        if (propertyField.getAmountOfBuildings() <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
+                        if (propertyField.amountOfBuildings <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
                             String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
                                     "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
                                     + propertyField.fieldName + "?", action1, action2);
 
                             if (choice.equals(action1)) {
-                                int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.getAmountOfBuildings();
+                                int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.amountOfBuildings;
                                 int houseCount = UI.getUserInteger("Hvor mange huse vil du købe?", 1, max);
                                 for (int i = 0; i < houseCount; i++) {
                                     propertyField.buyBuilding(player);
@@ -449,7 +472,7 @@ public class GameController {
                         }
 
                         // Køb hotel, hvis du ejer 4 huse allerede
-                        if (propertyField.getAmountOfBuildings() == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
+                        if (propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
                                 UI.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
                                                 "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
                                         action1, action2).equals(action1)) {
@@ -473,34 +496,6 @@ public class GameController {
             }
         }
         UI.updatePlayer(player);
-    }
-
-    public String sellBuilding(Player player, Field landedOn){
-        if (landedOn instanceof OwnableField ownableField){
-            if(ownableField.rent>=player.getNetWorth()){
-                boolean sellBuilding = Boolean.parseBoolean(sellBuilding(player, ownableField));
-                String action_1 = "Sælge en bygning";
-                String action_2 = "Tabe spillet";
-                String choice = UI.getUserButtonPressed("Du har ikke mange penge tilbage!" + " Vil du sælge en bygning eller tabe spillet?", action_1, action_2);
-
-                    if(choice.equals(action_2)){
-                        player.addAmountToBalance(-ownableField.rent);
-                        sellBuilding = false;
-                    }
-                    if(choice.equals(action_1)){
-                        int buildingCount = -1;
-                        for(int i=0; i<buildingCount; i--){
-                            ownableField.;
-                        }
-
-                        player.addAmountToBalance(+4000/2);
-                        player.addToNetWorth(4000/2);
-                        sellBuilding = true;
-
-                    }
-            }
-        }
-        return null;
     }
 
     private void doCardAction(Player player, int faceValue, ChanceCard chanceCard) {
@@ -633,6 +628,8 @@ public class GameController {
             if (p.wantToTryBidding) {
                 ownableField.owner = p;
                 p.addAmountToBalance(-prevBid);
+                // Ejendommen er mindre værd hvis den skal sælges igen
+                p.addToNetWorth(ownableField.price / 2);
                 UI.updatePlayerBalance(p);
 
                 for (int i = 0; i < gameBoard.fields.length; i++) {
