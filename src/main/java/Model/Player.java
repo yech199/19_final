@@ -31,6 +31,7 @@ public class Player {
         this.balance = balance;
         this.index = index;
         this.jailTryRollCounter = 0;
+        addToNetWorth(GlobalValues.START_MONEY);
     }
 
     /**
@@ -47,7 +48,6 @@ public class Player {
      */
     public Player(int index, String name) {
         this(name, index, GlobalValues.START_MONEY);
-        addToNetWorth(GlobalValues.START_MONEY);
     }
 
     public Player(String name) {

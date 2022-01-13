@@ -416,4 +416,76 @@ public class GameControllerTest {
         Assert.assertFalse(player2.wantToTryBidding);
         Assert.assertFalse(player3.wantToTryBidding);
     }
+
+    @Test
+    public void testMortgageNotPropertFields() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        OwnableField[] fields = new OwnableField[]{
+                new ShippingField("D.F.D.S.", "Pris: kr. 4000", "D.F.D.S.\nMols-Linien", GlobalValues.SHIPPING_RENT),
+                new ShippingField("Øresund", "Pris: kr. 4000", "Øresundsredderiet\nHelsingør-Helsingborg", GlobalValues.SHIPPING_RENT),
+                new BreweryField("Tuborg", "Pris: kr. 3000", "Tuborg bryggeri"),
+        };
+        gameBoard = new GameBoard(fields,chanceCards);
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        // Player player2 = new Player("2", balance);
+        // Player player3 = new Player("3", balance);
+        Player[] playerList = new Player[]{player1};
+        Die die1 = new StubDie(1);
+        Die die2 = new StubDie(0);
+        gameController = new GameController(guiController, gameBoard, die1, die2, playerList);
+
+        gameController.playTurn(player1);
+        gameController.playTurn(player1);
+
+        Assert.assertEquals(player1, fields[1].owner);
+        Assert.assertEquals(player1, fields[2].owner);
+        Assert.assertEquals(balance - fields[1].price - fields[2].price, player1.getBalance());
+
+        player1.addAmountToBalance(-player1.getBalance());
+        balance = player1.getBalance();
+
+        for (int i = 1; i < gameBoard.fields.length; i++) {
+            Field field = gameBoard.fields[i];
+            if (field instanceof OwnableField ownableField && ownableField.owner == player1) {
+                gameController.mortgageField(player1, i, ownableField);
+                Assert.assertTrue(fields[i].isMortgaged());
+                Assert.assertEquals(balance + (ownableField.price / 2), player1.getBalance());
+            }
+            balance = player1.getBalance();
+        }
+    }
+
+    @Test
+    public void testMortgagePropertFields() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        OwnableField[] fields = new OwnableField[]{
+                new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+                new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+                new PropertyField("Roskildevej", "Pris: kr. 2000", "Roskildevej", 100, 2000,
+                        new Color(255, 128, 0), new Color(0, 0, 0), 1000, new int[]{600, 1800, 5400, 8000, 11000}),
+                new PropertyField("Valby\nLanggade", "Pris: kr. 2000", "Valby Langgade", 100, 2000,
+                        new Color(255, 128, 0), new Color(0, 0, 0), 1000, new int[]{600, 1800, 5400, 8000, 11000}),
+                new PropertyField("Allégade", "Pris: kr. 2400", "Allégade", 150, 2400,
+                        new Color(255, 128, 0), new Color(0, 0, 0), 1000, new int[]{800, 2000, 6000, 9000, 12000})
+        };
+        gameBoard = new GameBoard(fields,chanceCards);
+
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        Player player2 = new Player("2", balance);
+        Player player3 = new Player("3", balance);
+        Player[] playerList = new Player[]{player1, player2, player3};
+
+        die = new StubDie(0);
+        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        OwnableField ownableField = (OwnableField) gameBoard.fields[0];
+        int numOfPlayersBidding = playerList.length;
+    }
 }
