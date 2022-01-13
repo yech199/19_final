@@ -20,7 +20,7 @@ public abstract class GameView {
     public abstract void setUpPlayers(Player[] playerList);
 
     /**
-     * Viser en besked til brugeren, og beder brugeren om et tekst-input.
+     * Viser en besked til brugeren, og beder brugeren om et tekst-input.<br>
      * Denne besked vises indtil et input er indtastet.
      *
      * @param msg Beskeden der vises i UI
