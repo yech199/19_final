@@ -36,7 +36,7 @@ public class PropertyField extends OwnableField {
             amountOfBuildings--;
             // Bygninger sælges for halv pris
             player.addAmountToBalance(buildingPrice / 2);
-            player.addToNetWorth(-(buildingPrice / 2));
+            player.addToNetWorth(-(buildingPrice));
             rent = rents[amountOfBuildings];
         }
     }

@@ -42,7 +42,7 @@ public abstract class OwnableField extends Field {
         if (mortgaged) {
             this.owner.haveMortgagedField = true;
             this.owner.addAmountToBalance(this.price / 2);
-            this.owner.addToNetWorth(-(this.price / 2));
+            this.owner.addToNetWorth(-(this.price));
         }
         else {
             // Renten er 10% (der rundes op til nærmeste 100 kr.), og renten betales sammen
