@@ -68,18 +68,28 @@ public class GameController {
         this(new GameBoard());
     }
 
-    private static Player[] setUpPlayers(GameView guiController) {
-        int playerCount = guiController.getUserInteger(String.format("Hvor mange spillere (%d-%d)?",
+    private static Player[] setUpPlayers(GameView UI) {
+        int playerCount = UI.getUserInteger(String.format("Hvor mange spillere (%d-%d)?",
                         GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS),
                 GlobalValues.MIN_PLAYERS, GlobalValues.MAX_PLAYERS);
 
         // Laver x antal nye spillere med navn
         Player[] playerList = new Player[playerCount];
         for (int i = 0; i < playerList.length; i++) {
-            playerList[i] = new Player(i, guiController.getUserString("Player " + (i + 1) + " skriv dit navn:"));
+            String playerName = UI.getUserString("Player " + (i + 1) + " skriv dit navn:");
+
+            for (int j = 0; j < i; j++) {
+                if (playerList[i].name.equals(playerName)) {
+                    j = -1;
+                    playerName = UI.getUserString("Dette navn er allerede i brug. " +
+                            "\nPlayer " + (i + 1) + " vælg venligst et nyt navn:");
+                }
+            }
+
+            playerList[i] = new Player(i, playerName);
         }
 
-        guiController.setUpPlayers(playerList);
+        UI.setUpPlayers(playerList);
 
         return playerList;
     }
