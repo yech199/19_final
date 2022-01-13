@@ -216,6 +216,8 @@ public class GameController {
 
         UI.updatePlayer(player);
 
+        // TODO: Pantsætning
+
         if (player.getBalance() <= 0) {
             updateGameWhenPlayerGoBankerupt(player);
         }

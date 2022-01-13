@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import stub.StubDie;
-import stub.StubGUIView;
+import stub.StubView;
 
 import java.awt.*;
 
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotEquals;
 
 public class GameControllerTest {
     private GameController gameController;
-    private StubGUIView guiController;
+    private StubView guiController;
     private GameBoard gameBoard;
     private Die die;
     private Player[] players;
@@ -35,7 +35,7 @@ public class GameControllerTest {
                 new Player("Test 3")
         };
         gameBoard = new GameBoard();
-        guiController = new StubGUIView();
+        guiController = new StubView();
         guiController.customChoice = null;
         gameController = new GameController(guiController, gameBoard, die, die, players);
     }

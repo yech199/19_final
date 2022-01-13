@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
-public class StubGUIView extends GameView {
+public class StubView extends GameView {
     public String customChoice = null;
 
     @Override
