@@ -9,6 +9,7 @@ import java.awt.*;
 public abstract class OwnableField extends Field {
     public int rent;
     public int price;
+    public boolean mortgaged = false; // = pantsat
     public Player owner; // public fordi get og set metoder bare getter og sætter værdien
 
     public OwnableField(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
@@ -25,7 +26,7 @@ public abstract class OwnableField extends Field {
     @Override
     public void fieldAction(Player player) {
         // Der opkræves ingen leje hvis ejeren af feltet er i fængsel
-        if (this.owner != null && !this.owner.inJail) {
+        if (this.owner != null && !this.owner.inJail && !this.mortgaged) {
             player.addAmountToBalance(-rent);
             owner.addAmountToBalance(rent);
         }

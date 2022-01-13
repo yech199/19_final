@@ -23,7 +23,8 @@ public class PropertyField extends OwnableField {
         if (amountOfBuildings < 5) {
             amountOfBuildings++;
             player.addAmountToBalance(-buildingPrice);
-            // Bygninger er mindre værd hvis den skal sælges igen
+            // Bygninger er mindre værd hvis den skal sælges igen. Derfor tilføjes der til netWorth igen
+            // Kun halvdelen af prisen man betaler for bygningen tilføjer værdi til din netWorth
             player.addToNetWorth(buildingPrice / 2);
             rent = rents[amountOfBuildings];
         }

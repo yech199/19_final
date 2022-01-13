@@ -47,6 +47,9 @@ public class StubView extends GameView {
     public void setOwner(Player player, int index) {}
 
     @Override
+    public void viewAsMortgaged(Player player, int index) {}
+
+    @Override
     public void removeOwner(int index) {}
 
     @Override

@@ -68,6 +68,8 @@ public abstract class GameView {
      */
     public abstract void setOwner(Player player, int index);
 
+    public abstract void viewAsMortgaged(Player player, int index);
+
     public abstract void removeOwner(int index);
 
     /**
