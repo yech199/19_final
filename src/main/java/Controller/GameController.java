@@ -257,7 +257,7 @@ public class GameController {
                                 tmpBalance = player.getNetWorth() + player.getBalance();
 
                                 if (propertyField.amountOfBuildings > 0 && !(tmpBalance > 0)) {
-                                    continue;
+                                    break;
                                 }
                             }
                             // Pantsætning
@@ -274,7 +274,7 @@ public class GameController {
         if (player.haveMortgagedField) {
             for (int i = 0; i < gameBoard.fields.length; i++) {
                 Field field = gameBoard.fields[i];
-                if (field instanceof OwnableField ownableField && ownableField.mortgaged) {
+                if (field instanceof OwnableField ownableField && ownableField.isMortgaged()) {
                     // TODO: Rund op til nærmeste 100. Modulo
                     int stopMortgagePrice = (ownableField.rent / 100 * 10) + (ownableField.price / 2);
                     if (player.getBalance() > (stopMortgagePrice + 1)) {
@@ -284,14 +284,13 @@ public class GameController {
                                 + ownableField.fieldName + " for " + stopMortgagePrice +
                                 "?\nDu har en balance på " + player.getBalance() + " kr.", action1, action2);
                         if (choice.equals(action1)) {
-                            ownableField.mortgaged = false;
-                            player.addAmountToBalance(-stopMortgagePrice);
+                            ownableField.setMortgaged(false);
                             UI.setOwner(player, i);
 
                             // Tjekker om spilleren har flere pantsatte ejendomme tilbage
                             for (Field f : gameBoard.fields) {
                                 int counter = 0;
-                                if (f instanceof OwnableField ownableField2 && ownableField2.mortgaged) {
+                                if (f instanceof OwnableField ownableField2 && ownableField2.isMortgaged()) {
                                     counter++;
                                 }
                                 if (counter == 0)
@@ -322,20 +321,15 @@ public class GameController {
      * @param ownableField Den ejendom der kan pantsættes
      */
     private void mortgageField(Player player, int i, OwnableField ownableField) {
-        String choice;
-        String action1;
-        String action2;
-        action1 = "Ja";
-        action2 = "Nej";
-        choice = UI.getUserButtonPressed("Vil " + player.name + " pantsætte " + ownableField.fieldName + " for"
+        String action1 = "Ja";
+        String action2 = "Nej";
+        String choice = UI.getUserButtonPressed("Vil " + player.name + " pantsætte " + ownableField.fieldName + " for"
                 + (ownableField.price / 2) + " kr?", action1, action2);
         if (choice.equals(action1)) {
             // Bruges i fieldAction til OwnableField
-            ownableField.mortgaged = true;
+            ownableField.setMortgaged(true);
             // Tjekkes hver tur
-            player.haveMortgagedField = true;
-            player.addAmountToBalance(ownableField.price / 2);
-            player.addToNetWorth(-(ownableField.price / 2));
+
             UI.viewAsMortgaged(player, i);
         }
     }

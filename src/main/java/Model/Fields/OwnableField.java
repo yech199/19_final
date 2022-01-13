@@ -1,7 +1,6 @@
 package Model.Fields;
 
 import Model.Player;
-import gui_fields.GUI_Field;
 import gui_fields.GUI_Ownable;
 
 import java.awt.*;
@@ -9,7 +8,7 @@ import java.awt.*;
 public abstract class OwnableField extends Field {
     public int rent;
     public int price;
-    public boolean mortgaged = false; // = pantsat
+    private boolean mortgaged = false; // = pantsat
     public Player owner; // public fordi get og set metoder bare getter og sætter værdien
 
     public OwnableField(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
@@ -34,4 +33,23 @@ public abstract class OwnableField extends Field {
 
     @Override
     public abstract GUI_Ownable getGUIversion();
+
+    public boolean isMortgaged() {
+        return mortgaged;
     }
+
+    public void setMortgaged(boolean mortgaged) {
+        if (mortgaged) {
+            this.owner.haveMortgagedField = true;
+            this.owner.addAmountToBalance(this.price / 2);
+            this.owner.addToNetWorth(-(this.price / 2));
+        }
+        else {
+            int stopMortgagePrice = (this.rent / 100 * 10) + (this.price / 2);
+            this.owner.addAmountToBalance(-stopMortgagePrice);
+            this.owner.addToNetWorth(this.price / 2);
+        }
+        this.mortgaged = mortgaged;
+    }
+}
+
