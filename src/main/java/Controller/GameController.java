@@ -513,7 +513,7 @@ public class GameController {
                 if (choice.equals(action1)) {
                     player.addAmountToBalance(-ownableField.price);
                     // Ejendommen er mindre værd hvis den skal sælges igen
-                    player.addToNetWorth(ownableField.price / 2);
+                    player.addToNetWorth(ownableField.price);
                     ownableField.owner = player;
                     UI.setOwner(player, player.getCurrentPos());
 
