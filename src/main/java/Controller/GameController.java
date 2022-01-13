@@ -275,8 +275,9 @@ public class GameController {
             for (int i = 0; i < gameBoard.fields.length; i++) {
                 Field field = gameBoard.fields[i];
                 if (field instanceof OwnableField ownableField && ownableField.isMortgaged()) {
-                    // TODO: Rund op til nærmeste 100. Modulo
-                    int stopMortgagePrice = (ownableField.rent / 100 * 10) + (ownableField.price / 2);
+                    // Renten er 10% (der rundes op til nærmeste 100 kr.), og renten betales sammen
+                    // med lånet, når pantsætningen hæves.
+                    int stopMortgagePrice = (int) (Math.ceil(((((double) ownableField.price / 2) / 100. * 10.) / 100.)) * 100 + (ownableField.price / 2));
                     if (player.getBalance() > (stopMortgagePrice + 1)) {
                         String action1 = "Ja";
                         String action2 = "Nej";

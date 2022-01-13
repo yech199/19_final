@@ -45,7 +45,9 @@ public abstract class OwnableField extends Field {
             this.owner.addToNetWorth(-(this.price / 2));
         }
         else {
-            int stopMortgagePrice = (this.rent / 100 * 10) + (this.price / 2);
+            // Renten er 10% (der rundes op til nærmeste 100 kr.), og renten betales sammen
+            // med lånet, når pantsætningen hæves.
+            int stopMortgagePrice = (int) Math.ceil((((double) this.price / 2 * 1.1) / 100.)) * 100;
             this.owner.addAmountToBalance(-stopMortgagePrice);
             this.owner.addToNetWorth(this.price / 2);
         }
