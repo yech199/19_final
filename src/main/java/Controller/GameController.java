@@ -199,7 +199,6 @@ public class GameController {
         movePlayerForward(player, faceValue);
 
         Field landedOn = gameBoard.fields[player.getCurrentPos()];
-
         checkInstanceOf(player, faceValue, landedOn);
 
         if (!afterAuction) landedOn.fieldAction(player);
@@ -207,59 +206,87 @@ public class GameController {
 
         UI.updatePlayer(player);
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Tjekker om den aktive spillers balance er under nul. Er balance under nul slutter spillet
-        //--------------------------------------------------------------------------------------------------------------
         if (player.getBalance() <= 0) {
-            extraTurn = false;
-            UI.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
-            // Slet næste linje hvis du vil sætte taberen i endnu mere evig skam
-            UI.removeCar(player);
-
-            for (int i = 0; i < gameBoard.fields.length; i++) {
-                Field f = gameBoard.fields[i];
-                if (f instanceof OwnableField ownableField && player == ownableField.owner) {
-                    if (tmpPlayerList.length != 2)
-                        doAuction(player, ownableField);
-
-                    if (ownableField.owner == player) {
-                        ownableField.owner = null;
-                        UI.removeOwner(i);
-                    }
-                }
-            }
-            tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
-            playerRankList = makePlayerRankArray(playerRankList, player);
-            afterAuction = false;
+            updateGameWhenPlayerGoBankerupt(player);
         }
+
+        if (extraTurn) {
+            doExtraTurn(player);
+        }
+
+        // Opdater playerList når den sidste spiller i listen har spillet sin tur færdig
         if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
                 tmpPlayerList.length == 1) {
             playerList = tmpPlayerList;
         }
+    }
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Tjekker om spilleren har fået en ekstra tur ved at slå 2 ens. Hvis de har slået 2 ens 3 gange i træk ryger
-        // de i fængsel.
-        //--------------------------------------------------------------------------------------------------------------
-        if (extraTurn) {
-            extraTurn = false;
-            if (turnCounter < 2) {
-                turnCounter++;
-                UI.showMessage("Du har slået 2 ens. Du får en tur til!");
-                playTurn(player);
-            }
-            else {
-                UI.showMessage("Du har slået 2 ens 3 gange i træk. Du fængsles");
-                player.putInJail();
-                UI.updatePlayer(player);
-                turnCounter = 0;
-            }
+    /**
+     * Tjekker om spilleren har fået en ekstra tur ved at slå 2 ens.
+     * Hvis de har slået 2 ens 3 gange i træk ryger de i fængsel.
+     *
+     * @param player Den spiller der evt. får en ekstra tur
+     */
+    private void doExtraTurn(Player player) {
+        extraTurn = false;
+        if (turnCounter < 2) {
+            turnCounter++;
+            UI.showMessage("Du har slået 2 ens. Du får en tur til!");
+            playTurn(player);
+        }
+        else {
+            UI.showMessage("Du har slået 2 ens 3 gange i træk. Du fængsles");
+            player.putInJail();
+            UI.updatePlayer(player);
+            turnCounter = 0;
         }
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Metoder der bruges ovenover
-    //------------------------------------------------------------------------------------------------------------------
+    /**
+     * Hvis man går bankerot, får man ikke en ekstra tur uanset om man fx har slået to ens med terningerne.<p>
+     * Spillerens brik fjernes fra spillebrættet. Og alle spillerens grunde sættes på auktion.
+     * Hvis ingen af de tilbageværende spillere deltager i auktionen bliver grundens farve og ejer sat til null.<p>
+     * Der oprettes et midlertidigt array som indeholder spillerlisten minus spilleren som er gået bankerot. <p>
+     * Den bankerotte spiller tilføjes til et nyt array, som holder styr på ranklisten af spillerne,
+     * som bruges til slut når spillet udskriver hvem der har vundet.
+     *
+     * @param player Den spiller som er gået bankerot
+     */
+    private void updateGameWhenPlayerGoBankerupt(Player player) {
+        extraTurn = false;
+        afterAuction = false;
+
+        UI.showMessage(player.name + " har mistet alle dine penge og har derfor tabt spillet");
+        UI.removeCar(player);
+
+        for (int i = 0; i < gameBoard.fields.length; i++) {
+            Field f = gameBoard.fields[i];
+            if (f instanceof OwnableField ownableField && player == ownableField.owner) {
+                updateOwnerOfBankeruptPlayersFields(player, i, ownableField);
+            }
+        }
+        tmpPlayerList = removeElementFromOldArray(tmpPlayerList, player.getIndex());
+        playerRankList = makePlayerRankArray(playerRankList, player);
+    }
+
+    /**
+     * Sætter alle felter, som den bankerotte spiller ejer på auktion. <br>
+     * Byder ingen på hans felter eller er der kun 1 spiller tilbage i spillet, ryddes den bankerotte spillers grund
+     *
+     * @param player       Den spiller som er gået bankerot
+     * @param i            index på det felt, hvis ejer og farve som skal opdateres
+     * @param ownableField Det felt som ejes af den spiller der er gået bankerot
+     */
+    private void updateOwnerOfBankeruptPlayersFields(Player player, int i, OwnableField ownableField) {
+        if (tmpPlayerList.length > 2)
+            doAuction(player, ownableField);
+
+        if (ownableField.owner == player) {
+            ownableField.owner = null;
+            UI.removeOwner(i);
+        }
+    }
+
     private void checkInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof IncomeTaxField incomeTaxField) {
             String action1 = "4000 kr.";
