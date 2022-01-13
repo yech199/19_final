@@ -79,7 +79,7 @@ public class GameController {
             String playerName = UI.getUserString("Player " + (i + 1) + " skriv dit navn:");
 
             for (int j = 0; j < i; j++) {
-                if (playerList[i].name.equals(playerName)) {
+                if (playerList[j].name.equals(playerName)) {
                     j = -1;
                     playerName = UI.getUserString("Dette navn er allerede i brug. " +
                             "\nPlayer " + (i + 1) + " vælg venligst et nyt navn:");

@@ -7,13 +7,13 @@ public abstract class GameView {
     public abstract int getUserInteger(String msg, int min, int max);
 
     /**
-     * Et array af 4 farver laves da der kan være max 6 spillere.
-     * Startbalance sættes alt efter hvor mange spillere der spiller.
-     * Hver spillers bil sættes til en farve fra arrayet af colors
-     * Der laves et array med gui_players der hver har et navn, en balance og en bil
-     * Tilføjer spillerne i arrayet med gui_players til GUI'en
-     * Alle spillernes biler sættes på index[0] = Start
-     * Alle spillernes biler vises på index[0] = Start
+     * Et array af 6 farver laves da der kan være max 6 spillere.<br>
+     * Hver spiller kan vælge hvilken brik de vil bruge på brættet.<br>
+     * Hver spillers brik sættes til en farve fra arrayet af colors.<br>
+     * Der laves et array med gui_players der hver har et navn, en balance og en bil.<br>
+     * Tilføjer spillerne i arrayet med gui_players til GUI'en.<br>
+     * Alle spillernes biler sættes på index[0] = Start<br>
+     * Alle spillernes biler vises på index[0] = Start<br>
      *
      * @param playerList et array med playerne
      */

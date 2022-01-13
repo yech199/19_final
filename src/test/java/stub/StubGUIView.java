@@ -4,6 +4,10 @@ import View.GameView;
 import Model.ChanceCards.ChanceCard;
 import Model.Player;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Random;
+
 public class StubGUIView extends GameView {
     public String customChoice = null;
 
@@ -17,7 +21,9 @@ public class StubGUIView extends GameView {
 
     @Override
     public String getUserString(String msg) {
-        return null;
+        byte[] array = new byte[3];
+        new Random().nextBytes(array);
+        return new String(array);
     }
 
     @Override

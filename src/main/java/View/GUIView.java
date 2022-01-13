@@ -12,6 +12,7 @@ import java.awt.*;
  * Laver alt der har noget med GUI'en at gøre. Ikke fx spilleren som ligger i Player klassen, kun GUI_Player
  */
 public class GUIView extends GameView {
+
     GUI_Field[] gui_fieldArray;
     GUI gui;
     GUI_Player[] gui_players;
@@ -54,17 +55,6 @@ public class GUIView extends GameView {
         return gui_fieldArray;
     }
 
-    /**
-     * Et array af 4 farver laves da der kan være max 4 spillere.
-     * Startbalance sættes alt efter hvor mange spillere der spiller.
-     * Hver spillers bil sættes til en farve fra arrayet af colors
-     * Der laves et array med gui_players der hver har et navn, en balance og en bil
-     * Tilføjer spillerne i arrayet med gui_players til GUI'en
-     * Alle spillernes biler sættes på index[0] = Start
-     * Alle spillernes biler vises på index[0] = Start
-     *
-     * @param playerList et array med playerne
-     */
     @Override
     public void setUpPlayers(Player[] playerList) {
         Color[] colors = {Color.BLUE, Color.RED, Color.YELLOW, Color.PINK, Color.lightGray, Color.green};
@@ -74,8 +64,19 @@ public class GUIView extends GameView {
         // Sætter spillernes startbalance alt efter hvor mange spillere der spiller
         //--------------------------------------------------------------------------------------------------------------
         for (int i = 0; i < playerList.length; i++) {
-            GUI_Car tmpCar = new GUI_Car();
-            tmpCar.setPrimaryColor(colors[i]);
+            String car = "Bil", tractor = "Traktor", racecar = "Racerbil", ufo = "UFO";
+            String choice = getUserButtonPressed("Hvilken brik vil " + playerList[i].name + " bruge?",
+                    car, tractor, racecar, ufo);
+
+            GUI_Car tmpCar = switch (choice) {
+                case "Bil" -> new GUI_Car(colors[i], colors[i], GUI_Car.Type.CAR, gui_fields.GUI_Car.Pattern.FILL);
+                case "Traktor" -> new GUI_Car(colors[i], colors[i], GUI_Car.Type.TRACTOR, gui_fields.GUI_Car.Pattern.FILL);
+                case "Racerbil" -> new GUI_Car(colors[i], colors[i], GUI_Car.Type.RACECAR, gui_fields.GUI_Car.Pattern.FILL);
+                case "UFO" -> new GUI_Car(colors[i], colors[i], GUI_Car.Type.UFO, gui_fields.GUI_Car.Pattern.FILL);
+                default -> null;
+            };
+
+            assert tmpCar != null;
 
             gui_players[i] = new GUI_Player(playerList[i].name, playerList[i].getBalance(), tmpCar);
             gui.addPlayer(gui_players[i]);
