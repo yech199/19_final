@@ -475,6 +475,34 @@ public class GameController {
         UI.updatePlayer(player);
     }
 
+    public String sellBuilding(Player player, Field landedOn){
+        if (landedOn instanceof OwnableField ownableField){
+            if(ownableField.rent>=player.getNetWorth()){
+                boolean sellBuilding = Boolean.parseBoolean(sellBuilding(player, ownableField));
+                String action_1 = "Sælge en bygning";
+                String action_2 = "Tabe spillet";
+                String choice = UI.getUserButtonPressed("Du har ikke mange penge tilbage!" + " Vil du sælge en bygning eller tabe spillet?", action_1, action_2);
+
+                    if(choice.equals(action_2)){
+                        player.addAmountToBalance(-ownableField.rent);
+                        sellBuilding = false;
+                    }
+                    if(choice.equals(action_1)){
+                        int buildingCount = -1;
+                        for(int i=0; i<buildingCount; i--){
+                            ownableField.;
+                        }
+
+                        player.addAmountToBalance(+4000/2);
+                        player.addToNetWorth(4000/2);
+                        sellBuilding = true;
+
+                    }
+            }
+        }
+        return null;
+    }
+
     private void doCardAction(Player player, int faceValue, ChanceCard chanceCard) {
         Field landedOn;
         int tmpPos = player.getCurrentPos();
