@@ -1,5 +1,6 @@
 package Model.Fields;
 
+import Model.GlobalValues;
 import Model.Player;
 import gui_fields.GUI_Street;
 
@@ -20,7 +21,7 @@ public class PropertyField extends OwnableField {
     }
 
     public void buyBuilding(Player player) {
-        if (amountOfBuildings < 5) {
+        if (amountOfBuildings < GlobalValues.MAX_AMOUNT_OF_BUILDINGS) {
             amountOfBuildings++;
             player.addAmountToBalance(-buildingPrice);
             // Bygninger er mindre værd hvis den skal sælges igen. Derfor tilføjes der til netWorth igen

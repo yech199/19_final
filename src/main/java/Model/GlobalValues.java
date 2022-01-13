@@ -20,4 +20,5 @@ public class GlobalValues {
     public static final int DIE_AMOUNT = 2;
 
     public static final int MAX_AMOUNT_OF_HOUSES = 4;
+    public static final int MAX_AMOUNT_OF_BUILDINGS = 5;
 }

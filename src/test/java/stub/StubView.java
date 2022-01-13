@@ -62,7 +62,7 @@ public class StubView extends GameView {
     public void displayChanceCard(ChanceCard chanceCard) {}
 
     @Override
-    public void setHouses(int houseCount, int index){}
+    public void updateAmountOfHouses(int houseCount, int index){}
 
     @Override
     public void setOrRemoveHotel(boolean hotelStatus, int index){}

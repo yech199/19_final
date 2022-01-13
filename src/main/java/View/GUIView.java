@@ -196,7 +196,7 @@ public class GUIView extends GameView {
     }
 
     @Override
-    public void setHouses(int houseCount, int index) {
+    public void updateAmountOfHouses(int houseCount, int index) {
         ((GUI_Street) gui_fieldArray[index]).setHouses(houseCount);
     }
 
