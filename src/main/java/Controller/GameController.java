@@ -240,9 +240,8 @@ public class GameController {
                                 }
                                 tmpBalance = player.getNetWorth() + player.getBalance();
 
-                                if (propertyField.amountOfBuildings > 0 && !(tmpBalance > 0)) {
-                                    break;
-                                }
+                                if (propertyField.amountOfBuildings > 0) continue;
+                                if (!(tmpBalance > 0)) break;
                             }
                             // Pantsætning
                             if (tmpBalance > 0) {
@@ -253,7 +252,9 @@ public class GameController {
                     }
                 }
             }
+            if (player.getBalance() <= 0) {
             updateGameWhenPlayerGoBankerupt(player);
+            }
         }
 
         if (player.haveMortgagedField) {
