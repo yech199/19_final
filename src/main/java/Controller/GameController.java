@@ -269,7 +269,7 @@ public class GameController {
                         String action2 = "Nej";
                         String choice = UI.getUserButtonPressed("Vil " + player.name + " ophæve pantsætningen af "
                                 + ownableField.fieldName + " for " + stopMortgagePrice +
-                                "?\nDu har en balance på " + player.getBalance() + " kr.", action2, action1);
+                                "?\nDu har en balance på " + player.getBalance() + " kr.", action1, action2);
                         if (choice.equals(action1)) {
                             ownableField.setMortgaged(false);
                             UI.setOwner(player, i);

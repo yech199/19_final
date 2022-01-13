@@ -54,4 +54,3 @@ public abstract class OwnableField extends Field {
         this.mortgaged = mortgaged;
     }
 }
-
