@@ -13,8 +13,7 @@ public class StubGUIView extends GameView {
     }
 
     @Override
-    public void setUpPlayers(Player[] playerList) {
-    }
+    public void setUpPlayers(Player[] playerList) {}
 
     @Override
     public String getUserString(String msg) {
@@ -22,15 +21,13 @@ public class StubGUIView extends GameView {
     }
 
     @Override
-    public void updatePlayer(Player player) {
-    }
+    public void updatePlayer(Player player) {}
 
     @Override
     public void updatePlayerBalance(Player player) {}
 
     @Override
-    public void removeCar(Player player) {
-    }
+    public void removeCar(Player player) {}
 
     @Override
     public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {}
@@ -41,32 +38,23 @@ public class StubGUIView extends GameView {
     }
 
     @Override
-    public void setOwner(Player player, int index) {
-    }
+    public void setOwner(Player player, int index) {}
 
     @Override
-    public void removeOwner(int index) {
-    }
+    public void removeOwner(int index) {}
 
     @Override
-    public void showMessage(String msg) {
-    }
+    public void showMessage(String msg) {}
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     @Override
-    public void displayChanceCard(ChanceCard chanceCard) {
-    }
+    public void displayChanceCard(ChanceCard chanceCard) {}
 
     @Override
-    public void setHouses(int houseCount, int index){
-
-    }
+    public void setHouses(int houseCount, int index){}
 
     @Override
-    public void setOrRemoveHotel(boolean hotelStatus, int index){
-
-    }
+    public void setOrRemoveHotel(boolean hotelStatus, int index){}
 }
