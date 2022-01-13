@@ -84,13 +84,6 @@ public class GUIView extends GameView {
         }
     }
 
-    /**
-     * Displays a message to the user, and prompt the user for a text input.
-     * Blocks/hangs until an input has been entered.
-     *
-     * @param msg The message that prompts the user.
-     * @return The string that the user has entered.
-     */
     @Override
     public String getUserString(String msg) {
         return gui.getUserString(msg);
@@ -121,12 +114,11 @@ public class GUIView extends GameView {
     }
 
     /**
-     * Opdaterer den visuelle spiller på brættet.
-     *      1) Vi laver en guiPlayer vha. getGUIversion metoden
-     *      2) Bilen på brættet slettes fra sin forrige position (før terningekast)
-     *      3) Sætter bilen på currentPos (beregnes ud fra terningekast). Når man lander på et felt sker der en fieldAction
-     *      4) Lander man fx på et AmusementField der ikke er ejet, købes denne ejendom automatisk.
-     *         Spillerens balance bliver altså opdateret
+     * Opdaterer den visuelle spiller på brættet.<p>
+     * 1) Vi laver en guiPlayer vha. getGUIversion metoden <br>
+     * 2) Bilen på brættet slettes fra sin forrige position (før terningekast) <br>
+     * 3) Sætter bilen på currentPos (beregnes ud fra terningekast). Når man lander på et felt sker der en fieldAction <br>
+     * 4) Opdaterer spillerens balance på UI
      *
      * @param player den aktive player
      */
@@ -155,35 +147,16 @@ public class GUIView extends GameView {
         gui_fieldArray[player.getCurrentPos()].setCar(guiPlayer, false);
     }
 
-    /**
-     * Displays one die with the given value, at a random position on the board
-     *
-     * @param faceValue1 The value of the die. If the value is not between
-     *                  1-6, the die won't be updated.
-     */
     @Override
     public void setDice(int faceValue1, int x1, int y1, int faceValue2, int x2, int y2) {
         gui.setDice(faceValue1, x1, y1, faceValue2, x2, y2);
     }
 
-    /**
-     * Displays a message and prompt the user for a button press of a series of buttons.
-     * The buttons are defined by the number of strings passed as the 'buttons' parameters.
-     *
-     * @param msg         The message that prompts the user to press the buttons
-     * @param menuOptions The message is displayed ON the button
-     * @return The string from the button that the user pressed.
-     */
     @Override
     public String getUserButtonPressed(String msg, String... menuOptions) {
         return gui.getUserButtonPressed(msg, menuOptions);
     }
 
-    /**
-     * Giver feltet en farve rundt om feltet, som er samme farve som den spiller der køber og dermed ejer feltet
-     *
-     * @param player active player
-     */
     @Override
     public void setOwner(Player player, int index) {
         GUI_Player guiPlayer = getGuiVersion(player);
@@ -199,25 +172,15 @@ public class GUIView extends GameView {
         playerField.setOwnerName(null);
     }
 
-    /**
-     * Displays a message to the user, along with an 'OK'-button.
-     * The program stops/hangs at the method call until the button is pressed.
-     *
-     * @param msg The message to print
-     */
     @Override
     public void showMessage(String msg) {
         gui.showMessage(msg);
     }
 
-    /**
-     * Closes the GUI window, and stops the thread it runs on.
-     */
     @Override
     public void close() {
         gui.close();
     }
-
 
     @Override
     public void displayChanceCard(ChanceCard chanceCard) {
@@ -225,11 +188,11 @@ public class GUIView extends GameView {
     }
 
     @Override
-    public void setHouses(int houseCount, int index){
+    public void setHouses(int houseCount, int index) {
         ((GUI_Street) gui_fieldArray[index]).setHouses(houseCount);
     }
 
-    public void setOrRemoveHotel(boolean hotelStatus,int index){
+    public void setOrRemoveHotel(boolean hotelStatus, int index) {
         ((GUI_Street) gui_fieldArray[index]).setHouses(0);
         ((GUI_Street) gui_fieldArray[index]).setHotel(hotelStatus);
     }
