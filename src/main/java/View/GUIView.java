@@ -57,7 +57,7 @@ public class GUIView extends GameView {
 
     @Override
     public void setUpPlayers(Player[] playerList) {
-        Color[] colors = {Color.BLUE, Color.RED, Color.YELLOW, Color.PINK, Color.lightGray, Color.green};
+        Color[] colors = {Color.BLUE, Color.RED, Color.YELLOW, Color.PINK, Color.MAGENTA, Color.GREEN};
         gui_players = new GUI_Player[playerList.length];
 
         //--------------------------------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ public class GUIView extends GameView {
     @Override
     public void viewAsMortgaged(Player player, int index) {
         GUI_Ownable playerField = ((GUI_Ownable) gui_fieldArray[index]);
-        playerField.setBorder(Color.CYAN);
+        playerField.setBorder(Color.lightGray);
         playerField.setOwnerName(player.name + " - PANTSAT");
     }
 

@@ -585,7 +585,7 @@ public class GameController {
 
                     ownableField.rent = faceValue * (100 * counter);
                 }
-                UI.updatePlayer(ownableField.owner);
+                UI.updatePlayerBalance(ownableField.owner);
             }
         }
         UI.updatePlayer(player);
