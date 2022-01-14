@@ -295,7 +295,6 @@ public class GameController {
         }
         afterMortage = false;
 
-        // TODO : Done?
         // Man bliver tilbudt at købe huse HVIS man ejer alle felter af samme farve og ingen af felterne er pantsat
         outerloop:
         for (int i = 0; i < gameBoard.fields.length; i++) {
@@ -304,7 +303,7 @@ public class GameController {
 
                 for (int j = 0; j < gameBoard.fields.length; j++) {
                     Field f = gameBoard.fields[j];
-                    if (f instanceof PropertyField p && p.isMortgaged() && propertyField.backgroundColor == p.backgroundColor) {
+                    if (f instanceof PropertyField p && p.isMortgaged() && propertyField.backgroundColor.equals(p.backgroundColor)) {
                         continue outerloop;
                     }
                 }
