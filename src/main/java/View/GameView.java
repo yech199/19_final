@@ -68,6 +68,8 @@ public abstract class GameView {
      */
     public abstract void setOwner(Player player, int index);
 
+    public abstract void viewAsMortgaged(Player player, int index);
+
     public abstract void removeOwner(int index);
 
     /**
@@ -85,7 +87,7 @@ public abstract class GameView {
 
     public abstract void displayChanceCard(ChanceCard chanceCard);
 
-    public abstract void setHouses(int houseCount, int index);
+    public abstract void updateAmountOfHouses(int houseCount, int index);
 
     public abstract void setOrRemoveHotel(boolean hotelStatus, int index);
 }

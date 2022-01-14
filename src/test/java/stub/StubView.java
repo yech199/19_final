@@ -4,16 +4,15 @@ import View.GameView;
 import Model.ChanceCards.ChanceCard;
 import Model.Player;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 public class StubView extends GameView {
     public String customChoice = null;
+    public int customNumber = 0;
 
     @Override
     public int getUserInteger(String msg, int min, int max) {
-        return max;
+        return customNumber == 0 ? max : customNumber;
     }
 
     @Override
@@ -47,6 +46,9 @@ public class StubView extends GameView {
     public void setOwner(Player player, int index) {}
 
     @Override
+    public void viewAsMortgaged(Player player, int index) {}
+
+    @Override
     public void removeOwner(int index) {}
 
     @Override
@@ -59,7 +61,7 @@ public class StubView extends GameView {
     public void displayChanceCard(ChanceCard chanceCard) {}
 
     @Override
-    public void setHouses(int houseCount, int index){}
+    public void updateAmountOfHouses(int houseCount, int index){}
 
     @Override
     public void setOrRemoveHotel(boolean hotelStatus, int index){}

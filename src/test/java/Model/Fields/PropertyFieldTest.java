@@ -32,14 +32,14 @@ public class PropertyFieldTest {
             Assert.assertEquals(propertyField.rents[numberOfBuildings], propertyField.rent);
         }
 
-        int amountOfBuildings = propertyField.getAmountOfBuildings();
+        int amountOfBuildings = propertyField.amountOfBuildings;
 
         // Forsøg at købe endnu en bygning, selvom der ikke kan købes flere
         propertyField.buyBuilding(player);
 
         // Tjek at der ikke blev købt flere bygninger og at spilleren ikke mistede penge
-        Assert.assertEquals(amountOfBuildings, propertyField.getAmountOfBuildings());
-        Assert.assertEquals(balance - propertyField.buildingPrice * propertyField.getAmountOfBuildings(), player.getBalance());
+        Assert.assertEquals(amountOfBuildings, propertyField.amountOfBuildings);
+        Assert.assertEquals(balance - propertyField.buildingPrice * propertyField.amountOfBuildings, player.getBalance());
         Assert.assertEquals(propertyField.rents[5], propertyField.rent);
     }
 
@@ -54,21 +54,22 @@ public class PropertyFieldTest {
         // Tjek at propertyField har den originale rent
         Assert.assertEquals(propertyField.rents[5], propertyField.rent);
 
-        for (int numberOfBuildings = propertyField.getAmountOfBuildings(); numberOfBuildings > 0; numberOfBuildings--) {
+        for (int numberOfBuildings = propertyField.amountOfBuildings; numberOfBuildings > 0; numberOfBuildings--) {
             propertyField.sellBuilding(player);
 
-            Assert.assertEquals(balance + propertyField.buildingPrice * (5 - propertyField.getAmountOfBuildings()), player.getBalance());
+            Assert.assertEquals(balance + ((propertyField.buildingPrice / 2)), player.getBalance());
             Assert.assertEquals(propertyField.rents[numberOfBuildings - 1], propertyField.rent);
+            balance = player.getBalance();
         }
 
-        int amountOfBuildings = propertyField.getAmountOfBuildings();
+        int amountOfBuildings = propertyField.amountOfBuildings;
 
         // Forsøg at sælge endnu en bygning, selvom der ikke kan sælges flere
         propertyField.sellBuilding(player);
 
         // Tjek at der ikke blev solgt flere bygninger og at spilleren ikke fik penge
-        Assert.assertEquals(amountOfBuildings, propertyField.getAmountOfBuildings());
-        Assert.assertEquals(balance + propertyField.buildingPrice * (5 - propertyField.getAmountOfBuildings()), player.getBalance());
+        Assert.assertEquals(amountOfBuildings, propertyField.amountOfBuildings);
+        Assert.assertEquals(balance, player.getBalance());
         Assert.assertEquals(propertyField.rents[0], propertyField.rent);
     }
 }

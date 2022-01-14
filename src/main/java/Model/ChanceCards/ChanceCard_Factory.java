@@ -43,32 +43,40 @@ public class ChanceCard_Factory {
                 new PayTheBankCard("Tandlæge", "Tandlægeregning, betal kr 2000.", 2000),
 
                 // Receive money from the bank
-                new ReceiveMoneyCard("Lotteri", "De har vundet i klasselotteriet. Modtag 500 kr.", 500, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Lotteri", "De har vundet i klasselotteriet. Modtag 500 kr.", 500, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Aktieudbytte", "De modtager Deres aktieudbytte. Modtag kr 1000 af banken.", 1000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Aktieudbytte", "De modtager Deres aktieudbytte. Modtag kr 1000 af banken.", 1000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Aktieudbytte", "De modtager Deres aktieudbytte. Modtag kr 1000 af banken.", 1000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Skat", "Kommunen har eftergivet et kvartals skat. Hæv i banken 3000 kr.", 3000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Tipning", "De har en række med elleve rigtige i tipning, modtag kl 1000.", 1000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Gageforhøjelse", "Grundet dyrtiden har De fået gageforhøjelse, modtag kr 1000.", 1000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Præmieobligation", "Deres præmieobligation er udtrykket. De modtager 1000 kr af banken.", 1000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Præmieobligation", "Deres præmieobligation er udtrykket. De modtager 1000 kr af banken.", 1000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Auktion", "De har solg nogle gamle møbler på auktion. Modtag 1000 kr af banken.", 1000, ReceiveMoneyCard.ReceivingFrom.BANK),
-                new ReceiveMoneyCard("Avl", "Værdien af egen avl fra nyttehaven udgør 200 som de modtager af banken", 200, ReceiveMoneyCard.ReceivingFrom.BANK),
+                new ReceiveMoneyFromBankCard("Lotteri", "De har vundet i klasselotteriet. Modtag 500 kr.", 500),
+                new ReceiveMoneyFromBankCard("Lotteri", "De har vundet i klasselotteriet. Modtag 500 kr.", 500),
+                new ReceiveMoneyFromBankCard("Aktieudbytte", "De modtager Deres aktieudbytte. Modtag kr 1000 af banken.", 1000),
+                new ReceiveMoneyFromBankCard("Aktieudbytte", "De modtager Deres aktieudbytte. Modtag kr 1000 af banken.", 1000),
+                new ReceiveMoneyFromBankCard("Aktieudbytte", "De modtager Deres aktieudbytte. Modtag kr 1000 af banken.", 1000),
+                new ReceiveMoneyFromBankCard("Skat", "Kommunen har eftergivet et kvartals skat. Hæv i banken 3000 kr.", 3000),
+                new ReceiveMoneyFromBankCard("Tipning", "De har en række med elleve rigtige i tipning, modtag kl 1000.", 1000),
+                new ReceiveMoneyFromBankCard("Gageforhøjelse", "Grundet dyrtiden har De fået gageforhøjelse, modtag kr 1000.", 1000),
+                new ReceiveMoneyFromBankCard("Præmieobligation", "Deres præmieobligation er udtrykket. De modtager 1000 kr af banken.", 1000),
+                new ReceiveMoneyFromBankCard("Præmieobligation", "Deres præmieobligation er udtrykket. De modtager 1000 kr af banken.", 1000),
+                new ReceiveMoneyFromBankCard("Auktion", "De har solg nogle gamle møbler på auktion. Modtag 1000 kr af banken.", 1000),
+                new ReceiveMoneyFromBankCard("Avl", "Værdien af egen avl fra nyttehaven udgør 200 som de modtager af banken", 200),
 
-                // FIXME: Receive money from other players
-                new ReceiveMoneyCard("Fødselsdag", "Det er deres fødselsdag. Modtag af hver medspiller 200 kr.",
-                        200, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
-                new ReceiveMoneyCard("Sammenskudsgilde", "De har lagt penge ud til et sammenskudsgilde. Mærkværdigvis betaler alle straks.\n" +
-                        "Modtag fra hver medspiller 500 kr.", 500, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
-                new ReceiveMoneyCard("Familiefest", "De skal holde familiefest og får et tilskud fra hver medspiller på 500 kr.",
-                        500, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
+                new ReceiveMoneyFromOtherPlayersCard("Fødselsdag", "Det er deres fødselsdag. " +
+                        "Modtag af hver medspiller 200 kr.", 200),
+                new ReceiveMoneyFromOtherPlayersCard("Sammenskudsgilde", "De har lagt penge ud " +
+                        "til et sammenskudsgilde. Mærkværdigvis betaler alle straks." +
+                        "\nModtag fra hver medspiller 500 kr.", 500),
+                new ReceiveMoneyFromOtherPlayersCard("Familiefest", "De skal holde familiefest og får " +
+                        "et tilskud fra hver medspiller på 500 kr.", 500),
 
                 // Release from prison
                 new ReleaseFromPrisonCard("Kongens fødselsdag", "I anledning af kongens fødselsdag benådes De herved for fængsel. Dette kort kan\n" +
                         "opbevares indtil De får brug for det, eller De kan sælge det."),
                 new ReleaseFromPrisonCard("Kongens fødselsdag", "I anledning af kongens fødselsdag benådes De herved for fængsel. Dette kort kan\n" +
                         "opbevares indtil De får brug for det, eller De kan sælge det."),
+
+                new EndowmentCard("Matedor-legat", "De modtager “Matador-legatet” på kr 40.000, " +
+                        "men kun hvis værdier ikke overstiger 15.000 kr", 40000, 1500),
+
+                new BuildingTaxCard("Oliepriser", "Oliepriserne er steget, " +
+                        "og De skal betale kr 500 pr hus og kr 2000 pr hotel.", 500, 2000),
+                new BuildingTaxCard("Ejendomsskat", "Ejendomsskatten er steget. " +
+                        "Ekstraudgifterne er: 800 kr pr hus, 2300 kr pr hotel.", 800, 2300)
         };
     }
 }

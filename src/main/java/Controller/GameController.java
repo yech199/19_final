@@ -2,6 +2,7 @@ package Controller;
 
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.MovementCard;
+import Model.ChanceCards.ReceiveMoneyFromOtherPlayersCard;
 import Model.Die;
 import Model.Fields.*;
 import Model.GameBoard;
@@ -26,9 +27,10 @@ public class GameController {
     private Player[] tmpPlayerList;
     private final Player[] quickGamePlayerList;
     private Player[] playerRankList = new Player[]{};
-    private int turnCounter;
+    public int turnCounter;
     private boolean extraTurn;
     public boolean quickGame;
+    public boolean afterMortage = false;
 
     public GameController(GameView UI, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
@@ -127,9 +129,12 @@ public class GameController {
         if (tmpPlayerList.length != 1) {
             roundCounter++;
 
-            UI.showMessage("Runde " + roundCounter);
+            if (roundCounter >= 30)
+                UI.showMessage("Runde " + roundCounter);
+            
         }
         for (Player player : playerList) {
+            turnCounter = 0;
 
             if (tmpPlayerList.length == 1) {
                 gameEnded = true;
@@ -190,7 +195,7 @@ public class GameController {
                             player.jailTryRollCounter = 1;
                             UI.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
                                     "\nDu er derfor nødt til at betale dig ud af fængslet. " +
-                                    "\nDu har slået " + faceValue + ". Du kan nu fortsætte din tur ");
+                                    "\nDu har slået " + faceValue + ". Du kan nu fortsætte din tur.");
                             player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
                             player.inJail = false;
                         }
@@ -216,11 +221,140 @@ public class GameController {
 
         UI.updatePlayer(player);
 
-        // TODO: Pantsætning
-
         if (player.getBalance() <= 0) {
-            updateGameWhenPlayerGoBankerupt(player);
+            int tmpBalance = (player.getNetWorth() / 2) + player.getBalance();
+            int mortgagedWorth = 0;
+
+            if (player.haveMortgagedField) {
+                for (int i = 0; i < gameBoard.fields.length; i++) {
+                    Field field = gameBoard.fields[i];
+                    if (field instanceof OwnableField ownableField && ownableField.isMortgaged() && player == ownableField.owner) {
+                        mortgagedWorth += (ownableField.price / 2);
+                    }
+                }
+                tmpBalance = (player.getNetWorth() - mortgagedWorth) / 2 + player.getBalance();
+            }
+
+            if (tmpBalance > 0) {
+                String action1 = "Ja";
+                String action2 = "Nej";
+                String choice = UI.getUserButtonPressed(player.name + " har mistet alle sine penge og står nu i gæld til banken, " +
+                        "men du har muligheden for at sælge dine bygninger og ejendomme, og dermed spille videre. " +
+                        "Vil du sælge dine ejendomme?", action1, action2);
+                if (choice.equals(action1)) {
+                    for (int i = 0; i < gameBoard.fields.length; i++) {
+                        Field field = gameBoard.fields[i];
+                        if (field instanceof OwnableField ownableField && ownableField.owner == player) {
+
+                            if (ownableField instanceof PropertyField propertyField && propertyField.amountOfBuildings > 0) {
+                                if (propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_BUILDINGS) {
+                                    sellHotel(player, i, propertyField);
+                                    tmpBalance -= (propertyField.buildingPrice / 2 * GlobalValues.MAX_AMOUNT_OF_BUILDINGS);
+                                }
+                                else {
+                                    sellHouse(player, i, propertyField);
+                                    tmpBalance -= (propertyField.buildingPrice / 2 * propertyField.amountOfBuildings);
+                                }
+
+                                if (propertyField.amountOfBuildings > 0) continue;
+                                if (!(tmpBalance > 0)) break;
+                            }
+                            // Pantsætning
+                            if (tmpBalance > 0 && !ownableField.isMortgaged()) {
+                                mortgageField(player, i, ownableField);
+                                tmpBalance -= (ownableField.price / 2);
+                            }
+                        }
+                        UI.updatePlayerBalance(player);
+                    }
+                    afterMortage = true;
+                }
+            }
+            if (player.getBalance() <= 0) {
+                updateGameWhenPlayerGoBankerupt(player);
+            }
         }
+
+        if (player.haveMortgagedField && !afterMortage) {
+            for (int i = 0; i < gameBoard.fields.length; i++) {
+                Field field = gameBoard.fields[i];
+                if (field instanceof OwnableField ownableField && ownableField.isMortgaged() && player == ownableField.owner) {
+                    unmortgageFields(player, i, ownableField);
+                }
+            }
+            UI.updatePlayerBalance(player);
+        }
+
+        // Man bliver tilbudt at købe huse HVIS man ejer alle felter af samme farve og ingen af felterne er pantsat
+        if (!afterMortage){
+            outerloop:
+            for (int i = 0; i < gameBoard.fields.length; i++) {
+                Field field = gameBoard.fields[i];
+                if (field instanceof PropertyField propertyField && propertyField.owner == player && ownsAll(propertyField)) {
+
+                    if (propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_BUILDINGS) continue;
+
+                    for (int j = 0; j < gameBoard.fields.length; j++) {
+                        Field f = gameBoard.fields[j];
+                        if (f instanceof PropertyField p && p.isMortgaged() && propertyField.backgroundColor.equals(p.backgroundColor)) {
+                            continue outerloop;
+                        }
+                    }
+
+                    String action1 = "Ja";
+                    String action2 = "Nej";
+                    // Køb x antal huse, hvis du har 0-3 huse
+                    if (propertyField.amountOfBuildings < GlobalValues.MAX_AMOUNT_OF_HOUSES && player.getBalance() > propertyField.buildingPrice) {
+                        String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                                "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
+                                + propertyField.fieldName + "?", action1, action2);
+
+                        if (choice.equals(action1)) {
+                            int maxToBuy = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.amountOfBuildings;
+                            int maxAfford = maxToBuy;
+
+                            for (int j = 1; j <= maxToBuy; j++) {
+                                if (player.getBalance() > propertyField.buildingPrice * j) {
+                                    maxAfford = j;
+                                }
+                            }
+
+                            int houseCount = propertyField.amountOfBuildings;
+                            int tmphouseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + maxAfford + " hus(e).", 1, maxAfford);
+                            for (int j = 0; j < tmphouseCount; j++) {
+                                propertyField.buyBuilding(player);
+                            }
+                            houseCount += tmphouseCount;
+
+                            for (int j = 0; j < gameBoard.fields.length; j++) {
+                                Field f = gameBoard.fields[j];
+                                if (f == propertyField) {
+                                    UI.updateAmountOfHouses(houseCount, j);
+                                }
+                            }
+                        }
+                    }
+
+                    // Køb hotel, hvis du ejer 4 huse allerede
+                    if (player.getBalance() > propertyField.buildingPrice &&
+                            propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
+                            UI.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
+                                            "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
+                                    action1, action2).equals(action1)) {
+                        propertyField.buyBuilding(player);
+
+                        for (int j = 0; j < gameBoard.fields.length; j++) {
+                            Field f = gameBoard.fields[j];
+                            if (f == propertyField) {
+                                UI.setOrRemoveHotel(true, j);
+                            }
+                        }
+                    }
+                    UI.updatePlayerBalance(player);
+                }
+            }
+        }
+        afterMortage = false;
 
         if (extraTurn) {
             doExtraTurn(player);
@@ -230,6 +364,83 @@ public class GameController {
         if ((player == playerList[playerList.length - 1] && tmpPlayerList.length != playerList.length) ||
                 tmpPlayerList.length == 1) {
             playerList = tmpPlayerList;
+        }
+    }
+
+    /**
+     * @param player Spilleren som kan ophæve pantsætningen af sine ejendomme
+     * @param i Index til det felt man kan ophæve pantsætningen af
+     * @param ownableField Det felt man kan ophæve pantsætningen af
+     */
+    private void unmortgageFields(Player player, int i, OwnableField ownableField) {
+        // Renten er 10% (der rundes op til nærmeste 100 kr.), og renten betales sammen
+        // med lånet, når pantsætningen hæves.
+        int stopMortgagePrice = (int) Math.ceil((((double) ownableField.price / 2 * 1.1) / 100.)) * 100;
+        if (player.getBalance() > (stopMortgagePrice + 1)) {
+            String action1 = "Ja";
+            String action2 = "Nej";
+            String choice = UI.getUserButtonPressed("Vil " + player.name + " ophæve pantsætningen af "
+                    + ownableField.fieldName + " for " + stopMortgagePrice +
+                    "?\nDu har en balance på " + player.getBalance() + " kr.", action1, action2);
+            if (choice.equals(action1)) {
+                ownableField.setMortgaged(false);
+                UI.setOwner(player, i);
+
+                // Tjekker om spilleren har flere pantsatte ejendomme tilbage
+                for (Field f : gameBoard.fields) {
+                    int counter = 0;
+                    if (f instanceof OwnableField ownableField2 && ownableField2.isMortgaged()) {
+                        counter++;
+                    }
+                    if (counter == 0)
+                        player.haveMortgagedField = false;
+                }
+            }
+        }
+    }
+
+    public void sellHotel(Player player, int i, PropertyField propertyField) {
+        String action1 = "Ja";
+        String action2 = "Nej";
+        String choice = UI.getUserButtonPressed("Vil " + player.name + " sælge dit hotel?", action1, action2);
+        if (choice.equals(action1)) {
+            UI.setOrRemoveHotel(false, i);
+            for (int j = 0; j < GlobalValues.MAX_AMOUNT_OF_BUILDINGS; j++) {
+                propertyField.sellBuilding(player);
+            }
+        }
+    }
+
+    public void sellHouse(Player player, int i, PropertyField propertyField) {
+        int buildingCount = UI.getUserInteger("Hvor mange huse vil " + player.name + " sælge på " + propertyField.fieldName + "?" +
+                        "\nHusk du kun kan pantsætte din grund, hvis du ikke har nogen bebyggelse på denne grund"
+                , 1, propertyField.amountOfBuildings);
+
+        UI.updateAmountOfHouses(buildingCount, i);
+
+        for (int j = 0; j < buildingCount; j++) {
+            propertyField.sellBuilding(player);
+        }
+    }
+
+    /**
+     * Pantsætning af ejendomme
+     *
+     * @param player       Den spiller der kan pantsætte sin ejendom
+     * @param i            Index på den ejendom der kan pantsættes
+     * @param ownableField Den ejendom der kan pantsættes
+     */
+    public void mortgageField(Player player, int i, OwnableField ownableField) {
+        String action1 = "Ja";
+        String action2 = "Nej";
+        String choice = UI.getUserButtonPressed("Vil " + player.name + " pantsætte " + ownableField.fieldName + " for "
+                + (ownableField.price / 2) + " kr?", action1, action2);
+        if (choice.equals(action1)) {
+            // Bruges i fieldAction til OwnableField
+            ownableField.setMortgaged(true);
+            // Tjekkes hver tur
+
+            UI.viewAsMortgaged(player, i);
         }
     }
 
@@ -299,7 +510,7 @@ public class GameController {
         }
     }
 
-    private void checkInstanceOf(Player player, int faceValue, Field landedOn) {
+    public void checkInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof IncomeTaxField incomeTaxField) {
             String action1 = "4000 kr.";
             String action2 = "10 %";
@@ -321,7 +532,7 @@ public class GameController {
         }
         // if instanceof OwnableField
         else {
-            updateOwnerAndRent(player, faceValue, landedOn);
+            updateOwnableFields(player, faceValue, landedOn);
         }
     }
 
@@ -386,10 +597,10 @@ public class GameController {
         }
     }
 
-    public void updateOwnerAndRent(Player player, int faceValue, Field landedOn) {
-        if (landedOn instanceof OwnableField ownableField) {
+    public void updateOwnableFields(Player player, int faceValue, Field landedOn) {
+        if (landedOn instanceof OwnableField ownableField && !ownableField.isMortgaged()) {
 
-            if (ownableField.owner == null) {
+            if (ownableField.owner == null && player.getBalance() > ownableField.price) {
                 // Køb felt og ændr farve
 
                 String action1 = "Ja";
@@ -399,6 +610,7 @@ public class GameController {
 
                 if (choice.equals(action1)) {
                     player.addAmountToBalance(-ownableField.price);
+                    // Ejendommen er mindre værd hvis den skal sælges igen
                     player.addToNetWorth(ownableField.price);
                     ownableField.owner = player;
                     UI.setOwner(player, player.getCurrentPos());
@@ -421,46 +633,8 @@ public class GameController {
             }
 
             else {
-                if (landedOn instanceof PropertyField propertyField) {
-                    String action1 = "Ja";
-                    String action2 = "Nej";
-
-                    if (propertyField.owner == player && ownsAll(propertyField)) {
-
-                        // Køb x antal huse, hvis du har 0-3 huse
-                        if (propertyField.getAmountOfBuildings() <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
-                            String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                    "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
-                                    + propertyField.fieldName + "?", action1, action2);
-
-                            if (choice.equals(action1)) {
-                                int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.getAmountOfBuildings();
-                                int houseCount = UI.getUserInteger("Hvor mange huse vil du købe?", 1, max);
-                                for (int i = 0; i < houseCount; i++) {
-                                    propertyField.buyBuilding(player);
-                                }
-                                for (int i = 0; i < gameBoard.fields.length; i++) {
-                                    Field field = gameBoard.fields[i];
-                                    if (field == propertyField) {
-                                        UI.setHouses(houseCount, i);
-                                    }
-                                }
-                            }
-                        }
-
-                        // Køb hotel, hvis du ejer 4 huse allerede
-                        if (propertyField.getAmountOfBuildings() == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
-                                UI.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
-                                                "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
-                                        action1, action2).equals(action1)) {
-                            propertyField.buyBuilding(player);
-                            UI.setOrRemoveHotel(true, player.getCurrentPos());
-                        }
-                    }
-                }
-
                 // Har brug for en faceValue og står derfor ikke samme sted som shippingField
-                else if (ownableField instanceof BreweryField) {
+                if (ownableField instanceof BreweryField) {
                     Player owner = ownableField.owner;
                     int counter = 0;
                     for (BreweryField f : gameBoard.breweryFields)
@@ -469,7 +643,6 @@ public class GameController {
 
                     ownableField.rent = faceValue * (100 * counter);
                 }
-                UI.updatePlayer(ownableField.owner);
             }
         }
         UI.updatePlayer(player);
@@ -488,10 +661,20 @@ public class GameController {
             landedOn.fieldAction(player);
             checkInstanceOf(player, faceValue, landedOn);
         }
+        else if (chanceCard instanceof ReceiveMoneyFromOtherPlayersCard card) {
+            for (Player p : tmpPlayerList) {
+                if (p == player) {
+                    player.addAmountToBalance(card.AMOUNT * (tmpPlayerList.length - 1));
+                }
+                else {
+                    p.addAmountToBalance(-card.AMOUNT);
+                }
+            }
+        }
         UI.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
         // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig
         if (player.getCurrentPos() != tmpPos)
-            updateOwnerAndRent(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
+            updateOwnableFields(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
     }
 
     /**
@@ -525,16 +708,18 @@ public class GameController {
             if (p == player || p.inJail || p.getBalance() < ownableField.price) {
 
                 p.wantToTryBidding = false;
-
-                if (numOfPlayersBidding == 1) {
-                    String choice = UI.getUserButtonPressed(p.name + " er den eneste der kan være med i auktionen. Vil " + p.name + " købe "
-                            + ownableField.fieldName + " til mindsteprisen, som er " + ownableField.price + ".", action1, action2);
-                    if (choice.equals(action2)) return 0;
-                    else return 1;
-                }
-                else if (numOfPlayersBidding == 0) return 0;
-
                 numOfPlayersBidding -= 1;
+            }
+
+            if (numOfPlayersBidding < 2 && p != player) {
+                String choice = UI.getUserButtonPressed(p.name + " er den eneste der kan være med i auktionen. Vil " + p.name + " købe "
+                        + ownableField.fieldName + " til mindsteprisen, som er " + ownableField.price + ".", action1, action2);
+                if (choice.equals(action2)) {
+                    p.wantToTryBidding = false;
+                    numOfPlayersBidding -= 1;
+                    return 0;
+                }
+                else return 1;
             }
 
             if (p.wantToTryBidding) {
@@ -605,6 +790,8 @@ public class GameController {
             if (p.wantToTryBidding) {
                 ownableField.owner = p;
                 p.addAmountToBalance(-prevBid);
+                // Ejendommen er mindre værd hvis den skal sælges igen
+                p.addToNetWorth(ownableField.price / 2);
                 UI.updatePlayerBalance(p);
 
                 for (int i = 0; i < gameBoard.fields.length; i++) {
@@ -682,7 +869,6 @@ public class GameController {
 
         if (ownsAll) {
             // Fordobler renten
-            //FIXME tjek om renten er blevet fordoblet allerede
             for (int i = 0, k = 0; i < gameBoard.fields.length && k < tmpFields.length; i++) {
                 Field field = gameBoard.fields[i];
                 if (field instanceof PropertyField pField && pField == tmpFields[k]) {

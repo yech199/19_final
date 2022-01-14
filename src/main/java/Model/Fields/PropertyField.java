@@ -1,12 +1,13 @@
 package Model.Fields;
 
+import Model.GlobalValues;
 import Model.Player;
 import gui_fields.GUI_Street;
 
 import java.awt.*;
 
 public class PropertyField extends OwnableField {
-    private int amountOfBuildings;
+    public int amountOfBuildings;
     public final int[] rents;
     public final int buildingPrice;
 
@@ -20,9 +21,11 @@ public class PropertyField extends OwnableField {
     }
 
     public void buyBuilding(Player player) {
-        if (amountOfBuildings < 5) {
+        if (amountOfBuildings < GlobalValues.MAX_AMOUNT_OF_BUILDINGS) {
             amountOfBuildings++;
             player.addAmountToBalance(-buildingPrice);
+            // Bygninger er mindre værd hvis den skal sælges igen. Derfor tilføjes der til netWorth igen
+            // Kun halvdelen af prisen man betaler for bygningen tilføjer værdi til din netWorth
             player.addToNetWorth(buildingPrice);
             rent = rents[amountOfBuildings];
         }
@@ -31,14 +34,11 @@ public class PropertyField extends OwnableField {
     public void sellBuilding(Player player) {
         if (amountOfBuildings > 0) {
             amountOfBuildings--;
-            player.addAmountToBalance(buildingPrice);
-            player.addToNetWorth(-buildingPrice);
+            // Bygninger sælges for halv pris
+            player.addAmountToBalance(buildingPrice / 2);
+            player.addToNetWorth(-(buildingPrice));
             rent = rents[amountOfBuildings];
         }
-    }
-
-    public int getAmountOfBuildings() {
-        return amountOfBuildings;
     }
 
 

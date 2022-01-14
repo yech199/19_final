@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ReceiveMoneyCardTest {
+public class ReceiveMoneyFromBankCardTest {
     private Player player;
     GameBoard gameBoard;
 
@@ -18,8 +18,7 @@ public class ReceiveMoneyCardTest {
 
     @Test
     public void testPlayerReceivesMoney() {
-        ChanceCard chanceCard = new ReceiveMoneyCard("", "", 1000,
-                ReceiveMoneyCard.ReceivingFrom.BANK);
+        ChanceCard chanceCard = new ReceiveMoneyFromBankCard("", "", 1000);
         chanceCard.cardAction(player, gameBoard);
         Assert.assertEquals(1000, player.getBalance());
     }

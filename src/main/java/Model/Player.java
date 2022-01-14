@@ -16,9 +16,10 @@ public class Player {
     private int index;
     private int balance;
     public int jailTryRollCounter;
-    public boolean inJail;
+    public boolean inJail = false;
     public boolean getOutOfJailFree;
     public boolean wantToTryBidding = true;
+    public boolean haveMortgagedField = false;
     private int netWorth;
 
     /**
@@ -30,6 +31,7 @@ public class Player {
         this.balance = balance;
         this.index = index;
         this.jailTryRollCounter = 0;
+        addToNetWorth(balance);
     }
 
     /**
@@ -46,7 +48,6 @@ public class Player {
      */
     public Player(int index, String name) {
         this(name, index, GlobalValues.START_MONEY);
-        addToNetWorth(GlobalValues.START_MONEY);
     }
 
     public Player(String name) {
