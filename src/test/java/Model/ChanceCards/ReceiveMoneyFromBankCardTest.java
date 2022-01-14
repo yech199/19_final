@@ -18,8 +18,7 @@ public class ReceiveMoneyFromBankCardTest {
 
     @Test
     public void testPlayerReceivesMoney() {
-        ChanceCard chanceCard = new ReceiveMoneyFromBankCard("", "", 1000,
-                ReceiveMoneyFromBankCard.ReceivingFrom.BANK);
+        ChanceCard chanceCard = new ReceiveMoneyFromBankCard("", "", 1000);
         chanceCard.cardAction(player, gameBoard);
         Assert.assertEquals(1000, player.getBalance());
     }

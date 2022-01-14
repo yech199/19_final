@@ -1,9 +1,6 @@
 package Controller;
 
-import Model.ChanceCards.ChanceCard;
-import Model.ChanceCards.MovementCard;
-import Model.ChanceCards.ReceiveMoneyFromBankCard;
-import Model.ChanceCards.ReleaseFromPrisonCard;
+import Model.ChanceCards.*;
 import Model.Die;
 import Model.Fields.*;
 import Model.GameBoard;
@@ -106,6 +103,38 @@ public class GameControllerTest {
         // Tjekker at spilleren rent faktisk har rykket sig
         Assert.assertEquals(1, player.getCurrentPos());
         Assert.assertEquals(0, player.getPreviousPos());
+    }
+
+    @Test
+    public void testReceiveMoneyFromOtherPlayersCard() {
+        int amount = 200;
+        ChanceCard[] chanceCards = new ChanceCard[]{
+                new ReceiveMoneyFromOtherPlayersCard("Fødselsdag", "Det er deres fødselsdag. " +
+                        "Modtag af hver medspiller 200 kr.", amount)
+        };
+
+        Field[] fields = new Field[]{
+                new StartField("", "", "", Color.BLACK),
+                new ChanceField(),
+        };
+
+        int balance = 2000;
+        gameBoard = new GameBoard(fields, chanceCards);
+        Player player1 = new Player("1", balance);
+        Player player2 = new Player("2", balance);
+        Player player3 = new Player("3", balance);
+        int[] rolls = {1, 0};
+        die = new StubDie(rolls);
+        gameController = new GameController(UI, gameBoard, die, die, new Player[] {player1, player2, player3});
+
+        int tmpBalance1 = player1.getBalance();
+        int tmpBalance2 = player2.getBalance();
+        int tmpBalance3 = player3.getBalance();
+        gameController.checkInstanceOf(player1, -1, fields[1]);
+
+        Assert.assertEquals(tmpBalance1 + (players.length - 1) * amount, player1.getBalance());
+        Assert.assertEquals(tmpBalance1 - amount, player2.getBalance());
+        Assert.assertEquals(tmpBalance1 - amount, player3.getBalance());
     }
 
     @Test

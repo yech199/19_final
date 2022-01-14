@@ -510,7 +510,7 @@ public class GameController {
         }
     }
 
-    private void checkInstanceOf(Player player, int faceValue, Field landedOn) {
+    public void checkInstanceOf(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof IncomeTaxField incomeTaxField) {
             String action1 = "4000 kr.";
             String action2 = "10 %";
