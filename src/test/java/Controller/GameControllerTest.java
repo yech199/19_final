@@ -2,7 +2,7 @@ package Controller;
 
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.MovementCard;
-import Model.ChanceCards.ReceiveMoneyCard;
+import Model.ChanceCards.ReceiveMoneyFromBankCard;
 import Model.ChanceCards.ReleaseFromPrisonCard;
 import Model.Die;
 import Model.Fields.*;
@@ -83,7 +83,7 @@ public class GameControllerTest {
     public void testPlayerDoesNotDrawTwiceOnTheSameChanceField() {
         int money = 1000;
         ChanceCard[] chanceCards = new ChanceCard[]{
-                new ReceiveMoneyCard("", "", money, ReceiveMoneyCard.ReceivingFrom.BANK),
+                new ReceiveMoneyFromBankCard("", "", money),
         };
 
         Field[] fields = new Field[]{
