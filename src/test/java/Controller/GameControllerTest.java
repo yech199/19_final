@@ -499,6 +499,149 @@ public class GameControllerTest {
     }
 
     @Test
+    public void testSellHouse() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        PropertyField[] fields = new PropertyField[]{
+                new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+                new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+        };
+        gameBoard = new GameBoard(fields,chanceCards);
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        Player[] playerList = new Player[]{player1};
+        Die die1 = new StubDie(1);
+        Die die2 = new StubDie(0);
+        gameController = new GameController(UI, gameBoard, die1, die2, playerList);
+
+        fields[0].amountOfBuildings = GlobalValues.MAX_AMOUNT_OF_HOUSES;
+        fields[1].amountOfBuildings = GlobalValues.MAX_AMOUNT_OF_HOUSES;
+        gameController.sellHouse(player1, 0, fields[0]);
+
+        Assert.assertEquals(0, fields[0].amountOfBuildings);
+        Assert.assertEquals(balance + fields[0].buildingPrice / 2 * GlobalValues.MAX_AMOUNT_OF_HOUSES, player1.getBalance());
+
+        balance = player1.getBalance();
+        UI.customNumber = 2;
+        gameController.sellHouse(player1, 1, fields[1]);
+
+        Assert.assertEquals(2, fields[1].amountOfBuildings);
+        Assert.assertEquals(balance + fields[1].buildingPrice / 2 * UI.customNumber, player1.getBalance());
+    }
+
+    @Test
+    public void testSellHotelThroughPlayTurn() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        PropertyField[] fields = new PropertyField[]{
+                new PropertyField("Frederiks-\nberg Allé", "Pris: kr. 2800", "Frederiksberg Allé", 200, 2800,
+                        new Color(0, 153, 0), new Color(0, 0, 0), 2000, new int[]{1000, 3000, 9000, 12500, 15000}),
+                new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+                new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+        };
+        gameBoard = new GameBoard(fields,chanceCards);
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        Player[] playerList = new Player[]{player1};
+        Die die1 = new StubDie(1);
+        Die die2 = new StubDie(0);
+        gameController = new GameController(UI, gameBoard, die1, die2, playerList);
+
+        gameController.playTurn(player1);
+        // player1 køber felt[2] --> player1 ejer alle farver af samme farve
+        // --> player1 køber max antal bygninger til begge felter i denne farve
+        gameController.playTurn(player1);
+
+        Assert.assertEquals(player1, fields[1].owner);
+        Assert.assertEquals(player1, fields[2].owner);
+        Assert.assertEquals(GlobalValues.MAX_AMOUNT_OF_BUILDINGS, fields[1].amountOfBuildings);
+        Assert.assertEquals(GlobalValues.MAX_AMOUNT_OF_BUILDINGS, fields[2].amountOfBuildings);
+
+        player1.setBalance(0);
+        balance = player1.getBalance();
+        player1.setCurrentPos(0);
+        gameController.playTurn(player1);
+
+        int field1Price = fields[1].buildingPrice / 2 * GlobalValues.MAX_AMOUNT_OF_BUILDINGS +
+                fields[1].price / 2;
+        int field2Price = fields[2].buildingPrice / 2 * GlobalValues.MAX_AMOUNT_OF_BUILDINGS +
+                fields[2].price / 2;
+
+
+        Assert.assertEquals(0, fields[1].amountOfBuildings);
+        Assert.assertEquals(0, fields[2].amountOfBuildings);
+        Assert.assertEquals(balance + field1Price + field2Price, player1.getBalance());
+    }
+
+    @Test
+    public void testSellHousesThroughPlayTurn() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        PropertyField[] fields = new PropertyField[]{
+                new PropertyField("Frederiks-\nberg Allé", "Pris: kr. 2800", "Frederiksberg Allé", 200, 2800,
+                        new Color(0, 153, 0), new Color(0, 0, 0), 2000, new int[]{1000, 3000, 9000, 12500, 15000}),
+                new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+                new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+        };
+        gameBoard = new GameBoard(fields,chanceCards);
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        Player[] playerList = new Player[]{player1};
+        Die die1 = new StubDie(1);
+        Die die2 = new StubDie(0);
+        gameController = new GameController(UI, gameBoard, die1, die2, playerList);
+
+        gameController.playTurn(player1);
+        // player1 køber felt[2] --> player1 ejer alle farver af samme farve
+        // --> player1 køber 3 huse til begge felter i denne farve
+        UI.customNumber = 3;
+        gameController.playTurn(player1);
+
+        Assert.assertEquals(player1, fields[1].owner);
+        Assert.assertEquals(player1, fields[2].owner);
+        Assert.assertEquals(UI.customNumber, fields[1].amountOfBuildings);
+        Assert.assertEquals(UI.customNumber, fields[2].amountOfBuildings);
+
+        // sælger kun 2 ud af 3 huse
+        player1.setBalance(0);
+        balance = player1.getBalance();
+        player1.setCurrentPos(0);
+        UI.customNumber = 2;
+        gameController.playTurn(player1);
+
+        int field1Price = fields[1].buildingPrice / 2 * UI.customNumber;
+        int field2Price = fields[2].buildingPrice / 2 * UI.customNumber;
+
+        Assert.assertEquals(1, fields[1].amountOfBuildings);
+        Assert.assertEquals(1, fields[2].amountOfBuildings);
+        Assert.assertEquals(balance + field1Price + field2Price, player1.getBalance());
+
+        // Sælger det sidste hus og selve grunden
+        player1.setBalance(0);
+        balance = player1.getBalance();
+        player1.setCurrentPos(0);
+
+        field1Price = fields[1].buildingPrice / 2 * fields[1].amountOfBuildings + fields[1].price / 2;
+        field2Price = fields[2].buildingPrice / 2 * fields[2].amountOfBuildings + fields[2].price / 2;
+
+        UI.customNumber = 0;
+        gameController.playTurn(player1);
+
+        Assert.assertEquals(0, fields[1].amountOfBuildings);
+        Assert.assertEquals(0, fields[2].amountOfBuildings);
+        Assert.assertEquals(balance + field1Price + field2Price, player1.getBalance());
+    }
+
+    @Test
     public void testMortgagePropertFields() {
         ChanceCard[] chanceCards = new ChanceCard[]{};
 
