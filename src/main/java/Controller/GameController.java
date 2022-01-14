@@ -2,6 +2,7 @@ package Controller;
 
 import Model.ChanceCards.ChanceCard;
 import Model.ChanceCards.MovementCard;
+import Model.ChanceCards.ReceiveMoneyFromOtherPlayersCard;
 import Model.Die;
 import Model.Fields.*;
 import Model.GameBoard;
@@ -659,6 +660,16 @@ public class GameController {
             landedOn = gameBoard.fields[player.getCurrentPos()];
             landedOn.fieldAction(player);
             checkInstanceOf(player, faceValue, landedOn);
+        }
+        else if (chanceCard instanceof ReceiveMoneyFromOtherPlayersCard card) {
+            for (Player p : tmpPlayerList) {
+                if (p == player) {
+                    player.addAmountToBalance(card.AMOUNT * (tmpPlayerList.length - 1));
+                }
+                else {
+                    p.addAmountToBalance(-card.AMOUNT);
+                }
+            }
         }
         UI.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
         // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig
