@@ -686,16 +686,18 @@ public class GameController {
             if (p == player || p.inJail || p.getBalance() < ownableField.price) {
 
                 p.wantToTryBidding = false;
-
-                if (numOfPlayersBidding == 1) {
-                    String choice = UI.getUserButtonPressed(p.name + " er den eneste der kan være med i auktionen. Vil " + p.name + " købe "
-                            + ownableField.fieldName + " til mindsteprisen, som er " + ownableField.price + ".", action1, action2);
-                    if (choice.equals(action2)) return 0;
-                    else return 1;
-                }
-                else if (numOfPlayersBidding == 0) return 0;
-
                 numOfPlayersBidding -= 1;
+            }
+
+            if (numOfPlayersBidding < 2 && p != player) {
+                String choice = UI.getUserButtonPressed(p.name + " er den eneste der kan være med i auktionen. Vil " + p.name + " købe "
+                        + ownableField.fieldName + " til mindsteprisen, som er " + ownableField.price + ".", action1, action2);
+                if (choice.equals(action2)) {
+                    p.wantToTryBidding = false;
+                    numOfPlayersBidding -= 1;
+                    return 0;
+                }
+                else return 1;
             }
 
             if (p.wantToTryBidding) {

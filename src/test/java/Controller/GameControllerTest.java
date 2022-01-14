@@ -232,9 +232,9 @@ public class GameControllerTest {
         UI.customChoice = "Rul 2 ens";
         gameBoard = new GameBoard(
                 new Field[]{
-                    new StartField("", "", "", Color.RED),
-                    new FreeParkingField("", "", ""),
-                    new JailField("", "", "")
+                        new StartField("", "", "", Color.RED),
+                        new FreeParkingField("", "", ""),
+                        new JailField("", "", "")
                 },
                 new ChanceCard[]{}
         );
@@ -276,9 +276,9 @@ public class GameControllerTest {
         UI.customChoice = "Betal " + GlobalValues.JAIL_PRICE + " kr";
         gameBoard = new GameBoard(
                 new Field[]{
-                    new StartField("", "", "", Color.RED),
-                    new FreeParkingField("", "", ""),
-                    new JailField("", "", "")
+                        new StartField("", "", "", Color.RED),
+                        new FreeParkingField("", "", ""),
+                        new JailField("", "", "")
                 },
                 new ChanceCard[]{}
         );
@@ -357,6 +357,15 @@ public class GameControllerTest {
         Assert.assertFalse(player1.wantToTryBidding);
         Assert.assertFalse(player2.wantToTryBidding);
         Assert.assertFalse(player3.wantToTryBidding);
+
+        playerList = new Player[]{player1, player2};
+        gameController = new GameController(UI, gameBoard, die, die, playerList);
+        UI.customChoice = null;
+        numOfPlayersBidding = gameController.checksWhoIsBiddingOnAuction(player1, ownableField, playerList);
+
+        Assert.assertEquals(1, numOfPlayersBidding);
+        Assert.assertFalse(player1.wantToTryBidding);
+        Assert.assertTrue(player2.wantToTryBidding);
     }
 
     @Test
@@ -426,7 +435,7 @@ public class GameControllerTest {
                 new ShippingField("Øresund", "Pris: kr. 4000", "Øresundsredderiet\nHelsingør-Helsingborg", GlobalValues.SHIPPING_RENT),
                 new BreweryField("Tuborg", "Pris: kr. 3000", "Tuborg bryggeri"),
         };
-        gameBoard = new GameBoard(fields,chanceCards);
+        gameBoard = new GameBoard(fields, chanceCards);
 
         int balance = 30000;
         Player player1 = new Player("1", balance);
@@ -482,7 +491,7 @@ public class GameControllerTest {
                 new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
                         new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
         };
-        gameBoard = new GameBoard(fields,chanceCards);
+        gameBoard = new GameBoard(fields, chanceCards);
 
         int balance = 30000;
         Player player1 = new Player("1", balance);
@@ -508,7 +517,7 @@ public class GameControllerTest {
                 new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
                         new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
         };
-        gameBoard = new GameBoard(fields,chanceCards);
+        gameBoard = new GameBoard(fields, chanceCards);
 
         int balance = 30000;
         Player player1 = new Player("1", balance);
@@ -544,7 +553,7 @@ public class GameControllerTest {
                 new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
                         new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
         };
-        gameBoard = new GameBoard(fields,chanceCards);
+        gameBoard = new GameBoard(fields, chanceCards);
 
         int balance = 30000;
         Player player1 = new Player("1", balance);
@@ -591,7 +600,7 @@ public class GameControllerTest {
                 new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
                         new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
         };
-        gameBoard = new GameBoard(fields,chanceCards);
+        gameBoard = new GameBoard(fields, chanceCards);
 
         int balance = 30000;
         Player player1 = new Player("1", balance);
@@ -639,5 +648,33 @@ public class GameControllerTest {
         Assert.assertEquals(0, fields[1].amountOfBuildings);
         Assert.assertEquals(0, fields[2].amountOfBuildings);
         Assert.assertEquals(balance + field1Price + field2Price, player1.getBalance());
+    }
+
+    @Test
+    public void testIncomeTaxField() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        IncomeTaxField[] fields = new IncomeTaxField[]{
+                new IncomeTaxField("Betal\nindkomst-\nskat", "4000 kr. el. 10%", "Betal indkomstskat\n10% eller kr. 4000,-", 4000, 10),
+                new IncomeTaxField("Betal\nindkomst-\nskat", "4000 kr. el. 10%", "Betal indkomstskat\n10% eller kr. 4000,-", 4000, 10),
+                new IncomeTaxField("Betal\nindkomst-\nskat", "4000 kr. el. 10%", "Betal indkomstskat\n10% eller kr. 4000,-", 4000, 10),
+        };
+        gameBoard = new GameBoard(fields, chanceCards);
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        Player[] playerList = new Player[]{player1};
+        Die die1 = new StubDie(1);
+        Die die2 = new StubDie(0);
+        gameController = new GameController(UI, gameBoard, die1, die2, playerList);
+
+        gameController.playTurn(player1);
+        Assert.assertEquals(balance - 4000, player1.getBalance());
+
+        balance = player1.getBalance();
+        UI.customChoice = "10 %";
+        gameController.playTurn(player1);
+
+        Assert.assertEquals(balance - (balance / 100 * 10), player1.getBalance());
     }
 }
