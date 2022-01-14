@@ -69,6 +69,9 @@ public class ChanceCard_Factory {
                         "opbevares indtil De får brug for det, eller De kan sælge det."),
                 new ReleaseFromPrisonCard("Kongens fødselsdag", "I anledning af kongens fødselsdag benådes De herved for fængsel. Dette kort kan\n" +
                         "opbevares indtil De får brug for det, eller De kan sælge det."),
+
+                new EndowmentCard("Matedor-legat", "De modtager “Matador-legatet” på kr 40.000, " +
+                        "men kun hvis værdier ikke overstiger 15.000 kr", 40000, 1500)
         };
     }
 }
