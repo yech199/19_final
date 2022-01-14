@@ -17,8 +17,6 @@ import stub.StubView;
 
 import java.awt.*;
 
-import static org.junit.Assert.*;
-
 public class GameControllerTest {
     private GameController gameController;
     private StubView UI;
@@ -52,7 +50,7 @@ public class GameControllerTest {
 
         gameController.playTurn(player);
 
-        assertEquals(moneyBefore + 4000, player.getBalance());
+        Assert.assertEquals(moneyBefore + 4000, player.getBalance());
     }
 
     @Test
@@ -76,9 +74,9 @@ public class GameControllerTest {
 
         gameController.playTurn(player);
 
-        assertEquals(0, player.getCurrentPos());
+        Assert.assertEquals(0, player.getCurrentPos());
         // Tjekker at spilleren rent faktisk har rykket sig
-        assertNotEquals(0, player.getPreviousPos());
+        Assert.assertNotEquals(0, player.getPreviousPos());
     }
 
     @Test
@@ -103,11 +101,11 @@ public class GameControllerTest {
         gameController.playTurn(player);
 
         // Tjekker at spilleren kun får pengene én gang
-        assertEquals(tmpBalance + money, player.getBalance());
+        Assert.assertEquals(tmpBalance + money, player.getBalance());
 
         // Tjekker at spilleren rent faktisk har rykket sig
-        assertEquals(1, player.getCurrentPos());
-        assertEquals(0, player.getPreviousPos());
+        Assert.assertEquals(1, player.getCurrentPos());
+        Assert.assertEquals(0, player.getPreviousPos());
     }
 
     @Test
@@ -136,11 +134,11 @@ public class GameControllerTest {
             ((OwnableField) fields[1]).owner = null;
 
             // Tjekker at spilleren kun får pengene én gang
-            assertEquals(tmpBalance + GlobalValues.START_FIELD_VALUE, player.getBalance());
+            Assert.assertEquals(tmpBalance + GlobalValues.START_FIELD_VALUE, player.getBalance());
 
             // Tjekker at spilleren rent faktisk har rykket sig
-            assertEquals(2, player.getPreviousPos());
-            assertEquals(1, player.getCurrentPos());
+            Assert.assertEquals(2, player.getPreviousPos());
+            Assert.assertEquals(1, player.getCurrentPos());
         }
     }
 
@@ -184,7 +182,7 @@ public class GameControllerTest {
             player.addAmountToBalance(counter);
             counter++;
         }
-        assertEquals(gameController.getWinner(playerList), playerList[playerList.length - 1]);
+        Assert.assertEquals(gameController.getWinner(playerList), playerList[playerList.length - 1]);
     }
 
     @Test
@@ -751,34 +749,34 @@ public class GameControllerTest {
         Die die2 = new StubDie(0);
         gameController = new GameController(UI, gameBoard, die1, die2, playerList);
 
-        assertEquals(player1.getBalance(), player1.getNetWorth());
+        Assert.assertEquals(player1.getBalance(), player1.getNetWorth());
 
         gameController.playTurn(player1);
         int moneySpent = propertyFields[1].price;
 
-        assertEquals((player1.getBalance() + moneySpent), player1.getNetWorth());
+        Assert.assertEquals((player1.getBalance() + moneySpent), player1.getNetWorth());
 
         gameController.playTurn(player1);
 
         // Køber det andet felt, samt hoteller på begge bygninger
         moneySpent += propertyFields[0].price;
-        moneySpent += propertyFields[0].buildingPrice * 5;
-        moneySpent += propertyFields[1].buildingPrice * 5;
+        moneySpent += propertyFields[0].buildingPrice * GlobalValues.MAX_AMOUNT_OF_BUILDINGS;
+        moneySpent += propertyFields[1].buildingPrice * GlobalValues.MAX_AMOUNT_OF_BUILDINGS;
 
-        assertEquals(player1.getBalance() + moneySpent, player1.getNetWorth());
+        Assert.assertEquals(player1.getBalance() + moneySpent, player1.getNetWorth());
 
         //sætter balance = 0, men ikke netWorth
         player1.addAmountToBalance(-player1.getBalance());
 
-        assertNotEquals(player1.getBalance(), player1.getNetWorth());
+        Assert.assertNotEquals(player1.getBalance(), player1.getNetWorth());
 
         // tjekker om spillerens netWorth er det samme som værdien af ejendomme og bygninger når balance = 0
-        assertEquals(moneySpent, player1.getNetWorth());
+        Assert.assertEquals(moneySpent, player1.getNetWorth());
 
         // balance er 0, så spilleren sælger alle bygninger, og pantsætter ejendomme
         gameController.playTurn(player1);
 
-        assertEquals(player1.getBalance(), player1.getNetWorth());
+        Assert.assertEquals(player1.getBalance(), player1.getNetWorth());
     }
 
     @Test
