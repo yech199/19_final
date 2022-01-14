@@ -128,7 +128,9 @@ public class GameController {
         if (tmpPlayerList.length != 1) {
             roundCounter++;
 
-            UI.showMessage("Runde " + roundCounter);
+            if (roundCounter >= 30)
+                UI.showMessage("Runde " + roundCounter);
+            
         }
         for (Player player : playerList) {
             turnCounter = 0;
