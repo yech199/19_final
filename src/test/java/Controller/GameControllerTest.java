@@ -733,4 +733,38 @@ public class GameControllerTest {
         Assert.assertEquals(balance, player1.getBalance());
         Assert.assertFalse(player1.haveMortgagedField);
     }
+
+    @Test
+    public void testDoExtraTurn() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        Field[] fields = new Field[]{
+                new StartField("", "", "", Color.RED),
+                new FreeParkingField("", "", ""),
+        };
+        gameBoard = new GameBoard(fields, chanceCards);
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        Player[] playerList = new Player[]{player1};
+        int[] rolls = new int[]{1, 1, 1, 1, 2, 0};
+        Die die = new StubDie(rolls);
+        gameController = new GameController(UI, gameBoard, die, die, playerList);
+
+        gameController.playTurn(player1);
+
+
+        Assert.assertEquals(2, gameController.turnCounter);
+        Assert.assertFalse(player1.inJail);
+
+        gameController.turnCounter = 0;
+        rolls = new int[]{1, 1, 1, 1, 1, 1};
+        die = new StubDie(rolls);
+        gameController = new GameController(UI, gameBoard, die, die, playerList);
+
+        gameController.playTurn(player1);
+
+        Assert.assertEquals(0, gameController.turnCounter);
+        Assert.assertTrue(player1.inJail);
+    }
 }

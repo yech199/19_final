@@ -26,7 +26,7 @@ public class GameController {
     private Player[] tmpPlayerList;
     private final Player[] quickGamePlayerList;
     private Player[] playerRankList = new Player[]{};
-    private int turnCounter;
+    public int turnCounter;
     private boolean extraTurn;
     public boolean quickGame;
     public boolean afterMortage = false;
