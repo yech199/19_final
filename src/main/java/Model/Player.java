@@ -31,7 +31,7 @@ public class Player {
         this.balance = balance;
         this.index = index;
         this.jailTryRollCounter = 0;
-        addToNetWorth(GlobalValues.START_MONEY);
+        addToNetWorth(balance);
     }
 
     /**
