@@ -132,7 +132,7 @@ public class GameController {
         }
         for (Player player : playerList) {
             turnCounter = 0;
-            
+
             if (tmpPlayerList.length == 1) {
                 gameEnded = true;
                 playerRankList = makePlayerRankArray(playerRankList, player);
@@ -312,7 +312,7 @@ public class GameController {
                 String action1 = "Ja";
                 String action2 = "Nej";
 
-                String choice = UI.getUserButtonPressed(propertyField.owner + " har mulighed for at bygninger til " +
+                String choice = UI.getUserButtonPressed(player.name + " har mulighed for at bygninger til " +
                         "alle felter af samme farve som er ejet af undertegnede. Vil du købe bygninger?", action1, action2);
                 if (choice.equals(action2)) break;
                 else {
