@@ -130,7 +130,8 @@ public class GameController {
             UI.showMessage("Runde " + roundCounter);
         }
         for (Player player : playerList) {
-
+            turnCounter = 0;
+            
             if (tmpPlayerList.length == 1) {
                 gameEnded = true;
                 playerRankList = makePlayerRankArray(playerRankList, player);
@@ -291,7 +292,8 @@ public class GameController {
             }
             UI.updatePlayerBalance(player);
         }
-        // TODO : Køb huse når som helst (slutning af ens tur)
+        // TODO : Done?
+        // Man bliver tilbudt at købe huse HVIS man ejer alle felter af samme farve og ingen af felterne er pantsat
         outerloop:
         for (int i = 0; i < gameBoard.fields.length; i++) {
             Field field = gameBoard.fields[i];
