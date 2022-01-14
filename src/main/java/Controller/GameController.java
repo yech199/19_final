@@ -222,7 +222,7 @@ public class GameController {
             if (tmpBalance > 0) {
                 String action1 = "Ja";
                 String action2 = "Nej";
-                String choice = UI.getUserButtonPressed(player.name + " har mistet alle dine penge og står nu i gæld til banken, " +
+                String choice = UI.getUserButtonPressed(player.name + " har mistet alle sine penge og står nu i gæld til banken, " +
                         "men du har muligheden for at sælge dine bygninger og ejendomme, og dermed spille videre. " +
                         "Vil du sælge dine ejendomme?", action1, action2);
                 if (choice.equals(action2)) return;
