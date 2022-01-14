@@ -290,13 +290,20 @@ public class GameController {
                     String action1 = "Ja";
                     String action2 = "Nej";
                     // Køb x antal huse, hvis du har 0-3 huse
-                    if (propertyField.amountOfBuildings <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
+                    if (propertyField.amountOfBuildings <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1) && player.getBalance() > propertyField.buildingPrice) {
                         String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
                                 "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
                                 + propertyField.fieldName + "?", action1, action2);
 
                         if (choice.equals(action1)) {
                             int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.amountOfBuildings;
+
+                            for (int j = 1; j <= max; j++) {
+                                if (player.getBalance() > propertyField.buildingPrice * j) {
+                                    max = j;
+                                }
+                            }
+
                             int houseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + max + " hus(e).", 1, max);
                             for (int j = 0; j < houseCount; j++) {
                                 propertyField.buyBuilding(player);
@@ -313,7 +320,8 @@ public class GameController {
                     }
 
                     // Køb hotel, hvis du ejer 4 huse allerede
-                    if (propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
+                    if (player.getBalance() > propertyField.buildingPrice &&
+                            propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
                             UI.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
                                             "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
                                     action1, action2).equals(action1)) {
@@ -570,7 +578,7 @@ public class GameController {
     public void updateOwnableFields(Player player, int faceValue, Field landedOn) {
         if (landedOn instanceof OwnableField ownableField && !ownableField.isMortgaged()) {
 
-            if (ownableField.owner == null) {
+            if (ownableField.owner == null && player.getBalance() > ownableField.price) {
                 // Køb felt og ændr farve
 
                 String action1 = "Ja";
