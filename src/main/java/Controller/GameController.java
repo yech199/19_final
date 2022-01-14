@@ -290,7 +290,7 @@ public class GameController {
                     String action1 = "Ja";
                     String action2 = "Nej";
                     // Køb x antal huse, hvis du har 0-3 huse
-                    if (propertyField.amountOfBuildings <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1) && player.getBalance() > propertyField.buildingPrice) {
+                    if (propertyField.amountOfBuildings < GlobalValues.MAX_AMOUNT_OF_HOUSES && player.getBalance() > propertyField.buildingPrice) {
                         String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
                                 "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
                                 + propertyField.fieldName + "?", action1, action2);
@@ -307,7 +307,7 @@ public class GameController {
 
                             int houseCount = propertyField.amountOfBuildings;
                             int tmphouseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + maxAfford + " hus(e).", 1, maxAfford);
-                            for (int j = 0; j < houseCount; j++) {
+                            for (int j = 0; j < tmphouseCount; j++) {
                                 propertyField.buyBuilding(player);
                             }
                             houseCount += tmphouseCount;
