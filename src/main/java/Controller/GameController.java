@@ -356,7 +356,7 @@ public class GameController {
         }
     }
 
-    private void sellHotel(Player player, int i, PropertyField propertyField) {
+    public void sellHotel(Player player, int i, PropertyField propertyField) {
         String action1 = "Ja";
         String action2 = "Nej";
         String choice = UI.getUserButtonPressed("Vil " + player.name + " sælge dit hotel?", action1, action2);

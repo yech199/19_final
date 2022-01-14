@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotEquals;
 
 public class GameControllerTest {
     private GameController gameController;
-    private StubView guiController;
+    private StubView UI;
     private GameBoard gameBoard;
     private Die die;
     private Player[] players;
@@ -35,9 +35,9 @@ public class GameControllerTest {
                 new Player("Test 3")
         };
         gameBoard = new GameBoard();
-        guiController = new StubView();
-        guiController.customChoice = null;
-        gameController = new GameController(guiController, gameBoard, die, die, players);
+        UI = new StubView();
+        UI.customChoice = null;
+        gameController = new GameController(UI, gameBoard, die, die, players);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class GameControllerTest {
         Player player = players[0];
         int[] rolls = {1, 0};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die, players);
+        gameController = new GameController(UI, gameBoard, die, die, players);
 
         gameController.playTurn(player);
 
@@ -98,7 +98,7 @@ public class GameControllerTest {
         Player player = players[0];
         int[] rolls = {1, 0};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die, players);
+        gameController = new GameController(UI, gameBoard, die, die, players);
 
         int tmpBalance = player.getBalance();
         gameController.playTurn(player);
@@ -130,7 +130,7 @@ public class GameControllerTest {
             Player player = new Player("");
             int[] rolls = {2, 0};
             die = new StubDie(rolls);
-            gameController = new GameController(guiController, gameBoard, die, die, players);
+            gameController = new GameController(UI, gameBoard, die, die, players);
 
             int tmpBalance = player.getBalance();
             gameController.playTurn(player);
@@ -162,7 +162,7 @@ public class GameControllerTest {
         Player player = players[0];
         int[] rolls = {1, 0, 0, 0};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die, players);
+        gameController = new GameController(UI, gameBoard, die, die, players);
         player.setBalance(money);
 
         gameController.playTurn(player);
@@ -176,7 +176,7 @@ public class GameControllerTest {
     @Test
     public void correctWinnerIsDecided() {
         Player[] playerList = new Player[6];
-        this.guiController.setUpPlayers(playerList);
+        this.UI.setUpPlayers(playerList);
         for (int i = 0; i < playerList.length; i++) {
             playerList[i] = new Player("" + i);
         }
@@ -208,7 +208,7 @@ public class GameControllerTest {
         gameBoard = new GameBoard(fields, chanceCards);
         Player player = players[0];
         die = new StubDie(-1);
-        gameController = new GameController(guiController, gameBoard, die, die);
+        gameController = new GameController(UI, gameBoard, die, die);
 
         Assert.assertFalse(gameController.ownsAll(fields[0]));
         Assert.assertFalse(gameController.ownsAll(fields[2]));
@@ -229,7 +229,7 @@ public class GameControllerTest {
 
     @Test
     public void testPlayerGetsOutOfJailWhenRollingAPair() {
-        guiController.customChoice = "Rul 2 ens";
+        UI.customChoice = "Rul 2 ens";
         gameBoard = new GameBoard(
                 new Field[]{
                     new StartField("", "", "", Color.RED),
@@ -249,7 +249,7 @@ public class GameControllerTest {
         for (int i = 0; i < 3; i++) {
             rolls = new int[]{1, 2, 3, 4, -1, 1};
             die = new StubDie(rolls);
-            gameController = new GameController(guiController, gameBoard, die, die, players);
+            gameController = new GameController(UI, gameBoard, die, die, players);
             gameController.playTurn(player1);
             if (i == 2) {
                 Assert.assertFalse(player1.inJail);
@@ -273,7 +273,7 @@ public class GameControllerTest {
 
     @Test
     public void testPlayerLosesMoneyWhenPayingToExitJail() {
-        guiController.customChoice = "Betal " + GlobalValues.JAIL_PRICE + " kr";
+        UI.customChoice = "Betal " + GlobalValues.JAIL_PRICE + " kr";
         gameBoard = new GameBoard(
                 new Field[]{
                     new StartField("", "", "", Color.RED),
@@ -288,7 +288,7 @@ public class GameControllerTest {
         player1.inJail = true;
         int[] rolls = {-1, 1, -1, 1};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die, players);
+        gameController = new GameController(UI, gameBoard, die, die, players);
         gameController.playTurn(player1);
 
         Assert.assertFalse(player1.inJail);
@@ -306,7 +306,7 @@ public class GameControllerTest {
         // Derefter spilles der er runder for hver spiller i spillerlisten.
         int[] rolls = {0, 3, 0, 2, 0, 1, -1, 1, -1, 1, -1, 1};
         die = new StubDie(rolls);
-        gameController = new GameController(guiController, gameBoard, die, die, new Player[]{player1, player2, player3});
+        gameController = new GameController(UI, gameBoard, die, die, new Player[]{player1, player2, player3});
         gameController.runGame();
 
         Assert.assertTrue(gameController.gameEnded);
@@ -321,7 +321,7 @@ public class GameControllerTest {
         Player player3 = new Player("3", balance);
         Die die1 = new StubDie(-1);
         Die die2 = new StubDie(1);
-        gameController = new GameController(guiController, gameBoard, die1, die2, new Player[]{player1, player2, player3});
+        gameController = new GameController(UI, gameBoard, die1, die2, new Player[]{player1, player2, player3});
         gameController.quickGame = true;
 
         gameController.runGame();
@@ -341,7 +341,7 @@ public class GameControllerTest {
         Player[] playerList = new Player[]{player1, player2, player3};
         die = new StubDie(0);
 
-        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        gameController = new GameController(UI, gameBoard, die, die, playerList);
         OwnableField ownableField = (OwnableField) gameBoard.fields[0];
 
         int numOfPlayersBidding = gameController.checksWhoIsBiddingOnAuction(player1, ownableField, playerList);
@@ -351,7 +351,7 @@ public class GameControllerTest {
         Assert.assertTrue(player2.wantToTryBidding);
         Assert.assertTrue(player3.wantToTryBidding);
 
-        guiController.customChoice = "Nej";
+        UI.customChoice = "Nej";
         numOfPlayersBidding = gameController.checksWhoIsBiddingOnAuction(player2, ownableField, playerList);
         Assert.assertEquals(0, numOfPlayersBidding);
         Assert.assertFalse(player1.wantToTryBidding);
@@ -370,7 +370,7 @@ public class GameControllerTest {
         Player[] playerList = new Player[]{player1, player2, player3};
 
         die = new StubDie(0);
-        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        gameController = new GameController(UI, gameBoard, die, die, playerList);
         OwnableField ownableField = (OwnableField) gameBoard.fields[0];
         int numOfPlayersBidding = playerList.length;
 
@@ -388,7 +388,7 @@ public class GameControllerTest {
         player3 = new Player("3", 5000);
         playerList = new Player[]{player1, player2, player3};
 
-        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        gameController = new GameController(UI, gameBoard, die, die, playerList);
         ownableField = (OwnableField) gameBoard.fields[0];
         gameController.bidOnAuction(ownableField, numOfPlayersBidding);
 
@@ -403,9 +403,9 @@ public class GameControllerTest {
         player2 = new Player("2", 7000);
         player3 = new Player("3", 5000);
         playerList = new Player[]{player1, player2, player3};
-        guiController.customChoice = "Nej";
+        UI.customChoice = "Nej";
 
-        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        gameController = new GameController(UI, gameBoard, die, die, playerList);
         ownableField = (OwnableField) gameBoard.fields[0];
         gameController.bidOnAuction(ownableField, numOfPlayersBidding);
 
@@ -430,13 +430,12 @@ public class GameControllerTest {
 
         int balance = 30000;
         Player player1 = new Player("1", balance);
-        // Player player2 = new Player("2", balance);
-        // Player player3 = new Player("3", balance);
         Player[] playerList = new Player[]{player1};
         Die die1 = new StubDie(1);
         Die die2 = new StubDie(0);
-        gameController = new GameController(guiController, gameBoard, die1, die2, playerList);
+        gameController = new GameController(UI, gameBoard, die1, die2, playerList);
 
+        // Køber begge felter
         gameController.playTurn(player1);
         gameController.playTurn(player1);
 
@@ -444,9 +443,11 @@ public class GameControllerTest {
         Assert.assertEquals(player1, fields[2].owner);
         Assert.assertEquals(balance - fields[1].price - fields[2].price, player1.getBalance());
 
+        // netWorth bliver også opdateret i addAmountToBalance-metoden
         player1.addAmountToBalance(-player1.getBalance());
         balance = player1.getBalance();
 
+        // Tjekker metoden mortgageField
         for (int i = 1; i < gameBoard.fields.length; i++) {
             Field field = gameBoard.fields[i];
             if (field instanceof OwnableField ownableField && ownableField.owner == player1) {
@@ -456,6 +457,45 @@ public class GameControllerTest {
             }
             balance = player1.getBalance();
         }
+
+        // Sætter samme værdier som før mortgageField-metoden kørte
+        fields[1].setMortgaged(false);
+        fields[2].setMortgaged(false);
+
+        player1.setCurrentPos(0);
+        player1.addToNetWorth(fields[1].price + (fields[1].price / 2) + fields[2].price + (fields[2].price));
+        player1.addAmountToBalance(-player1.getBalance());
+        balance = player1.getBalance();
+
+        // Tjekker om mortgageField virker når man spiller en tur
+        gameController.playTurn(player1);
+        Assert.assertEquals(balance + (fields[1].price / 2) + (fields[2].price / 2), player1.getBalance());
+    }
+
+    @Test
+    public void testSellHotel() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        PropertyField[] fields = new PropertyField[]{
+                new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+                new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+        };
+        gameBoard = new GameBoard(fields,chanceCards);
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        Player[] playerList = new Player[]{player1};
+        Die die1 = new StubDie(1);
+        Die die2 = new StubDie(0);
+        gameController = new GameController(UI, gameBoard, die1, die2, playerList);
+
+        fields[0].amountOfBuildings = GlobalValues.MAX_AMOUNT_OF_BUILDINGS;
+        gameController.sellHotel(player1, 0, fields[0]);
+
+        Assert.assertEquals(0, fields[0].amountOfBuildings);
+        Assert.assertEquals(balance + fields[0].buildingPrice / 2 * GlobalValues.MAX_AMOUNT_OF_BUILDINGS, player1.getBalance());
     }
 
     @Test
@@ -476,7 +516,6 @@ public class GameControllerTest {
         };
         gameBoard = new GameBoard(fields,chanceCards);
 
-
         int balance = 30000;
         Player player1 = new Player("1", balance);
         Player player2 = new Player("2", balance);
@@ -484,7 +523,7 @@ public class GameControllerTest {
         Player[] playerList = new Player[]{player1, player2, player3};
 
         die = new StubDie(0);
-        gameController = new GameController(guiController, gameBoard, die, die, playerList);
+        gameController = new GameController(UI, gameBoard, die, die, playerList);
         OwnableField ownableField = (OwnableField) gameBoard.fields[0];
         int numOfPlayersBidding = playerList.length;
     }
