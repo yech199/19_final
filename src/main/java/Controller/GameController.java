@@ -305,11 +305,12 @@ public class GameController {
                                 }
                             }
 
-                            int houseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + maxAfford + " hus(e).", 1, maxAfford);
+                            int houseCount = propertyField.amountOfBuildings;
+                            int tmphouseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + maxAfford + " hus(e).", 1, maxAfford);
                             for (int j = 0; j < houseCount; j++) {
                                 propertyField.buyBuilding(player);
                             }
-                            houseCount += propertyField.amountOfBuildings;
+                            houseCount += tmphouseCount;
 
                             for (int j = 0; j < gameBoard.fields.length; j++) {
                                 Field f = gameBoard.fields[j];
