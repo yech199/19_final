@@ -327,15 +327,14 @@ public class GameController {
                             int houseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + max + " hus(e).", 1, max);
                             for (int j = 0; j < houseCount; j++) {
                                 propertyField.buyBuilding(player);
-                                UI.updateAmountOfHouses(houseCount, j);
                             }
 
-                            // for (int j = 0; j < gameBoard.fields.length; j++) {
-                            //     Field f = gameBoard.fields[j];
-                            //     if (f == propertyField) {
-                            //         UI.updateAmountOfHouses(houseCount, j);
-                            //     }
-                            // }
+                            for (int j = 0; j < gameBoard.fields.length; j++) {
+                                Field f = gameBoard.fields[j];
+                                if (f == propertyField) {
+                                    UI.updateAmountOfHouses(houseCount, j);
+                                }
+                            }
                         }
                     }
 
