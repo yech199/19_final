@@ -328,7 +328,13 @@ public class GameController {
                                             "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
                                     action1, action2).equals(action1)) {
                         propertyField.buyBuilding(player);
-                        UI.setOrRemoveHotel(true, player.getCurrentPos());
+
+                        for (int j = 0; j < gameBoard.fields.length; j++) {
+                            Field f = gameBoard.fields[j];
+                            if (f == propertyField) {
+                                UI.setOrRemoveHotel(true, j);
+                            }
+                        }
                     }
                     UI.updatePlayerBalance(player);
                 }
