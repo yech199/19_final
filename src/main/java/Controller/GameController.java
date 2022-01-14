@@ -310,37 +310,38 @@ public class GameController {
 
                 String action1 = "Ja";
                 String action2 = "Nej";
-                    // Køb x antal huse, hvis du har 0-3 huse
-                    if (propertyField.amountOfBuildings <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
-                        String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
-                                "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
-                                + propertyField.fieldName + "?", action1, action2);
+                // Køb x antal huse, hvis du har 0-3 huse
+                if (propertyField.amountOfBuildings <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
+                    String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                            "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
+                            + propertyField.fieldName + "?", action1, action2);
 
-                        if (choice.equals(action1)) {
-                            int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.amountOfBuildings;
-                            int houseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + max + " hus(e).", 1, max);
-                            for (int j = 0; j < houseCount; j++) {
-                                propertyField.buyBuilding(player);
-                            }
+                    if (choice.equals(action1)) {
+                        int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.amountOfBuildings;
+                        int houseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + max + " hus(e).", 1, max);
+                        for (int j = 0; j < houseCount; j++) {
+                            propertyField.buyBuilding(player);
+                        }
+                        houseCount += propertyField.amountOfBuildings;
 
-                            for (int j = 0; j < gameBoard.fields.length; j++) {
-                                Field f = gameBoard.fields[j];
-                                if (f == propertyField) {
-                                    UI.updateAmountOfHouses(houseCount, j);
-                                }
+                        for (int j = 0; j < gameBoard.fields.length; j++) {
+                            Field f = gameBoard.fields[j];
+                            if (f == propertyField) {
+                                UI.updateAmountOfHouses(houseCount, j);
                             }
                         }
                     }
+                }
 
-                    // Køb hotel, hvis du ejer 4 huse allerede
-                    if (propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
-                            UI.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
-                                            "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
-                                    action1, action2).equals(action1)) {
-                        propertyField.buyBuilding(player);
-                        UI.setOrRemoveHotel(true, player.getCurrentPos());
-                    }
-
+                // Køb hotel, hvis du ejer 4 huse allerede
+                if (propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_HOUSES &&
+                        UI.getUserButtonPressed("Du ejer 4 huse på dette felt. " +
+                                        "Vil du købe et hotel for " + propertyField.buildingPrice + " kr?",
+                                action1, action2).equals(action1)) {
+                    propertyField.buyBuilding(player);
+                    UI.setOrRemoveHotel(true, player.getCurrentPos());
+                }
+                UI.updatePlayerBalance(player);
             }
         }
 
@@ -599,7 +600,6 @@ public class GameController {
 
                     ownableField.rent = faceValue * (100 * counter);
                 }
-                UI.updatePlayerBalance(ownableField.owner);
             }
         }
         UI.updatePlayer(player);
