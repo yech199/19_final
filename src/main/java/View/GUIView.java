@@ -170,7 +170,7 @@ public class GUIView extends GameView {
     public void viewAsMortgaged(Player player, int index) {
         GUI_Ownable playerField = ((GUI_Ownable) gui_fieldArray[index]);
         playerField.setBorder(Color.CYAN);
-        playerField.setOwnerName(player.name + ": PANTSAT");
+        playerField.setOwnerName(player.name + " - PANTSAT");
     }
 
     @Override

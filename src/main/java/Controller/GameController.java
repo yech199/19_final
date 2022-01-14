@@ -190,7 +190,7 @@ public class GameController {
                             player.jailTryRollCounter = 1;
                             UI.showMessage("Du har haft 3 forsøg af 3 runder og har stadig ikke rulles 2 ens. " +
                                     "\nDu er derfor nødt til at betale dig ud af fængslet. " +
-                                    "\nDu har slået " + faceValue + ". Du kan nu fortsætte din tur ");
+                                    "\nDu har slået " + faceValue + ". Du kan nu fortsætte din tur.");
                             player.addAmountToBalance(-GlobalValues.JAIL_PRICE);
                             player.inJail = false;
                         }
@@ -217,13 +217,13 @@ public class GameController {
         UI.updatePlayer(player);
 
         if (player.getBalance() <= 0) {
-            int tmpBalance = player.getNetWorth() + player.getBalance();
+            int tmpBalance = (player.getNetWorth() / 2) + player.getBalance();
 
             if (tmpBalance > 0) {
                 String action1 = "Ja";
                 String action2 = "Nej";
                 String choice = UI.getUserButtonPressed(player.name + " har mistet alle dine penge og står nu i gæld til banken, " +
-                        "\nmen du har muligheden for at sælge dine bygninger og ejendomme, og dermed spille videre. " +
+                        "men du har muligheden for at sælge dine bygninger og ejendomme, og dermed spille videre. " +
                         "Vil du sælge dine ejendomme?", action1, action2);
                 if (choice.equals(action2)) return;
                 else {
@@ -234,11 +234,12 @@ public class GameController {
                             if (ownableField instanceof PropertyField propertyField && propertyField.amountOfBuildings > 0) {
                                 if (propertyField.amountOfBuildings == GlobalValues.MAX_AMOUNT_OF_BUILDINGS) {
                                     sellHotel(player, i, propertyField);
+                                    tmpBalance -= (propertyField.buildingPrice / 2 * GlobalValues.MAX_AMOUNT_OF_BUILDINGS);
                                 }
                                 else {
                                     sellHouse(player, i, propertyField);
+                                    tmpBalance -= (propertyField.buildingPrice / 2 * propertyField.amountOfBuildings);
                                 }
-                                tmpBalance = player.getNetWorth() + player.getBalance();
 
                                 if (propertyField.amountOfBuildings > 0) continue;
                                 if (!(tmpBalance > 0)) break;
@@ -246,6 +247,7 @@ public class GameController {
                             // Pantsætning
                             if (tmpBalance > 0) {
                                 mortgageField(player, i, ownableField);
+                                tmpBalance -= (ownableField.price / 2);
                             }
                         }
                         UI.updatePlayerBalance(player);
@@ -263,7 +265,7 @@ public class GameController {
                 if (field instanceof OwnableField ownableField && ownableField.isMortgaged()) {
                     // Renten er 10% (der rundes op til nærmeste 100 kr.), og renten betales sammen
                     // med lånet, når pantsætningen hæves.
-                    int stopMortgagePrice = (int) (Math.ceil(((((double) ownableField.price / 2) / 100. * 10.) / 100.)) * 100 + (ownableField.price / 2));
+                    int stopMortgagePrice = (int) Math.ceil((((double) ownableField.price / 2 * 1.1) / 100.)) * 100;
                     if (player.getBalance() > (stopMortgagePrice + 1)) {
                         String action1 = "Ja";
                         String action2 = "Nej";
@@ -304,7 +306,7 @@ public class GameController {
     private void sellHotel(Player player, int i, PropertyField propertyField) {
         String action1 = "Ja";
         String action2 = "Nej";
-        String choice = UI.getUserButtonPressed("Vil du sælge dit hotel?", action1, action2);
+        String choice = UI.getUserButtonPressed("Vil " + player.name + " sælge dit hotel?", action1, action2);
         if (choice.equals(action1)) {
             UI.setOrRemoveHotel(false, i);
             for (int j = 0; j < GlobalValues.MAX_AMOUNT_OF_BUILDINGS; j++) {
