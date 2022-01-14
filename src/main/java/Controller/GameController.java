@@ -29,6 +29,7 @@ public class GameController {
     private int turnCounter;
     private boolean extraTurn;
     public boolean quickGame;
+    private boolean afterMortage = false;
 
     public GameController(GameView UI, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
@@ -226,8 +227,7 @@ public class GameController {
                 String choice = UI.getUserButtonPressed(player.name + " har mistet alle sine penge og står nu i gæld til banken, " +
                         "men du har muligheden for at sælge dine bygninger og ejendomme, og dermed spille videre. " +
                         "Vil du sælge dine ejendomme?", action1, action2);
-                if (choice.equals(action2)) return;
-                else {
+                if (choice.equals(action1)) {
                     for (int i = 0; i < gameBoard.fields.length; i++) {
                         Field field = gameBoard.fields[i];
                         if (field instanceof OwnableField ownableField && ownableField.owner == player) {
@@ -253,6 +253,7 @@ public class GameController {
                         }
                         UI.updatePlayerBalance(player);
                     }
+                    afterMortage = true;
                 }
             }
             if (player.getBalance() <= 0) {
@@ -260,7 +261,7 @@ public class GameController {
             }
         }
 
-        if (player.haveMortgagedField) {
+        if (player.haveMortgagedField && !afterMortage) {
             for (int i = 0; i < gameBoard.fields.length; i++) {
                 Field field = gameBoard.fields[i];
                 if (field instanceof OwnableField ownableField && ownableField.isMortgaged()) {
@@ -292,6 +293,8 @@ public class GameController {
             }
             UI.updatePlayerBalance(player);
         }
+        afterMortage = false;
+
         // TODO : Done?
         // Man bliver tilbudt at købe huse HVIS man ejer alle felter af samme farve og ingen af felterne er pantsat
         outerloop:
