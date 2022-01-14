@@ -222,6 +222,17 @@ public class GameController {
 
         if (player.getBalance() <= 0) {
             int tmpBalance = (player.getNetWorth() / 2) + player.getBalance();
+            int mortgagedWorth = 0;
+
+            if (player.haveMortgagedField) {
+                for (int i = 0; i < gameBoard.fields.length; i++) {
+                    Field field = gameBoard.fields[i];
+                    if (field instanceof OwnableField ownableField && ownableField.isMortgaged() && player == ownableField.owner) {
+                        mortgagedWorth += (ownableField.price / 2);
+                    }
+                }
+                tmpBalance -= mortgagedWorth;
+            }
 
             if (tmpBalance > 0) {
                 String action1 = "Ja";
@@ -248,7 +259,7 @@ public class GameController {
                                 if (!(tmpBalance > 0)) break;
                             }
                             // Pantsætning
-                            if (tmpBalance > 0) {
+                            if (tmpBalance > 0 && !ownableField.isMortgaged()) {
                                 mortgageField(player, i, ownableField);
                                 tmpBalance -= (ownableField.price / 2);
                             }
@@ -266,7 +277,7 @@ public class GameController {
         if (player.haveMortgagedField && !afterMortage) {
             for (int i = 0; i < gameBoard.fields.length; i++) {
                 Field field = gameBoard.fields[i];
-                if (field instanceof OwnableField ownableField && ownableField.isMortgaged()) {
+                if (field instanceof OwnableField ownableField && ownableField.isMortgaged() && player == ownableField.owner) {
                     unmortgageFields(player, i, ownableField);
                 }
             }
