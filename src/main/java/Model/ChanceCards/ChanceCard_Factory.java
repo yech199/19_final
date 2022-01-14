@@ -56,7 +56,6 @@ public class ChanceCard_Factory {
                 new ReceiveMoneyFromBankCard("Auktion", "De har solg nogle gamle møbler på auktion. Modtag 1000 kr af banken.", 1000),
                 new ReceiveMoneyFromBankCard("Avl", "Værdien af egen avl fra nyttehaven udgør 200 som de modtager af banken", 200),
 
-                // FIXME: Receive money from other players
                 new ReceiveMoneyFromOtherPlayersCard("Fødselsdag", "Det er deres fødselsdag. " +
                         "Modtag af hver medspiller 200 kr.", 200),
                 new ReceiveMoneyFromOtherPlayersCard("Sammenskudsgilde", "De har lagt penge ud " +
