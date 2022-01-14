@@ -41,13 +41,13 @@ public class BreweryFieldTest {
         BreweryField breweryField1 = (BreweryField) fields[0];
         BreweryField breweryField2 = (BreweryField) fields[1];
         int faceValue = 1;
-        gameController.updateOwnerAndRent(player1, faceValue, breweryField1);
-        gameController.updateOwnerAndRent(player2, faceValue, breweryField1);
+        gameController.updateOwnableFields(player1, faceValue, breweryField1);
+        gameController.updateOwnableFields(player2, faceValue, breweryField1);
 
         Assert.assertEquals(faceValue * 100, breweryField1.rent);
 
-        gameController.updateOwnerAndRent(player1, faceValue, breweryField2);
-        gameController.updateOwnerAndRent(player2, faceValue, breweryField2);
+        gameController.updateOwnableFields(player1, faceValue, breweryField2);
+        gameController.updateOwnableFields(player2, faceValue, breweryField2);
 
         Assert.assertEquals(faceValue * 200, breweryField2.rent);
     }

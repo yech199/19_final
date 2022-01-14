@@ -337,7 +337,7 @@ public class GameController {
     public void mortgageField(Player player, int i, OwnableField ownableField) {
         String action1 = "Ja";
         String action2 = "Nej";
-        String choice = UI.getUserButtonPressed("Vil " + player.name + " pantsætte " + ownableField.fieldName + " for"
+        String choice = UI.getUserButtonPressed("Vil " + player.name + " pantsætte " + ownableField.fieldName + " for "
                 + (ownableField.price / 2) + " kr?", action1, action2);
         if (choice.equals(action1)) {
             // Bruges i fieldAction til OwnableField
@@ -436,7 +436,7 @@ public class GameController {
         }
         // if instanceof OwnableField
         else {
-            updateOwnerAndRent(player, faceValue, landedOn);
+            updateOwnableFields(player, faceValue, landedOn);
         }
     }
 
@@ -501,8 +501,8 @@ public class GameController {
         }
     }
 
-    public void updateOwnerAndRent(Player player, int faceValue, Field landedOn) {
-        if (landedOn instanceof OwnableField ownableField) {
+    public void updateOwnableFields(Player player, int faceValue, Field landedOn) {
+        if (landedOn instanceof OwnableField ownableField && !ownableField.isMortgaged()) {
 
             if (ownableField.owner == null) {
                 // Køb felt og ændr farve
@@ -607,7 +607,7 @@ public class GameController {
         UI.getUserButtonPressed("Tryk OK for at fortsætte", "OK");
         // Sørger for at man ikke trækker et nyt chancekort, hvis man ikke rykker sig
         if (player.getCurrentPos() != tmpPos)
-            updateOwnerAndRent(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
+            updateOwnableFields(player, faceValue, gameBoard.fields[player.getCurrentPos()]);
     }
 
     /**
