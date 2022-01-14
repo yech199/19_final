@@ -296,15 +296,16 @@ public class GameController {
                                 + propertyField.fieldName + "?", action1, action2);
 
                         if (choice.equals(action1)) {
-                            int max = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.amountOfBuildings;
+                            int maxToBuy = GlobalValues.MAX_AMOUNT_OF_HOUSES - propertyField.amountOfBuildings;
+                            int maxAfford = maxToBuy;
 
-                            for (int j = 1; j <= max; j++) {
+                            for (int j = 1; j <= maxToBuy; j++) {
                                 if (player.getBalance() > propertyField.buildingPrice * j) {
-                                    max = j;
+                                    maxAfford = j;
                                 }
                             }
 
-                            int houseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + max + " hus(e).", 1, max);
+                            int houseCount = UI.getUserInteger("Hvor mange huse vil du købe? Du kan købe max " + maxAfford + " hus(e).", 1, maxAfford);
                             for (int j = 0; j < houseCount; j++) {
                                 propertyField.buyBuilding(player);
                             }

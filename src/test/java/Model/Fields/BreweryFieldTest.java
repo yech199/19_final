@@ -20,8 +20,8 @@ public class BreweryFieldTest {
     @Before
     public void setup() {
         players = new Player[]{
-                new Player("Test 1", 500),
-                new Player("Test 2", 500)
+                new Player("Test 1", 50000),
+                new Player("Test 2", 50000)
         };
         fields = new Field[]{
                 new BreweryField("Tuborg", "", ""),
