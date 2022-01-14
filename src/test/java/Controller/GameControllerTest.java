@@ -677,4 +677,60 @@ public class GameControllerTest {
 
         Assert.assertEquals(balance - (balance / 100 * 10), player1.getBalance());
     }
+
+    @Test
+    public void testUnmortgageFields() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+
+        OwnableField[] fields = new OwnableField[]{
+                new ShippingField("D.F.D.S.", "Pris: kr. 4000", "D.F.D.S.\nMols-Linien", GlobalValues.SHIPPING_RENT),
+                new ShippingField("Øresund", "Pris: kr. 4000", "Øresundsredderiet\nHelsingør-Helsingborg", GlobalValues.SHIPPING_RENT),
+                new BreweryField("Tuborg", "Pris: kr. 3000", "Tuborg bryggeri"),
+                new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+                new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+        };
+        gameBoard = new GameBoard(fields, chanceCards);
+
+        int balance = 30000;
+        Player player1 = new Player("1", balance);
+        Player[] playerList = new Player[]{player1};
+        Die die1 = new StubDie(1);
+        Die die2 = new StubDie(0);
+        gameController = new GameController(UI, gameBoard, die1, die2, playerList);
+
+        for (int i = 1; i < gameBoard.fields.length; i++) {
+            gameController.playTurn(player1);
+            Assert.assertEquals(player1, fields[i].owner);
+        }
+
+        balance = player1.getBalance();
+        for (int i = 0; i < gameBoard.fields.length; i++) {
+            Field field = gameBoard.fields[i];
+            if (field instanceof OwnableField ownableField && ownableField.owner == player1) {
+                gameController.mortgageField(player1, i, ownableField);
+                Assert.assertTrue(fields[i].isMortgaged());
+                Assert.assertEquals(balance + (ownableField.price / 2), player1.getBalance());
+            }
+            balance = player1.getBalance();
+        }
+
+        player1.setCurrentPos(0);
+        player1.setBalance(30000);
+        balance = player1.getBalance();
+        gameController.playTurn(player1);
+
+        for (int i = 0; i < gameBoard.fields.length; i++) {
+            Field field = gameBoard.fields[i];
+            if (field instanceof OwnableField ownableField && ownableField.owner == player1) {
+                int stopMortgagePrice = (int) Math.ceil((((double) ownableField.price / 2 * 1.1) / 100.)) * 100;
+                Assert.assertFalse(fields[i].isMortgaged());
+                balance -= stopMortgagePrice;
+            }
+        }
+
+        Assert.assertEquals(balance, player1.getBalance());
+        Assert.assertFalse(player1.haveMortgagedField);
+    }
 }

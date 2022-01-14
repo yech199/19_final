@@ -29,7 +29,7 @@ public class GameController {
     private int turnCounter;
     private boolean extraTurn;
     public boolean quickGame;
-    private boolean afterMortage = false;
+    public boolean afterMortage = false;
 
     public GameController(GameView UI, GameBoard gameBoard, Die die1, Die die2, Player[] players) {
         this.die1 = die1;
