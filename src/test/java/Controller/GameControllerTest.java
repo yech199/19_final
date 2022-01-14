@@ -17,8 +17,7 @@ import stub.StubView;
 
 import java.awt.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class GameControllerTest {
     private GameController gameController;
@@ -732,5 +731,53 @@ public class GameControllerTest {
 
         Assert.assertEquals(balance, player1.getBalance());
         Assert.assertFalse(player1.haveMortgagedField);
+    }
+
+
+    @Test
+    public void netWorthUpdatesCorrectly() {
+        ChanceCard[] chanceCards = new ChanceCard[]{};
+        PropertyField[] propertyFields = new PropertyField[] {
+                new PropertyField("Rødovrevej", "Pris: kr. 1200", "Rødovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+                new PropertyField("Hvidovrevej", "Pris: kr. 1200", "Hvidovrevej", 50, 1200,
+                        new Color(0, 0, 102), new Color(255, 255, 255), 1000, new int[]{250, 750, 2250, 4000, 6000}),
+        };
+
+        gameBoard = new GameBoard(propertyFields, chanceCards);
+        Player player1 = new Player("1");
+        Player[] playerList = new Player[]{player1};
+        Die die1 = new StubDie(1);
+        Die die2 = new StubDie(0);
+        gameController = new GameController(UI, gameBoard, die1, die2, playerList);
+
+        assertEquals(player1.getBalance(), player1.getNetWorth());
+
+        gameController.playTurn(player1);
+        int moneySpent = propertyFields[1].price;
+
+        assertEquals((player1.getBalance() + moneySpent), player1.getNetWorth());
+
+        gameController.playTurn(player1);
+
+        // Køber det andet felt, samt hoteller på begge bygninger
+        moneySpent += propertyFields[0].price;
+        moneySpent += propertyFields[0].buildingPrice * 5;
+        moneySpent += propertyFields[1].buildingPrice * 5;
+
+        assertEquals(player1.getBalance() + moneySpent, player1.getNetWorth());
+
+        //sætter balance = 0, men ikke netWorth
+        player1.addAmountToBalance(-player1.getBalance());
+
+        assertNotEquals(player1.getBalance(), player1.getNetWorth());
+
+        // tjekker om spillerens netWorth er det samme som værdien af ejendomme og bygninger når balance = 0
+        assertEquals(moneySpent, player1.getNetWorth());
+
+        // balance er 0, så spilleren sælger alle bygninger, og pantsætter ejendomme
+        gameController.playTurn(player1);
+
+        assertEquals(player1.getBalance(), player1.getNetWorth());
     }
 }
