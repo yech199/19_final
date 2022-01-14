@@ -311,14 +311,9 @@ public class GameController {
 
                 String action1 = "Ja";
                 String action2 = "Nej";
-
-                String choice = UI.getUserButtonPressed(player.name + " har mulighed for at bygninger til " +
-                        "alle felter af samme farve som er ejet af undertegnede. Vil du købe bygninger?", action1, action2);
-                if (choice.equals(action2)) break;
-                else {
                     // Køb x antal huse, hvis du har 0-3 huse
                     if (propertyField.amountOfBuildings <= (GlobalValues.MAX_AMOUNT_OF_HOUSES - 1)) {
-                        choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
+                        String choice = UI.getUserButtonPressed("Du ejer alle felter af denne farve. " +
                                 "Vil du købe huse for " + propertyField.buildingPrice + " kr. til "
                                 + propertyField.fieldName + "?", action1, action2);
 
@@ -346,7 +341,7 @@ public class GameController {
                         propertyField.buyBuilding(player);
                         UI.setOrRemoveHotel(true, player.getCurrentPos());
                     }
-                }
+
             }
         }
 
