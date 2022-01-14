@@ -71,7 +71,12 @@ public class ChanceCard_Factory {
                         "opbevares indtil De får brug for det, eller De kan sælge det."),
 
                 new EndowmentCard("Matedor-legat", "De modtager “Matador-legatet” på kr 40.000, " +
-                        "men kun hvis værdier ikke overstiger 15.000 kr", 40000, 1500)
+                        "men kun hvis værdier ikke overstiger 15.000 kr", 40000, 1500),
+
+                new BuildingTaxCard("Oliepriser", "Oliepriserne er steget, " +
+                        "og De skal betale kr 500 pr hus og kr 2000 pr hotel.", 500, 2000),
+                new BuildingTaxCard("Ejendomsskat", "Ejendomsskatten er steget. " +
+                        "Ekstraudgifterne er: 800 kr pr hus, 2300 kr pr hotel.", 800, 2300)
         };
     }
 }
