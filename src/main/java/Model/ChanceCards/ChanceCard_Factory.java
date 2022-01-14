@@ -7,26 +7,28 @@ public class ChanceCard_Factory {
                 new MovementCard("Start", "Ryk frem til START", 0, MovementCard.MovementType.INDEX),
                 new MovementCard("Start", "Ryk frem til START", 0, MovementCard.MovementType.INDEX),
                 new MovementCard("Rådhuspladsen", "Tag til Rådhuspladsen", 39, MovementCard.MovementType.INDEX),
-                new MovementCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start.", 30, MovementCard.MovementType.INDEX),
-                new MovementCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start.", 30, MovementCard.MovementType.INDEX),
-                // TODO: Hvis De passere START, indkasser da 4000 kr.
+
                 new MovementCard("Frederiksberg Allé", "Ryk frem til Frederiksberg Allé. Hvis De passere START, indkasser da 4000 kr.", 11, MovementCard.MovementType.INDEX),
-                new MovementCard("Mols-Linien", "Tag med Mols-Linien, flyt brikken frem og hvis De passerer START indkassér da kr\n" +
-                        "4000.", 15, MovementCard.MovementType.INDEX),
+                new MovementCard("Mols-Linien", "Tag med Mols-Linien, flyt brikken frem og hvis De passerer START indkassér da kr 4000.", 15, MovementCard.MovementType.INDEX),
                 new MovementCard("Grønningen", "Ryk frem til Grønningen, hvis De passerer start indkasser da kr 4000", 24, MovementCard.MovementType.INDEX),
                 new MovementCard("Vimmelskaftet", "Ryk frem til Vimmelskaftet, hvis de passerer start indkasser da kr 4000", 32, MovementCard.MovementType.INDEX),
                 new MovementCard("Strandvejen", "Ryk frem til Strandvejen. Hvis De passere START, indkasser da 4000 kr.", 19, MovementCard.MovementType.INDEX),
-                // TODO: Find den der er tættest på spillerens nuværende position
+
+                // fieldIndex er sat til -1, for alle der bruger NEAREST
                 new MovementCard("Nærmeste rederi", "Ryk frem til det nærmeste rederi og betal ejeren to gange den leje han ellers er berettiget\n" +
-                        "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", 5, MovementCard.MovementType.INDEX),
+                        "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", -1, MovementCard.MovementType.NEAREST),
                 new MovementCard("Nærmeste rederi", "Ryk frem til det nærmeste rederi og betal ejeren to gange den leje han ellers er berettiget\n" +
-                        "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", 5, MovementCard.MovementType.INDEX),
-                new MovementCard("Færge", "Tag med den nærmeste færge, hvis de passerer start indkasser da kr 4000", 5, MovementCard.MovementType.INDEX),
+                        "til, hvis selskabet ikke ejes af nogen kan De købe det af banken.", -1, MovementCard.MovementType.NEAREST),
+                new MovementCard("Færge", "Tag med den nærmeste færge, hvis de passerer start indkasser da kr 4000", -1, MovementCard.MovementType.NEAREST),
 
                 // Number of fields
                 new MovementCard("3 felter frem", "Ryk tre felter frem", 3, MovementCard.MovementType.NUMBER),
                 new MovementCard("3 felter tilbage" ,"Ryk tre felter tilbage", -3, MovementCard.MovementType.NUMBER),
                 new MovementCard("3 felter tilbage" ,"Ryk tre felter tilbage", -3, MovementCard.MovementType.NUMBER),
+
+                new GoToJailCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start."),
+                new GoToJailCard("Fængsel", "Gå i fængsel, De indkasserer ikke 4000 kr for at passere start."),
+
 
                 // Pay the bank
                 new PayTheBankCard("Fuldt stop", "De har kørt frem for “fuldt stop”, Betal 1000 kroner i bøde.", 1000),
@@ -55,8 +57,12 @@ public class ChanceCard_Factory {
                 new ReceiveMoneyCard("Avl", "Værdien af egen avl fra nyttehaven udgør 200 som de modtager af banken", 200, ReceiveMoneyCard.ReceivingFrom.BANK),
 
                 // FIXME: Receive money from other players
-                new ReceiveMoneyCard("Fødselsdag", "Det er din fødselsdag! Modtag 2$ fra banken. TILLYKKE MED FØDSELSDAGEN!",
-                        2, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS), // FIXME: fra andre spillere
+                new ReceiveMoneyCard("Fødselsdag", "Det er deres fødselsdag. Modtag af hver medspiller 200 kr.",
+                        200, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
+                new ReceiveMoneyCard("Sammenskudsgilde", "De har lagt penge ud til et sammenskudsgilde. Mærkværdigvis betaler alle straks.\n" +
+                        "Modtag fra hver medspiller 500 kr.", 500, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
+                new ReceiveMoneyCard("Familiefest", "De skal holde familiefest og får et tilskud fra hver medspiller på 500 kr.",
+                        500, ReceiveMoneyCard.ReceivingFrom.OTHER_PLAYERS),
 
                 // Release from prison
                 new ReleaseFromPrisonCard("Kongens fødselsdag", "I anledning af kongens fødselsdag benådes De herved for fængsel. Dette kort kan\n" +

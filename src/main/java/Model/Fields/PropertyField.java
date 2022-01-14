@@ -5,10 +5,42 @@ import gui_fields.GUI_Street;
 
 import java.awt.*;
 
-public class PropertyField extends OwnableFields {
-    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
+public class PropertyField extends OwnableField {
+    private int amountOfBuildings;
+    public final int[] rents;
+    public final int buildingPrice;
+
+    public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor, int buildingPrice, int[] buildingRents) {
         super(name, subText, description, rent, price, color, textColor);
+        assert buildingRents.length == 5;
+        amountOfBuildings = 0;
+        this.rents = new int[] {rent, buildingRents[0], buildingRents[1], buildingRents[2], buildingRents[3], buildingRents[4]};
+        this.buildingPrice = buildingPrice;
+
     }
+
+    public void buyBuilding(Player player) {
+        if (amountOfBuildings < 5) {
+            amountOfBuildings++;
+            player.addAmountToBalance(-buildingPrice);
+            player.addToNetWorth(buildingPrice);
+            rent = rents[amountOfBuildings];
+        }
+    }
+
+    public void sellBuilding(Player player) {
+        if (amountOfBuildings > 0) {
+            amountOfBuildings--;
+            player.addAmountToBalance(buildingPrice);
+            player.addToNetWorth(-buildingPrice);
+            rent = rents[amountOfBuildings];
+        }
+    }
+
+    public int getAmountOfBuildings() {
+        return amountOfBuildings;
+    }
+
 
     /**
      * Translates the fields we made to Fields in GUI format, so the GUI can use the fields

@@ -6,12 +6,12 @@ import gui_fields.GUI_Ownable;
 
 import java.awt.*;
 
-public abstract class OwnableFields extends Field {
+public abstract class OwnableField extends Field {
     public int rent;
     public int price;
     public Player owner; // public fordi get og set metoder bare getter og sætter værdien
 
-    public OwnableFields(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
+    public OwnableField(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
         super(name, subText, description, color, textColor);
         this.rent = rent;
         this.price = price;
@@ -24,7 +24,8 @@ public abstract class OwnableFields extends Field {
      */
     @Override
     public void fieldAction(Player player) {
-        if (this.owner != null) {
+        // Der opkræves ingen leje hvis ejeren af feltet er i fængsel
+        if (this.owner != null && !this.owner.inJail) {
             player.addAmountToBalance(-rent);
             owner.addAmountToBalance(rent);
         }

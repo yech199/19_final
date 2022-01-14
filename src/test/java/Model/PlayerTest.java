@@ -16,20 +16,12 @@ public class PlayerTest {
         gameBoard = new GameBoard();
     }
 
-    //Test for, om get og set position metoderne fungerer
     @Test
-    public void playerMovesSetAmount() {
+    public void testSetCurrentPos() {
         player.setCurrentPos(2);
-        player.setPreviousPos(2);
-
-        assertEquals(player.getCurrentPos(), player.getPreviousPos());
-    }
-
-    //Test for, at være sikker på, at positionen bliver opdateret
-    @Test
-    public void playerMovesSetAmountOne() {
-        player.setPreviousPos(2);
         player.setCurrentPos(4);
-        assertNotEquals(player.getCurrentPos(), player.getPreviousPos());
+
+        assertEquals(2, player.getPreviousPos());
+        assertEquals(4, player.getCurrentPos());
     }
 }

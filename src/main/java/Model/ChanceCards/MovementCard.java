@@ -1,8 +1,7 @@
 package Model.ChanceCards;
 
-import Model.Fields.Field;
-import Model.Fields.GoToJailField;
 import Model.GameBoard;
+import Model.GlobalValues;
 import Model.Player;
 
 /**
@@ -14,7 +13,8 @@ import Model.Player;
 public class MovementCard extends ChanceCard {
     public enum MovementType {
         NUMBER,
-        INDEX
+        INDEX,
+        NEAREST
     }
 
     private final int fieldIndex;
@@ -37,20 +37,45 @@ public class MovementCard extends ChanceCard {
     public void cardAction(Player player, GameBoard gameBoard) {
         switch (movementType) {
             case NUMBER -> {
-                player.setCurrentPos(player.getCurrentPos() + fieldIndex % gameBoard.fields.length);
+                int newPos = (player.getCurrentPos() + fieldIndex) % gameBoard.fields.length;
+
+                // Tjekker om den nye position er negativ.
+                if (newPos < 0) {
+                    newPos += gameBoard.fields.length;
+                }
+                player.setCurrentPos(newPos);
             }
             case INDEX -> {
                 player.setCurrentPos(fieldIndex);
             }
-        }
-        // Sørger for at man laver den handling der svarer til det felt man lander på
-        Field landedOn = gameBoard.fields[player.getCurrentPos()];
-        landedOn.fieldAction(player);
+            case NEAREST -> {
+                int pos = player.getCurrentPos();
+                int nearest = gameBoard.ferryIndices[0];
+                int nearestDistance = nearest - pos;
 
-        // Skal ikke tjekke om man passerer start når man bliver sendt i fængsel
-        if (!(landedOn instanceof GoToJailField))
-            // Tjekker om spilleren passerer start
-            if (player.getCurrentPos() < player.getPreviousPos())
-                player.addAmountToBalance(4000);
+                if (nearestDistance < 0) {
+                    nearestDistance += gameBoard.fields.length;
+                }
+
+                for (int ferryIndex : gameBoard.ferryIndices) {
+                    int distance = ferryIndex - pos;
+                    if (distance < 0) {
+                        distance += gameBoard.fields.length;
+                    }
+
+                    if (distance < nearestDistance) {
+                        nearest = ferryIndex;
+                        nearestDistance = distance;
+                    }
+                }
+                // Vi har nu fundet den færge der er tættest på spillerens position (fremadgående)
+
+                player.setCurrentPos(nearest);
+            }
+        }
+
+        // Tjekker om spilleren passerede start
+        if (player.getCurrentPos() < player.getPreviousPos())
+            player.addAmountToBalance(GlobalValues.START_FIELD_VALUE);
     }
 }
