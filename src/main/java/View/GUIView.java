@@ -200,6 +200,7 @@ public class GUIView extends GameView {
         ((GUI_Street) gui_fieldArray[index]).setHouses(houseCount);
     }
 
+    @Override
     public void setOrRemoveHotel(boolean hotelStatus, int index) {
         ((GUI_Street) gui_fieldArray[index]).setHouses(0);
         ((GUI_Street) gui_fieldArray[index]).setHotel(hotelStatus);

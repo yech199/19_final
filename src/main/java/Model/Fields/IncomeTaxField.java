@@ -6,17 +6,13 @@ import gui_fields.GUI_Tax;
 import java.awt.*;
 
 public class IncomeTaxField extends Field{
-    public final int tax;
-    public final int percent;
+    public final int TAX;
+    public final int PERCENT;
 
-    public IncomeTaxField(String name, String subText, String description, int tax, int percent) {
+    public IncomeTaxField(String name, String subText, String description, int TAX, int percent) {
         super(name, subText, description, Color.GRAY, Color.BLACK);
-        this.tax = tax;
-        this.percent = percent;
-    }
-
-    @Override
-    public void fieldAction(Player player) {
+        this.TAX = TAX;
+        this.PERCENT = percent;
     }
 
     @Override
