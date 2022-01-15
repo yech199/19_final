@@ -220,6 +220,9 @@ public class GameController {
         else afterAuction = false;
 
         UI.updatePlayer(player);
+        for (Player p: tmpPlayerList) {
+            UI.updatePlayerBalance(p);
+        }
 
         if (player.getBalance() <= 0) {
             int tmpBalance = (player.getNetWorth() / 2) + player.getBalance();
