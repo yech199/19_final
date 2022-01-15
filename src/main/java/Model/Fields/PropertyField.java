@@ -21,23 +21,23 @@ public class PropertyField extends OwnableField {
     }
 
     public void buyBuilding(Player player) {
-        if (amountOfBuildings < GlobalValues.MAX_AMOUNT_OF_BUILDINGS) {
-            amountOfBuildings++;
-            player.addAmountToBalance(-buildingPrice);
+        if (this.amountOfBuildings < GlobalValues.MAX_AMOUNT_OF_BUILDINGS) {
+            this.amountOfBuildings++;
+            player.addAmountToBalance(-this.buildingPrice);
             // Bygninger er mindre værd hvis den skal sælges igen. Derfor tilføjes der til netWorth igen
             // Kun halvdelen af prisen man betaler for bygningen tilføjer værdi til din netWorth
-            player.addToNetWorth(buildingPrice);
-            rent = rents[amountOfBuildings];
+            player.addToNetWorth(this.buildingPrice);
+            this.rent = this.rents[this.amountOfBuildings];
         }
     }
 
     public void sellBuilding(Player player) {
-        if (amountOfBuildings > 0) {
-            amountOfBuildings--;
+        if (this.amountOfBuildings > 0) {
+            this.amountOfBuildings--;
             // Bygninger sælges for halv pris
-            player.addAmountToBalance(buildingPrice / 2);
-            player.addToNetWorth(-(buildingPrice));
-            rent = rents[amountOfBuildings];
+            player.addAmountToBalance(this.buildingPrice / 2);
+            player.addToNetWorth(-(this.buildingPrice));
+            this.rent = this.rents[this.amountOfBuildings];
         }
     }
 

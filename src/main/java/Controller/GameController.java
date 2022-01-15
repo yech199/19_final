@@ -220,6 +220,9 @@ public class GameController {
         else afterAuction = false;
 
         UI.updatePlayer(player);
+        for (Player p: tmpPlayerList) {
+            UI.updatePlayerBalance(p);
+        }
 
         if (player.getBalance() <= 0) {
             int tmpBalance = (player.getNetWorth() / 2) + player.getBalance();
@@ -520,9 +523,9 @@ public class GameController {
                     \t2. Betal 10% af alle dine værdier""", action1, action2);
 
             if (choice.equals(action1))
-                player.addAmountToBalance(-incomeTaxField.tax);
+                player.addAmountToBalance(-incomeTaxField.TAX);
             else {
-                player.addAmountToBalance(-(player.getNetWorth() / 100 * incomeTaxField.percent));
+                player.addAmountToBalance(-(player.getNetWorth() / 100 * incomeTaxField.PERCENT));
             }
         }
         else if (landedOn instanceof ChanceField) {
@@ -573,7 +576,7 @@ public class GameController {
         return duplicates;
     }
 
-    public void makeStartingOrderPlayerList() {
+    private void makeStartingOrderPlayerList() {
         HashMap<Integer, Player> dieValues = new HashMap<>();
         Player[] orderOfPlayers = playerList;
 
@@ -866,8 +869,14 @@ public class GameController {
                 ownsAll = true;
             }
         }
+        int fieldsWithBuildings = 0;
+        for (PropertyField p : tmpFields) {
+            if (p.amountOfBuildings > 0) {
+                fieldsWithBuildings++;
+            }
+        }
 
-        if (ownsAll) {
+        if (ownsAll && fieldsWithBuildings == 0) {
             // Fordobler renten
             for (int i = 0, k = 0; i < gameBoard.fields.length && k < tmpFields.length; i++) {
                 Field field = gameBoard.fields[i];
@@ -924,7 +933,7 @@ public class GameController {
      * @param playerList tager listen af players som input
      * @return returnerer den spiller der har vundet
      */
-    Player getWinner(Player[] playerList) {
+    public Player getWinner(Player[] playerList) {
         Player winner = new Player("", 0); //tom spiller, da den udskiftes med en ny spiller efter første runde i for-loop
         for (Player player : playerList) {
             if (winner.getBalance() < player.getBalance()) {

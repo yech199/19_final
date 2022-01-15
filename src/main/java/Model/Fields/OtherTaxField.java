@@ -6,16 +6,16 @@ import gui_fields.GUI_Tax;
 import java.awt.*;
 
 public class OtherTaxField extends Field {
-    public final int tax;
+    public final int TAX;
 
-    public OtherTaxField(String name, String subText, String description, int tax) {
+    public OtherTaxField(String name, String subText, String description, int TAX) {
         super(name, subText, description, Color.GRAY, Color.BLACK);
-        this.tax = tax;
+        this.TAX = TAX;
     }
 
     @Override
     public void fieldAction(Player player) {
-        player.addAmountToBalance(-tax);
+        player.addAmountToBalance(-TAX);
     }
 
     @Override

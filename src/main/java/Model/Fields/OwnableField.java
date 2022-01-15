@@ -26,8 +26,8 @@ public abstract class OwnableField extends Field {
     public void fieldAction(Player player) {
         // Der opkræves ingen leje hvis ejeren af feltet er i fængsel
         if (this.owner != null && !this.owner.inJail && !this.mortgaged) {
-            player.addAmountToBalance(-rent);
-            owner.addAmountToBalance(rent);
+            player.addAmountToBalance(-this.rent);
+            this.owner.addAmountToBalance(this.rent);
         }
     }
 
