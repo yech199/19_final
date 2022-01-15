@@ -866,8 +866,14 @@ public class GameController {
                 ownsAll = true;
             }
         }
+        int fieldsWithBuildings = 0;
+        for (PropertyField p : tmpFields) {
+            if (p.amountOfBuildings > 0) {
+                fieldsWithBuildings++;
+            }
+        }
 
-        if (ownsAll) {
+        if (ownsAll && fieldsWithBuildings == 0) {
             // Fordobler renten
             for (int i = 0, k = 0; i < gameBoard.fields.length && k < tmpFields.length; i++) {
                 Field field = gameBoard.fields[i];
