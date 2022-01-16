@@ -11,10 +11,10 @@ import java.awt.*;
 
 public abstract class Field {
     public final String fieldName;
-    public final String subText;
-    public final String description;
+    protected final String subText;
+    protected final String description;
     public final Color backgroundColor;
-    public final Color textColor;
+    protected final Color textColor;
 
     public Field(String name, String subText, String description, Color color, Color textColor) {
         this.fieldName = name;
