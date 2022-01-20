@@ -163,6 +163,7 @@ public class GameController {
                         "men har et benådelseskort fra Kongen, og kommer derfor gratis ud af fængslet", "OK");
                 player.getOutOfJailFree = false;
                 player.inJail = false;
+                faceValue = rollDice(player);
             }
             else {
 
