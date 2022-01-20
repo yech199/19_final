@@ -169,7 +169,7 @@ public class GameController {
                 String action1 = "Betal " + GlobalValues.JAIL_PRICE + " kr";
                 String action2 = "Rul 2 ens";
                 String choice = UI.getUserButtonPressed(player.name + " er røget i fængsel." +
-                        "Hvordan vil du komme ud?", action1, action2);
+                        " Hvordan vil du komme ud?", action1, action2);
                 if (choice.equals(action2)) {
 
                     if (player.jailTryRollCounter < 3) {
@@ -327,6 +327,7 @@ public class GameController {
                             for (int j = 0; j < tmphouseCount; j++) {
                                 propertyField.buyBuilding(player);
                             }
+                            if (tmphouseCount == -1) tmphouseCount = 1;
                             houseCount += tmphouseCount;
 
                             for (int j = 0; j < gameBoard.fields.length; j++) {
@@ -608,7 +609,7 @@ public class GameController {
 
                 String action1 = "Ja";
                 String action2 = "Nej";
-                String choice = UI.getUserButtonPressed("Du er landet på " + landedOn.fieldName +
+                String choice = UI.getUserButtonPressed( player.name + " er landet på " + landedOn.fieldName +
                         ". Vil du købe denne ejendom?", action1, action2);
 
                 if (choice.equals(action1)) {
@@ -781,7 +782,7 @@ public class GameController {
                     while (bid == prevBid && prevPlayer != null && prevPlayer != p) {
                         bid = UI.getUserInteger("Dette bud er ugyldigt. Giv et nyt bud" +
                                 "\nHvad vil " + p.name + " byde på " + ownableField.fieldName + "? Buddet starter på "
-                                + prevBid + " kr.", prevBid, p.getBalance());
+                                + (prevBid + 1) + " kr.", (prevBid + 1), p.getBalance());
                     }
                     prevPlayer = p;
                     prevBid = bid;

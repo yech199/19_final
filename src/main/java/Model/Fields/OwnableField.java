@@ -11,7 +11,8 @@ public abstract class OwnableField extends Field {
     private boolean mortgaged = false; // = pantsat
     public Player owner; // public fordi get og set metoder bare getter og sætter værdien
 
-    public OwnableField(String name, String subText, String description, int rent, int price, Color color, Color textColor) {
+    public OwnableField(String name, String subText, String description, int rent, int price,
+                        Color color, Color textColor) {
         super(name, subText, description, color, textColor);
         this.rent = rent;
         this.price = price;

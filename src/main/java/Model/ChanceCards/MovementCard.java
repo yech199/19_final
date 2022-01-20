@@ -26,7 +26,6 @@ public class MovementCard extends ChanceCard {
      *
      * @param name         of the card, so it's easy to identify
      * @param text         describing what the card does
-     * @param movementType
      */
     public MovementCard(String name, String text, int fieldIndex, MovementType movementType) {
         super(name, text);
@@ -34,6 +33,7 @@ public class MovementCard extends ChanceCard {
         this.movementType = movementType;
     }
 
+    @Override
     public void cardAction(Player player, GameBoard gameBoard) {
         switch (movementType) {
             case NUMBER -> {

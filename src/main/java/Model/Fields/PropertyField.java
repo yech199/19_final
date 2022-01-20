@@ -14,7 +14,7 @@ public class PropertyField extends OwnableField {
     public PropertyField(String name, String subText, String description, int rent, int price, Color color, Color textColor, int buildingPrice, int[] buildingRents) {
         super(name, subText, description, rent, price, color, textColor);
         assert buildingRents.length == 5;
-        amountOfBuildings = 0;
+        this.amountOfBuildings = 0;
         this.rents = new int[] {rent, buildingRents[0], buildingRents[1], buildingRents[2], buildingRents[3], buildingRents[4]};
         this.buildingPrice = buildingPrice;
 
